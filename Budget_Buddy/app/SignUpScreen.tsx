@@ -4,8 +4,19 @@ import { useSignUp } from "@clerk/clerk-expo";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Colors from "../constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 
 export default function SignUpScreen() {
+    /*
+      This screen contains the components for the user 
+      to sign in and get send their email to create their
+      account it also shows the layout for the user such as
+      the colors and basic styles
+      when the users email is pending it will show a diffrent
+      screen where the user can input their email code to
+      verify their account then they will have their
+      account set active so they can view the main screens
+    */
   const { isLoaded, signUp, setActive } = useSignUp();
   
   const [emailAddress, setEmailAddress] = React.useState("");
@@ -48,12 +59,13 @@ export default function SignUpScreen() {
       });
  
       await setActive({ session: completeSignUp.createdSessionId });
+      router.replace('(auth)')
     } catch (err: any) {
       console.log(JSON.stringify(err, null, 2));
       alert(err.errors[0].message);
     }
   };
- 
+
   return (
     <ImageBackground source={require('../assets/images/Login_BG.jpg')} style={styles.image}>
       <LinearGradient colors={[Colors.background,  Colors.transparent]} style={styles.container} start={{ x: 0, y: .15 }} >

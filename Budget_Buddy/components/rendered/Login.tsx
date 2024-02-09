@@ -3,6 +3,7 @@ import { Text, TextInput, TouchableOpacity, View, StyleSheet} from "react-native
 import { useSignIn } from "@clerk/clerk-expo";
 import Colors from '../../constants/Colors';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { router } from "expo-router";
 
 
 export default function Login() {
@@ -12,7 +13,7 @@ export default function Login() {
     onSignInPress function then it will
     set the user to active so that the user
     can be directed to the main app
-    (this is done in App.tsx file)
+    (this is done in main layout file)
     the styles are also here
   */
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -33,6 +34,7 @@ export default function Login() {
       // This is an important step,
       // This indicates the user is signed in
       await setActive({ session: completeSignIn.createdSessionId });
+      router.replace('(auth)')
     } catch (err: any) {
       console.log(err);
       alert(err.errors[0].message);

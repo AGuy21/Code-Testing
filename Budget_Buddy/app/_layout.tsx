@@ -3,13 +3,11 @@ import React from 'react'
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Colors from '../constants/Colors';
 import * as SecureStore from "expo-secure-store";
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
-import SignedInNavigator from '../app/(auth)/_layout';
-import PublicStackNavigator from '../components/rendered/PublicStackNavigator';
-
+import { ClerkProvider, SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
+import { Stack } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
@@ -35,6 +33,7 @@ const tokenCache = {
 // fsdsf
 
 export default function App() {
+
   // Load fonts
   const [fontsLoaded, fontError] = useFonts({
     'Lato-Bold': require('../assets/fonts/Lato-Bold.ttf'),
@@ -61,8 +60,9 @@ export default function App() {
     /*
       Provides clerk token cache for saving of sessions and key
       and uses clerk with expo to see if the user 
-      is signed in and if so the signed in navigator is shown
-      and if not the public stack nav is shown so the user can sign in
+      is signed in and if so the needed screens for 
+      user sign in are shown and if not the main 
+      page is shown
     */
     <ClerkProvider 
       tokenCache={tokenCache}
@@ -70,13 +70,18 @@ export default function App() {
     > 
       <View style={styles.container} onLayout={onLayoutRootView}>
 
+      <Stack screenOptions={{ headerShown: false }}>
+
         <SignedOut>
-          <PublicStackNavigator />
+          <Stack.Screen name="index"  />
+          <Stack.Screen name="Authenticate"  />
+          <Stack.Screen name="SignUpScreen" />
         </SignedOut>
 
         <SignedIn>
-          <SignedInNavigator />
+          <Stack.Screen name='(auth)' />
         </SignedIn>
+      </Stack>
 
       </View>
     </ClerkProvider>
