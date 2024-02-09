@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "750752699149",
+    "project_id": "testapp-f4f01",
+    "storage_bucket": "testapp-f4f01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750752699149:android:a7534b98450171b321d644",
+        "android_client_info": {
+          "package_name": "com.Solo.App"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6Vj3A4bIULxnp2ZldCyUgmk5DztsZLVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
