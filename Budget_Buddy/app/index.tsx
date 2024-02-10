@@ -7,10 +7,14 @@ import Animated, {
 } from 'react-native-reanimated';
 import React from 'react';
 import { router } from 'expo-router';
+import { useSignedInCheck } from '../components/hooks/userSignedIn';
 
 // Keep the splash screen visible while we fetch resources
 
 export default function LandingPage() {
+  // if the user is signed in it routes to home to avoid bugs
+  useSignedInCheck()
+
   return (
     /*
       This will take all components for the beginning screen

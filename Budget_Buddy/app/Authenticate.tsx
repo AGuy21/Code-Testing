@@ -1,4 +1,4 @@
-import { Text, StyleSheet, TouchableOpacity, ImageBackground, View } from 'react-native'
+import { Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native'
 import React from 'react'
 import Login from '../components/rendered/Login'
 import Colors from '../constants/Colors';

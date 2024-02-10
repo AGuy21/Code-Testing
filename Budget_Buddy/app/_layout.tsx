@@ -6,7 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Colors from '../constants/Colors';
 import * as SecureStore from "expo-secure-store";
-import { ClerkProvider, SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
+import { ClerkProvider } from "@clerk/clerk-expo";
 import { Stack } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 
@@ -33,7 +33,7 @@ const tokenCache = {
 // fsdsf
 
 export default function App() {
-
+  
   // Load fonts
   const [fontsLoaded, fontError] = useFonts({
     'Lato-Bold': require('../assets/fonts/Lato-Bold.ttf'),
@@ -53,8 +53,6 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-  
-
 
   return (
     /*
@@ -62,7 +60,8 @@ export default function App() {
       and uses clerk with expo to see if the user 
       is signed in and if so the needed screens for 
       user sign in are shown and if not the main 
-      page is shown
+      screens needed to sign in are shown
+      (the transfer to home is done at app/index.tsx)
     */
     <ClerkProvider 
       tokenCache={tokenCache}
@@ -71,16 +70,9 @@ export default function App() {
       <View style={styles.container} onLayout={onLayoutRootView}>
 
       <Stack screenOptions={{ headerShown: false }}>
-
-        <SignedOut>
           <Stack.Screen name="index"  />
           <Stack.Screen name="Authenticate"  />
           <Stack.Screen name="SignUpScreen" />
-        </SignedOut>
-
-        <SignedIn>
-          <Stack.Screen name='(auth)' />
-        </SignedIn>
       </Stack>
 
       </View>
