@@ -1,5 +1,4 @@
 import { View, StyleSheet } from 'react-native'
-import React from 'react'
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -8,6 +7,8 @@ import Colors from '../constants/Colors';
 import * as SecureStore from "expo-secure-store";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { Stack } from 'expo-router';
+import React from 'react'
+import { useSignedInCheck } from '../components/hooks/userSignedIn';
 SplashScreen.preventAutoHideAsync();
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
@@ -30,10 +31,9 @@ const tokenCache = {
     }
   },
 };
-// fsdsf
+
 
 export default function App() {
-  
   // Load fonts
   const [fontsLoaded, fontError] = useFonts({
     'Lato-Bold': require('../assets/fonts/Lato-Bold.ttf'),

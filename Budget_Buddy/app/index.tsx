@@ -5,7 +5,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import Animated, {
   BounceInDown, Easing, FadeInUp,
 } from 'react-native-reanimated';
-import React from 'react';
+import React from 'react'
 import { router } from 'expo-router';
 import { useSignedInCheck } from '../components/hooks/userSignedIn';
 

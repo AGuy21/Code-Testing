@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     height: hp(5),
     borderWidth: wp(.5),
     borderColor: Colors.background,
-    backgroundColor: Colors.primary2,
+    backgroundColor: Colors.primary,
     opacity: 0.86,
     borderRadius: wp(100),
     alignItems: 'center',

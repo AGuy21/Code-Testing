@@ -12,7 +12,7 @@ export default function Profile() {
   const doLogout = () => {
     signOut();
     console.log(user.user?.emailAddresses[0]?.emailAddress + 'Signed out')
-    router.replace('/')
+    router.replace('Authenticate')
   };
 
   return (
