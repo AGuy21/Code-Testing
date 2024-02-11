@@ -1,15 +1,17 @@
-import { Button, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import {  Button, StyleSheet, Text, View } from 'react-native'
+import React, {  useState } from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import Colors from '../../constants/Colors'
 import ExpenseType from '../../components/rendered/ExpenseType';
 import PaymentFrequency from '../../components/rendered/PaymentFrequency';
+import AmountSlider from '../../components/rendered/AmountSlider';
 
 const CreateExpenseScreen = () => {
 
   const [expenseType, setExpenseType] = useState('');
   const [expenseFrequency, setExpenseFrequency] = useState('');
+  const [amount, setAmount] = useState(0);
 
   const handleExpenseTypeChange = (newState: string) => {
     setExpenseType(newState); // sets expense type to new state
@@ -19,7 +21,20 @@ const CreateExpenseScreen = () => {
     setExpenseFrequency(newState); // sets expense frequency to new state
   };
 
+  const handleAmountChange = (newState: number) => {
+    setAmount(newState); // sets amount to new state
+  }
 
+  const handleCreateExpense = () => {
+    console.log('-----------------------------');
+    console.log('     New expense created!    ');
+    console.log('-----------------------------');
+
+    console.log(' Expense type: ', expenseType);
+    console.log(' Expense frequency: ', expenseFrequency);
+    console.log(' Amount: ', amount);
+    console.log('-----------------------------');
+  }
   return (
     <View style={styles.container}>
 
@@ -30,18 +45,21 @@ const CreateExpenseScreen = () => {
         Add your expenses here
       </Text>
       {/* When the user selects an expense type, the expense type is sent to the parent component */}
-      <ExpenseType onStateChange={handleExpenseTypeChange} />
+      <ExpenseType sendDataToParent={handleExpenseTypeChange} />
 
       <Text style={styles.mainText}>
         Payment Frequency 
       </Text>
 
-      <PaymentFrequency onStateChange={handlePaymentFrequencyChange}/>
+      <PaymentFrequency sendDataToParent={handlePaymentFrequencyChange}/>
 
       <Text style={styles.mainText}>
         Amount 
       </Text>
 
+      <AmountSlider sendDataToParent={handleAmountChange}/>
+
+      <Button title='Create Expense' onPress={handleCreateExpense} />
     </View>
   )
 }

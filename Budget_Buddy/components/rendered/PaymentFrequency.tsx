@@ -3,7 +3,7 @@ import Colors from '../../constants/Colors'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-const PaymentFrequency = ({ onStateChange }) => {
+const PaymentFrequency = ({ sendDataToParent }) => {
     /*
         This component is a row of 3 buttons where
         the user can choose the frequency of their
@@ -13,7 +13,7 @@ const PaymentFrequency = ({ onStateChange }) => {
   const [expenseFrequency, setExpenseFrequency] = useState('');
   
   useEffect(() => { // this sends the parent the expense freq when changed
-    onStateChange(expenseFrequency)
+    sendDataToParent(expenseFrequency)
   }, [expenseFrequency])
   
 
