@@ -1,34 +1,45 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Button, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import Colors from '../../constants/Colors'
 import ExpenseType from '../../components/rendered/ExpenseType';
+import PaymentFrequency from '../../components/rendered/PaymentFrequency';
 
 const CreateExpenseScreen = () => {
 
   const [expenseType, setExpenseType] = useState('');
+  const [expenseFrequency, setExpenseFrequency] = useState('');
 
-  const handleChildStateChange = (newState: string) => {
+  const handleExpenseTypeChange = (newState: string) => {
     setExpenseType(newState); // sets expense type to new state
   };
+
+  const handlePaymentFrequencyChange = (newState: string) => {
+    setExpenseFrequency(newState); // sets expense frequency to new state
+  };
+
 
   return (
     <View style={styles.container}>
 
       <Text style={styles.titleText}>
-        Add A Expense
+        Expense Tracker
       </Text>
       <Text style={styles.subTitleText}>
-        Add a new income source, expense, or budget!
+        Add your expenses here
       </Text>
-
       {/* When the user selects an expense type, the expense type is sent to the parent component */}
-      <ExpenseType onStateChange={handleChildStateChange} />
+      <ExpenseType onStateChange={handleExpenseTypeChange} />
 
-      <Text style={styles.subTitleText}>
-        Payment Frequency
+      <Text style={styles.mainText}>
+        Payment Frequency {expenseFrequency}
       </Text>
+
+      <PaymentFrequency onStateChange={handlePaymentFrequencyChange}/>
+
+      <Button title='Create Expense' onPress={() => console.log('Expense Type: ', expenseType, '  Frequency: ', expenseFrequency)} />
+ 
     </View>
   )
 }
@@ -50,9 +61,19 @@ const styles = StyleSheet.create({
     },
     subTitleText: {
       color: Colors.white,
-      fontSize: wp(4),
-      fontFamily: 'Lato-Reg',
-      marginBottom: hp(2),
+      fontSize: wp(3.5),
+      fontFamily: 'Lato-Bold',
+      marginBottom: hp(3),
+      textAlign: 'center',
+      width: wp(80),
     },
-
+    mainText: {
+      color: Colors.white,
+      fontSize: wp(3.5),
+      fontFamily: 'Lato-Bold',
+      marginBottom: hp(3),
+      textAlign: 'center',
+      width: wp(80),
+    },
+    
 })
