@@ -1,5 +1,5 @@
 import { StyleSheet} from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
@@ -8,12 +8,14 @@ import { SelectList } from 'react-native-dropdown-select-list';
 
 import { Entypo} from '@expo/vector-icons';
 
-const ExpenseType = ({ sendDataToParent}) => {
+const ExpenseType = ({ sendDataToParent, typeDataToChild}) => {
     /*
         This component is a dropdown to choose expense type
         the data for the expense is in the data var,
         and when clicking the new expense in the dropdown
         it will send the data to the parent for future use
+        in the database and can be reset by the parent
+        by taking in the params from the parent
     */
     const [selected, setSelected] = useState('')
 
@@ -29,6 +31,13 @@ const ExpenseType = ({ sendDataToParent}) => {
         setSelectionMade(true) // to change selction made to true when selection is made
         sendDataToParent(selected)
     }
+    
+    useEffect(() => {
+        setSelected(typeDataToChild) // when the typeDataToChild changes it will set the selectionMade to false
+        if (typeDataToChild === '') { // when the typeDataToChild is empty it will set the selectionMade to false
+            setSelectionMade(false) 
+        }
+    }, [typeDataToChild])
 
     return (
         <>

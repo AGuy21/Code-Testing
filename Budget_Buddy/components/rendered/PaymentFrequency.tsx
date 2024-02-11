@@ -3,12 +3,13 @@ import Colors from '../../constants/Colors'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-const PaymentFrequency = ({ sendDataToParent }) => {
+const PaymentFrequency = ({ sendDataToParent, frequencyDataToChild}) => {
     /*
         This component is a row of 3 buttons where
         the user can choose the frequency of their
         expenses and it will be sent to the parent for 
-        future use and has styles
+        future use and has styles and when parent changes
+        data is changes it to be synced
     */
   const [expenseFrequency, setExpenseFrequency] = useState('');
   
@@ -16,6 +17,9 @@ const PaymentFrequency = ({ sendDataToParent }) => {
     sendDataToParent(expenseFrequency)
   }, [expenseFrequency])
   
+  useEffect(() => { // this sets the expense freq when changed by parent done on reset
+    setExpenseFrequency(frequencyDataToChild)
+  }, [frequencyDataToChild])
 
   return (
     <View style={styles.buttonRowContainer}>

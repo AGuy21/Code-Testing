@@ -7,7 +7,7 @@ import ExpenseType from '../../components/rendered/ExpenseType';
 import PaymentFrequency from '../../components/rendered/PaymentFrequency';
 import AmountSlider from '../../components/rendered/AmountSlider';
 
-const CreateExpenseScreen = () => {
+const CreateExpenseScreen = ({ sendAmountDataFromParent }) => {
 
   const [expenseType, setExpenseType] = useState('');
   const [expenseFrequency, setExpenseFrequency] = useState('');
@@ -34,6 +34,9 @@ const CreateExpenseScreen = () => {
     console.log(' Expense frequency: ', expenseFrequency);
     console.log(' Amount: ', amount);
     console.log('-----------------------------');
+    setAmount(0); // resets amount to 0 when creating new expense
+    setExpenseFrequency(''); // resets expense frequency to empty string when creating new expense
+    setExpenseType(''); // resets expense type to empty string when creating new expense
   }
   return (
     <View style={styles.container}>
@@ -44,22 +47,24 @@ const CreateExpenseScreen = () => {
       <Text style={styles.subTitleText}>
         Add your expenses here
       </Text>
-      {/* When the user selects an expense type, the expense type is sent to the parent component */}
-      <ExpenseType sendDataToParent={handleExpenseTypeChange} />
+      {/* When the user selects an expense type, the expense type is sent to the parent component 
+      and the parent can send its data on reset for components to be synced*/}
+      <ExpenseType sendDataToParent={handleExpenseTypeChange} typeDataToChild={expenseType}/> 
 
       <Text style={styles.mainText}>
         Payment Frequency 
       </Text>
 
-      <PaymentFrequency sendDataToParent={handlePaymentFrequencyChange}/>
+      <PaymentFrequency sendDataToParent={handlePaymentFrequencyChange} frequencyDataToChild={expenseFrequency}/>
 
       <Text style={styles.mainText}>
         Amount 
       </Text>
 
-      <AmountSlider sendDataToParent={handleAmountChange}/>
-
-      <Button title='Create Expense' onPress={handleCreateExpense} />
+      <AmountSlider sendDataToParent={handleAmountChange} amountDataToChild={amount}/> 
+      
+      <View style={{marginTop: hp(10)}}/>
+      <Button title='Create Expense' onPress={handleCreateExpense} color={Colors.primary}/>
     </View>
   )
 }
