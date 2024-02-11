@@ -33,13 +33,15 @@ const CreateExpenseScreen = () => {
       <ExpenseType onStateChange={handleExpenseTypeChange} />
 
       <Text style={styles.mainText}>
-        Payment Frequency {expenseFrequency}
+        Payment Frequency 
       </Text>
 
       <PaymentFrequency onStateChange={handlePaymentFrequencyChange}/>
 
-      <Button title='Create Expense' onPress={() => console.log('Expense Type: ', expenseType, '  Frequency: ', expenseFrequency)} />
- 
+      <Text style={styles.mainText}>
+        Amount 
+      </Text>
+
     </View>
   )
 }
@@ -71,9 +73,11 @@ const styles = StyleSheet.create({
       color: Colors.white,
       fontSize: wp(3.5),
       fontFamily: 'Lato-Bold',
-      marginBottom: hp(3),
-      textAlign: 'center',
+      marginTop: hp(3),
+      marginBottom: hp(2),
+      textAlign: 'left',
       width: wp(80),
+      paddingLeft: wp(3),
     },
     
 })

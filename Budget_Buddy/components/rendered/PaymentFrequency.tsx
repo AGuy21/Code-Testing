@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray,
         alignItems: 'center',
         justifyContent: 'center',
+        borderWidth: wp(.25),
+        borderColor: Colors.white60,
       },
       activeButton: {
         width: wp(25),
