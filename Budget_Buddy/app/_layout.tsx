@@ -8,7 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { Stack } from 'expo-router';
 import React from 'react'
-import { useSignedInCheck } from '../components/hooks/userSignedIn';
+
 SplashScreen.preventAutoHideAsync();
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
@@ -53,7 +53,8 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-
+  // gets users data
+  
   return (
     /*
       Provides clerk token cache for saving of sessions and key

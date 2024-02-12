@@ -13,8 +13,7 @@ import { useSignedInCheck } from '../components/hooks/userSignedIn';
 
 export default function LandingPage() {
   // if the user is signed in it routes to home to avoid bugs
-  useSignedInCheck()
-
+  useSignedInCheck();
   return (
     /*
       This will take all components for the beginning screen
