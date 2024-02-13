@@ -32,6 +32,12 @@ const tokenCache = {
   },
 };
 
+type AppContextType = {
+  refresh: boolean,
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
+export const AppContext = React.createContext<AppContextType | null>(null);
 
 export default function App() {
   // Load fonts
@@ -53,7 +59,13 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-  // gets users data
+  // context related declerations
+  const [refresh, setRefresh] = React.useState(true);
+
+  const appContextValues = {
+    refresh,
+    setRefresh,
+  }
   
   return (
     /*
@@ -68,15 +80,17 @@ export default function App() {
       tokenCache={tokenCache}
       publishableKey={CLERK_PUBLISHABLE_KEY}
     > 
-      <View style={styles.container} onLayout={onLayoutRootView}>
+      <AppContext.Provider value={appContextValues}>
+        <View style={styles.container} onLayout={onLayoutRootView}>
 
-      <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index"  />
-          <Stack.Screen name="Authenticate"  />
-          <Stack.Screen name="SignUpScreen" />
-      </Stack>
+        <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index"  />
+            <Stack.Screen name="Authenticate"  />
+            <Stack.Screen name="SignUpScreen" />
+        </Stack>
 
-      </View>
+        </View>
+      </AppContext.Provider>
     </ClerkProvider>
   )
 }

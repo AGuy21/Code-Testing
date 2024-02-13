@@ -9,6 +9,7 @@ import AmountSlider from '../../components/rendered/AmountSlider';
 import { collection, doc, addDoc } from 'firebase/firestore';
 import {  FIREBASE_DB } from '../../FirebaseConfig';
 import { useUser } from '@clerk/clerk-expo';
+import { AppContext } from '../_layout';
 
 const CreateExpenseScreen = () => {
   /*
@@ -19,6 +20,9 @@ const CreateExpenseScreen = () => {
     This component also alows for submission of the data to the
     database when the handleCreateExpense function is called.
   */
+  const appContext = React.useContext(AppContext); 
+
+  const setRefresh = appContext?.setRefresh // This is used to refresh the screen on Home.tsx
   // states
   const [expenseType, setExpenseType] = useState('');
   const [expenseFrequency, setExpenseFrequency] = useState('');
@@ -60,6 +64,7 @@ const CreateExpenseScreen = () => {
 
   const handleCreateExpense = async () => {
     createCollection()
+    setRefresh(true); // refreshes the screen on Home
 
     setAmount(0); // resets amount to 0 when creating new expense
     setExpenseFrequency(''); // resets expense frequency to empty string when creating new expense
