@@ -6,7 +6,10 @@ import { Entypo } from '@expo/vector-icons';
 
 const DataContainer = ({ show, incomeData, expenseData }) => {
     /*
-    
+        This component takes in the data from Home
+        and renders it in its respectable flatlists
+        that are in a scroll view which is conditionally
+        rendered depending on what the user shows
     */
   return (
     <>
