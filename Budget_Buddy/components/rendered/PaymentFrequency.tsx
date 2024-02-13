@@ -11,7 +11,7 @@ const PaymentFrequency = ({ sendDataToParent, frequencyDataToChild}) => {
         future use and has styles and when parent changes
         data is changes it to be synced
     */
-  const [expenseFrequency, setExpenseFrequency] = useState('');
+  const [expenseFrequency, setExpenseFrequency] = useState<string>('');
   
   useEffect(() => { // this sends the parent the expense freq when changed
     sendDataToParent(expenseFrequency)

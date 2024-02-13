@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View, StyleSheet} from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
 import Colors from '../../constants/Colors';
@@ -18,8 +18,8 @@ export default function Login() {
   */
   const { signIn, setActive, isLoaded } = useSignIn();
  
-  const [emailAddress, setEmailAddress] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [emailAddress, setEmailAddress] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
  
   const onSignInPress = async () => {
     if (!isLoaded) {

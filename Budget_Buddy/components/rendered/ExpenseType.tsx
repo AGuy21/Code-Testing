@@ -17,9 +17,9 @@ const ExpenseType = ({ sendDataToParent, typeDataToChild}) => {
         in the database and can be reset by the parent
         by taking in the params from the parent
     */
-    const [selected, setSelected] = useState('')
+    const [selected, setSelected] = useState<string>('')
 
-    const [ selectionMade, setSelectionMade] = useState(false)
+    const [ selectionMade, setSelectionMade] = useState<boolean>(false)
     const data = [ // data for dropdown
         {key:'1', value:'Expense' },
         {key:'2', value:'Income' },

@@ -12,7 +12,7 @@ const AmountSlider = ({sendDataToParent, amountDataToChild}) => {
         and the parent will send this data to the database in future
         and it will take parent data to reset state when needed
     */
-    const [amount, setAmount] = useState(0)
+    const [amount, setAmount] = useState<number>(0)
 
     useEffect(() => {
         sendDataToParent(amount)

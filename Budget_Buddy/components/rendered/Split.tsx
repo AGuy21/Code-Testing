@@ -4,6 +4,10 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import Colors from '../../constants/Colors';
 
 const Split = () => {
+    /* 
+        This component renders a split line for the 
+        authenticate screen
+    */
   return (
     <View style={styles.split}>
     <View style={styles.splitLine} />

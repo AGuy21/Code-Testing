@@ -6,7 +6,7 @@ import Colors from '../../constants/Colors'
 import ExpenseType from '../../components/rendered/ExpenseType';
 import PaymentFrequency from '../../components/rendered/PaymentFrequency';
 import AmountSlider from '../../components/rendered/AmountSlider';
-import { collection, doc, addDoc } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 import {  FIREBASE_DB } from '../../FirebaseConfig';
 import { useUser } from '@clerk/clerk-expo';
 import { AppContext } from '../_layout';
@@ -24,10 +24,10 @@ const CreateExpenseScreen = () => {
 
   const setRefresh = appContext?.setRefresh // This is used to refresh the screen on Home.tsx
   // states
-  const [expenseType, setExpenseType] = useState('');
-  const [expenseFrequency, setExpenseFrequency] = useState('');
-  const [amount, setAmount] = useState(0);
-  const [expenseName, setExpenseName] = useState('')
+  const [expenseType, setExpenseType] = useState<string>('');
+  const [expenseFrequency, setExpenseFrequency] = useState<string>('');
+  const [amount, setAmount] = useState<number>(0);
+  const [expenseName, setExpenseName] = useState<string>('')
 
   const handleExpenseTypeChange = (newState: string) => {
     setExpenseType(newState); // sets expense type to new state
@@ -96,8 +96,17 @@ const CreateExpenseScreen = () => {
       <AmountSlider sendDataToParent={handleAmountChange} amountDataToChild={amount}/> 
       
       <View style={{marginTop: hp(10)}}/>
-      <TextInput placeholder='Enter Name' value={expenseName} placeholderTextColor={ Colors.primary} onChangeText={(text) => setExpenseName(text)} style={{ textAlign: 'center', borderWidth: 2, borderColor: Colors.primary, width: wp(25), height: hp(10), color: Colors.primary}}/>
+      
+      
+      <TextInput 
+        placeholder='Enter Expense Name' 
+        value={expenseName} 
+        placeholderTextColor={ Colors.primary} 
+        onChangeText={(text) => setExpenseName(text)} 
+        style={{ textAlign: 'center', borderWidth: 2, borderColor: Colors.primary, width: wp(60), height: hp(5), color: Colors.primary}}
+        />
       <View style={{marginTop: hp(10)}}/>
+
       <Button title='Create Expense' onPress={handleCreateExpense} color={Colors.primary}/>
 
     </View>

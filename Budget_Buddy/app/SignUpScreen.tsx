@@ -1,10 +1,11 @@
-import * as React from "react";
+import React from "react";
 import { Text, TextInput, TouchableOpacity, View, StyleSheet, ImageBackground } from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Colors from "../constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { useState } from "react";
 
 export default function SignUpScreen() {
     /*
@@ -19,10 +20,10 @@ export default function SignUpScreen() {
     */
   const { isLoaded, signUp, setActive } = useSignUp();
   
-  const [emailAddress, setEmailAddress] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [pendingVerification, setPendingVerification] = React.useState(false);
-  const [code, setCode] = React.useState("");
+  const [emailAddress, setEmailAddress] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [pendingVerification, setPendingVerification] = useState<boolean>(false);
+  const [code, setCode] = useState<string>("");
  
   // start the sign up process.
   const onSignUpPress = async () => {

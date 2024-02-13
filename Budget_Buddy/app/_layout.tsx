@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native'
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
@@ -60,7 +60,7 @@ export default function App() {
     return null;
   }
   // context related declerations
-  const [refresh, setRefresh] = React.useState(true);
+  const [refresh, setRefresh] = useState<boolean>(true);
 
   const appContextValues = {
     refresh,
