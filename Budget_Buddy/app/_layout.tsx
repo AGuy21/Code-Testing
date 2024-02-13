@@ -40,6 +40,13 @@ type AppContextType = {
 export const AppContext = React.createContext<AppContextType | null>(null);
 
 export default function App() {
+  // context related declerations
+  const [refresh, setRefresh] = useState<boolean>(true);
+
+  const appContextValues = {
+    refresh,
+    setRefresh,
+  }
   // Load fonts
   const [fontsLoaded, fontError] = useFonts({
     'Lato-Bold': require('../assets/fonts/Lato-Bold.ttf'),
@@ -59,13 +66,7 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-  // context related declerations
-  const [refresh, setRefresh] = useState<boolean>(true);
 
-  const appContextValues = {
-    refresh,
-    setRefresh,
-  }
   
   return (
     /*
