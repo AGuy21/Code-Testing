@@ -77,6 +77,9 @@ const Home = () => {
     await getData();
     convertData();
   }
+  const handleLoadingChange = (newState: boolean) => {
+    setLoading(newState); // sets expense type to new state
+  };
 
   useEffect(() => {
     setLoading(true)
@@ -86,7 +89,6 @@ const Home = () => {
       } else {
         console.log('Didnt reload')
       }
-    setLoading(false)
   },[refresh])
   
   return (
@@ -94,17 +96,14 @@ const Home = () => {
       <View style={styles.subContainer}>
 
       </View>
-      { loading ? (
-        <>
-          <Loader />
-        </>
-        ) : (
-          <DataContainer 
-            show={show} 
-            expenseData={expenseData} 
-            incomeData={incomeData} 
-          />
-      )}
+
+      <DataContainer 
+        show={show} 
+        expenseData={expenseData} 
+        incomeData={incomeData} 
+        loading={loading}
+        loadingCompleted={handleLoadingChange} // when the loading state changes it will set loading to false
+      />
     </View>
   )
 }

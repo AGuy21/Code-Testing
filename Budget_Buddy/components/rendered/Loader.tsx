@@ -12,7 +12,7 @@ export default function Loader() {
   return (
     <>
       <ActivityIndicator 
-        size={'small'}
+        size={'large'}
         color={Colors.primary}
       />
       <Text style={styles.text}>
@@ -23,7 +23,7 @@ export default function Loader() {
 }
 const styles = StyleSheet.create({
   text: {
-    fontSize: wp(2),
+    fontSize: wp(3.5),
     color: Colors.white,
     fontFamily: 'Lato-Bold'
   },
