@@ -25,30 +25,30 @@ const PaymentFrequency = ({ sendDataToParent, frequencyDataToChild}) => {
     <View style={styles.buttonRowContainer}>
         
         <Pressable style={ 
-            expenseFrequency === 'Daily' ? 
-            styles.activeButton : styles.button
-          } 
-          onPress={() => setExpenseFrequency('Daily')}
-        >
-          <Text style={ 
-            expenseFrequency === 'Daily' ? 
-            styles.activeButtonText : styles.buttonText
-          }>
-            Daily
-          </Text>
-        </Pressable>
-        <Pressable style={ 
             expenseFrequency === 'Weekly' ? 
             styles.activeButton : styles.button
           } 
           onPress={() => setExpenseFrequency('Weekly')}
-
         >
           <Text style={ 
             expenseFrequency === 'Weekly' ? 
             styles.activeButtonText : styles.buttonText
           }>
             Weekly
+          </Text>
+        </Pressable>
+        <Pressable style={ 
+            expenseFrequency === 'Bi-Weekly' ? 
+            styles.activeButton : styles.button
+          } 
+          onPress={() => setExpenseFrequency('Bi-Weekly')}
+
+        >
+          <Text style={ 
+            expenseFrequency === 'Bi-Weekly' ? 
+            styles.activeButtonText : styles.buttonText
+          }>
+            Bi-Weekly
           </Text>
         </Pressable>
         <Pressable style={ 
