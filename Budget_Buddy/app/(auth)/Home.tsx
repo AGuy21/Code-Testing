@@ -8,6 +8,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { AppContext } from '../_layout'
 import DataContainer from '../../components/rendered/DataContainer'
 import Loader from '../../components/rendered/Loader'
+import ButtonRow from '../../components/rendered/ButtonRow'
 
 const Home = () => {
   /*
@@ -81,6 +82,10 @@ const Home = () => {
     setLoading(newState); // sets expense type to new state
   };
 
+  const handleShowChange = (newState: string) => {
+    setShow(newState); // sets shown to new state when changed from buttons
+  }
+
   useEffect(() => {
     setLoading(true)
       if (refresh) {
@@ -97,6 +102,8 @@ const Home = () => {
 
       </View>
 
+      <ButtonRow sendDataToParent={handleShowChange} />
+      
       <DataContainer 
         show={show} 
         expenseData={expenseData} 

@@ -51,7 +51,7 @@ const DataContainer = ({ show, incomeData, expenseData, loading, loadingComplete
                         />
                     </ScrollView>
                 }
-                { show === 'Expense' &&
+                { show === 'Expenses' &&
                     <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
                     {/* Expense Data  */}
                     <FlatList 
@@ -146,7 +146,6 @@ const styles = StyleSheet.create({
       backgroundColor: Colors.gray,
       width: wp(95),
       height: hp(20),
-      borderRadius: wp(10),
       borderBottomLeftRadius: 0,
       borderBottomRightRadius: 0,
       marginBottom: hp(2),
@@ -154,13 +153,14 @@ const styles = StyleSheet.create({
       position: 'absolute',
       borderColor: Colors.primary,
       borderWidth: wp(.25),
+      borderTopWidth: 0,
       borderBottomWidth: 0,
+        
     },
     loadingDataContainer: {
         backgroundColor: Colors.gray,
         width: wp(95),
         height: hp(20),
-        borderRadius: wp(10),
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0,
         marginBottom: hp(2),
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         borderColor: Colors.primary,
         borderWidth: wp(.25),
+        borderTopWidth: 0,
         borderBottomWidth: 0,
         alignItems: 'center',
         justifyContent: 'center',
