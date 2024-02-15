@@ -15,10 +15,10 @@ const DataContainer = ({ show, incomeData, expenseData, loading, loadingComplete
    // this has a hard-coded timer when complete shows data so user has indicator
    useEffect(() => {
     let loadingTimer = setTimeout(() => {
-        loading = false
-        loadingCompleted(loading)
+        loadingCompleted(false)
     },1000)
    })
+
   return (
     <>
         { loading ? ( 
@@ -144,18 +144,13 @@ const styles = StyleSheet.create({
     },
     dataContainer: {
       backgroundColor: Colors.gray,
-      width: wp(95),
-      height: hp(20),
-      borderBottomLeftRadius: 0,
-      borderBottomRightRadius: 0,
-      marginBottom: hp(2),
-      paddingLeft: wp(4),
+      width: wp(75),
+      height: hp(50),
       position: 'absolute',
       borderColor: Colors.primary,
+      borderRadius: wp(10),
+      padding: wp(5),  
       borderWidth: wp(.25),
-      borderTopWidth: 0,
-      borderBottomWidth: 0,
-        
     },
     loadingDataContainer: {
         backgroundColor: Colors.gray,

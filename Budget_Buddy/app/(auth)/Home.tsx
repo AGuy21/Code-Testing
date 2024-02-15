@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore'
 import { FIREBASE_DB } from '../../FirebaseConfig'
@@ -7,7 +7,6 @@ import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { AppContext } from '../_layout'
 import DataContainer from '../../components/rendered/DataContainer'
-import Loader from '../../components/rendered/Loader'
 import ButtonRow from '../../components/rendered/ButtonRow'
 
 const Home = () => {
@@ -98,9 +97,6 @@ const Home = () => {
   
   return (
     <View style={styles.container}>
-      <View style={styles.subContainer}>
-
-      </View>
 
       <ButtonRow sendDataToParent={handleShowChange} />
       
@@ -122,7 +118,7 @@ const styles = StyleSheet.create({
         flex: 1,  
         backgroundColor: Colors.background,
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'center',
     },
     subContainer: {
       backgroundColor: Colors.background,

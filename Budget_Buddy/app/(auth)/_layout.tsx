@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react';
+
 import { Tabs } from 'expo-router';
-import { View, Text } from'react-native';
+import { View } from'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +9,7 @@ import { Entypo } from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
 
-import { useUser } from '@clerk/clerk-expo';
+import { useUser } from '@clerk/clerk-react';
 
 
 export default function SignedInNavigator() {

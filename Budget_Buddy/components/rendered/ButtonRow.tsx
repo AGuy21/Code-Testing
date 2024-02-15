@@ -19,7 +19,7 @@ const ButtonRow = ({ sendDataToParent}) => {
     }
     // this function takes in the name to pass to handle show and to render 
     // but it also takes in if it is active which happens when the if statement before use is true
-    const Button = ({ active, name}) => {
+    const FilterButton = ({ active, name}) => {
         if (active) {
             return (
                 <TouchableOpacity style={styles.activeButton} >
@@ -42,19 +42,19 @@ const ButtonRow = ({ sendDataToParent}) => {
     return (
         <View style={styles.buttonRow}>
             { show === 'All' ? (
-                <Button active={true} name='All' />
+                <FilterButton active={true} name='All' />
             ) : (
-                <Button active={false} name='All' />
+                <FilterButton active={false} name='All' />
             )}
             { show === 'Income' ? (
-                <Button active={true} name='Income' />
+                <FilterButton active={true} name='Income' />
             ) : (
-                <Button active={false} name='Income' />
+                <FilterButton active={false} name='Income' />
             )}
             { show === 'Expenses' ? (
-                <Button active={true} name='Expenses' />
+                <FilterButton active={true} name='Expenses' />
             ) : (
-                <Button active={false} name='Expenses' />
+                <FilterButton active={false} name='Expenses' />
             )}
         </View>
     )
@@ -67,16 +67,15 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray,
         width: wp(95),
         height: hp(6),
-        marginBottom: hp(20),
+        marginBottom: hp(80),
         borderColor: Colors.primary,
         borderWidth: wp(.25),
-        borderTopRightRadius: wp(10),
-        borderTopLeftRadius: wp(10),
         flexDirection: 'row',
         gap: wp(5),
         alignItems: 'center',
         justifyContent: 'space-evenly',
         paddingHorizontal: wp(7),
+        borderRadius: wp(5)
     },
     button: {
         width: wp(25),
@@ -96,7 +95,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: wp(.3),
-        borderColor: Colors.primary,
       },
     buttonText: {
         color: Colors.white,
