@@ -99,17 +99,19 @@ const Home = () => {
   
   return (
     <View style={styles.container}>
-      
-      <MoneyProgressBar expenseTotal={2} incomeTotal={3}/>
+      <View style={styles.topContainer}>
+        <ButtonRow sendDataToParent={handleShowChange} />
+        <MoneyProgressBar expenseTotal={totalExpense} incomeTotal={totalIncome} />
+      </View>
 
-      <ButtonRow sendDataToParent={handleShowChange} />
-      
-      <DataContainer 
-        show={show} 
-        expenseData={expenseData} 
-        incomeData={incomeData} 
-        loading={loading}
-      />
+      <View style={styles.endContainer}>
+        <DataContainer 
+          show={show} 
+          expenseData={expenseData} 
+          incomeData={incomeData} 
+          loading={loading}
+        />
+      </View>
     </View>
   )
 }
@@ -121,7 +123,18 @@ const styles = StyleSheet.create({
         flex: 1,  
         backgroundColor: Colors.background,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-evenly',
+    },
+    topContainer: {
+      alignItems: 'center',
+      justifyContent: 'space-evenly',
+      flex: 1,
+    },
+    endContainer: {
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      position: 'relative',
+      flex: 1.2,
     },
     subContainer: {
       backgroundColor: Colors.background,

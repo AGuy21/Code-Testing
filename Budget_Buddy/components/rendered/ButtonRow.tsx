@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray,
         width: wp(95),
         height: hp(6),
-        marginBottom: hp(80),
         borderColor: Colors.primary,
         borderWidth: wp(.25),
         flexDirection: 'row',

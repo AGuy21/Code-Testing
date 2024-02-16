@@ -27,7 +27,7 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
 //    })
 
   return (
-    <>
+    <View style={styles.container}>
         { show === 'Income' &&
             <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
                 {/* Income Data  */}
@@ -126,38 +126,32 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
                 />
             </ScrollView> 
         }
-    </> 
+    </View> 
   )
 }
 
 export default DataContainer
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,  
-        backgroundColor: Colors.background,
+    container: { // container used to be relative to the parent component
         alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-    subContainer: {
-      backgroundColor: Colors.background,
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      height: hp(75),
-      width: wp(85),
+        justifyContent: 'center',
+        height: hp(50),
+        width: wp(75),
+        paddingBottom: hp(2.5),
     },
     dataContainer: {
       backgroundColor: Colors.gray,
       width: wp(75),
       height: hp(50),
-      position: 'absolute',
       borderColor: Colors.primary,
       borderRadius: wp(10),
       padding: wp(5),  
       borderWidth: wp(.25),
     },
     loadingDataContainer: {
-        marginTop: hp(20),
+        height: hp(45),
+        width: wp(70),
         alignItems: 'center',
         justifyContent: 'center',
     },
