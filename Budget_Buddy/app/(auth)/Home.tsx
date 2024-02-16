@@ -31,6 +31,7 @@ const Home = () => {
   const [ incomeData, setIncomeData ] = useState<any[]>([]) // This is used to make all of the user data in an object
   const [ expenseData, setExpenseData ] = useState<any[]>([]) // This is used to make all of the user data in an object
 
+  const [ dependentComponents, setDependentComponents ] = useState<string>('Inactive') // This is used to make all of the user data in an object
   const [ totalExpense, setTotalExpense ] = useState<number>(0) // This is used to get the total amount in income
   const [ totalIncome, setTotalIncome ] = useState<number>(0) // This is used to get the total amount in income
 
@@ -74,9 +75,46 @@ const Home = () => {
     })); 
 
     setExpenseData(expenseDataArray);
+    makeTotals(expenseDataArray, incomeDataArray)
+  }
+  // totals both income and expense data to be sent to the progress bar
+  /**
+   * Calculates the total expenses and total income based on the given expense and income arrays.
+   * Updates the state with the calculated totals and sets the dependent components to active.
+   * also multiplies the amounts based on frequency
+   * @param expenseArray An array of expense objects.
+   * @param incomeArray An array of income objects.
+   */
+  const makeTotals = (expenseArray: any[], incomeArray: any[]) => {
+    let expenseTotal = 0;
+    let incomeTotal = 0;
+    
+    for (let i = 0; i < expenseArray.length; i++) {
+      if (expenseArray[i].frequency === 'Weekly') {
+        expenseTotal += expenseArray[i].amount * 4
+      } else if (expenseArray[i].frequency === 'Bi-Weekly') {
+        expenseTotal += expenseArray[i].amount * 2
+      } else if (expenseArray[i].frequency === 'Monthly') {
+        expenseTotal += expenseArray[i].amount 
+      }
+    }
+    
+    for (let i = 0; i < incomeArray.length; i++) {
+      if (incomeArray[i].frequency === 'Weekly') {
+        incomeTotal += incomeArray[i].amount * 4
+      } else if (incomeArray[i].frequency === 'Bi-Weekly') {
+        incomeTotal += incomeArray[i].amount * 2
+      } else if (incomeArray[i].frequency === 'Monthly') {
+        incomeTotal += incomeArray[i].amount 
+      }
+    }
+    
+    setTotalExpense(expenseTotal)
+    setTotalIncome(incomeTotal)
+    setDependentComponents('Active')
   }
 
-  const getDataAndConvert = async () => { // this function gets all data and then converts it via async and awaiting data retrieval
+  const getAndUseData = async () => { // this function gets all data and then converts it via async and awaiting data retrieval
     await getData();
     convertData();
   }
@@ -88,7 +126,7 @@ const Home = () => {
   useEffect(() => {
     setLoading(true)
       if (refresh) {
-        getDataAndConvert().then(() => { // gets all data and then converts it
+        getAndUseData().then(() => { // gets all data and then converts it
           setLoading(false) // then sets loading to false
         })
         setRefresh(false)
@@ -101,7 +139,9 @@ const Home = () => {
     <View style={styles.container}>
       <View style={styles.topContainer}>
         <ButtonRow sendDataToParent={handleShowChange} />
-        <MoneyProgressBar expenseTotal={totalExpense} incomeTotal={totalIncome} />
+        { dependentComponents === 'Active' &&
+          <MoneyProgressBar expenseTotal={totalExpense} incomeTotal={totalIncome} show={show}/>
+        } 
       </View>
 
       <View style={styles.endContainer}>

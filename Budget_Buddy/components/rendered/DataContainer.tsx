@@ -19,12 +19,6 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
         that are in a scroll view which is conditionally
         rendered depending on what the user shows
     */
-   // this has a hard-coded timer when complete shows data so user has indicator
-//    useEffect(() => {
-//     let loadingTimer = setTimeout(() => {
-//         loadingCompleted(false)
-//     },1000)
-//    })
 
   return (
     <View style={styles.container}>
