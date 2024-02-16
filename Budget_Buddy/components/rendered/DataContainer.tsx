@@ -5,7 +5,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { Entypo } from '@expo/vector-icons';
 import Loader from './Loader';
 
-const DataContainer = ({ show, incomeData, expenseData, loading, loadingCompleted }) => {
+const DataContainer = ({ show, incomeData, expenseData, loading }) => {
     /*
         This component takes in the data from Home
         and renders it in its respectable flatlists
@@ -13,116 +13,113 @@ const DataContainer = ({ show, incomeData, expenseData, loading, loadingComplete
         rendered depending on what the user shows
     */
    // this has a hard-coded timer when complete shows data so user has indicator
-   useEffect(() => {
-    let loadingTimer = setTimeout(() => {
-        loadingCompleted(false)
-    },1000)
-   })
+//    useEffect(() => {
+//     let loadingTimer = setTimeout(() => {
+//         loadingCompleted(false)
+//     },1000)
+//    })
 
   return (
     <>
-        { loading ? ( 
-            <View style={styles.loadingDataContainer}>
-                <Loader /> 
-            </View>
-        ) : (
-            <>
-                { show === 'Income' &&
-                    <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
-                        {/* Income Data  */}
-                        <FlatList
-                            scrollEnabled={false}
-                            data={incomeData} 
-                            keyExtractor={(item) => item.name}
-                            renderItem={({ item}) => (
-                            <View style={styles.expenseTextRow}>
-                                <Entypo name="dot-single" size={wp(8)} color='lime' />
-                                <Text style={styles.dataText}>
-                                {item.name}  
-                                </Text>
-                                <Text style={styles.dataText}>
-                                {item.frequency}   
-                                </Text>
-                                <Text style={styles.dataText}>
-                                ${item.amount}   
-                                </Text>
-                            </View>
-                            )}
-                        />
-                    </ScrollView>
-                }
-                { show === 'Expenses' &&
-                    <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
-                    {/* Expense Data  */}
-                    <FlatList 
-                        scrollEnabled={false}
-                        data={expenseData} 
-                        keyExtractor={(item) => item.name}
-                        renderItem={({ item}) => (
-                        <View style={styles.expenseTextRow}>
-                            <Entypo name="dot-single" size={wp(8)} color='yellow' />
-                            <Text style={styles.dataText}>
+        { show === 'Income' &&
+            <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
+                {/* Income Data  */}
+                <FlatList
+                    scrollEnabled={false}
+                    data={incomeData} 
+                    keyExtractor={(item) => item.name}
+                    renderItem={({ item}) => (
+                    <View style={styles.expenseTextRow}>
+                        <Entypo name="dot-single" size={wp(8)} color='lime' />
+                        <Text style={styles.dataText}>
                             {item.name}  
-                            </Text>
-                            <Text style={styles.dataText}>
+                        </Text>
+                        <Text style={styles.dataText}>
                             {item.frequency}   
-                            </Text>
-                            <Text style={styles.dataText}>
+                        </Text>
+                        <Text style={styles.dataText}>
                             ${item.amount}   
-                            </Text>
-                        </View>
-                        )}
-                    />
-                    
-                    </ScrollView>
+                        </Text>
+                    </View>
+                    )}
+                />
+            </ScrollView>
+        }
+        { show === 'Expenses' &&
+            <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
+            {/* Expense Data  */}
+            <FlatList 
+                scrollEnabled={false}
+                data={expenseData} 
+                keyExtractor={(item) => item.name}
+                renderItem={({ item}) => (
+                <View style={styles.expenseTextRow}>
+                    <Entypo name="dot-single" size={wp(8)} color='yellow' />
+                    <Text style={styles.dataText}>
+                        {item.name}  
+                    </Text>
+                    <Text style={styles.dataText}>
+                        {item.frequency}   
+                    </Text>
+                    <Text style={styles.dataText}>
+                        ${item.amount}   
+                    </Text>
+                </View>
+                )}
+            />
+            
+            </ScrollView>
+        }
+        { show === 'All' && 
+            <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>  
+                { loading &&
+                    <View style={styles.loadingDataContainer}>
+                        <Loader />
+                    </View>
                 }
-                { show === 'All' &&
-                    <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
-                        {/* Income Data  */}
-                        <FlatList
-                            scrollEnabled={false}
-                            data={incomeData} 
-                            keyExtractor={(item) => item.name}
-                            renderItem={({ item}) => (
-                            <View style={styles.expenseTextRow}>
-                                <Entypo name="dot-single" size={wp(8)} color='lime' />
-                                <Text style={styles.dataText}>
-                                {item.name}  
-                                </Text>
-                                <Text style={styles.dataText}>
-                                {item.frequency}   
-                                </Text>
-                                <Text style={styles.dataText}>
-                                ${item.amount}   
-                                </Text>
-                            </View>
-                            )}
-                        />
-                        {/* Expense Data  */}
-                        <FlatList 
-                            scrollEnabled={false}
-                            data={expenseData} 
-                            keyExtractor={(item) => item.name}
-                            renderItem={({ item}) => (
-                            <View style={styles.expenseTextRow}>
-                                <Entypo name="dot-single" size={wp(8)} color='yellow' />
-                                <Text style={styles.dataText}>
-                                {item.name}  
-                                </Text>
-                                <Text style={styles.dataText}>
-                                {item.frequency}   
-                                </Text>
-                                <Text style={styles.dataText}>
-                                ${item.amount}   
-                                </Text>
-                            </View>
-                            )}
-                        />
-                    </ScrollView> 
-                }
-            </>
-        )}
-  </>
+                {/* Income Data  */}
+                <FlatList
+                    scrollEnabled={false}
+                    data={incomeData} 
+                    keyExtractor={(item) => item.name}
+                    renderItem={({ item}) => (
+                    <View style={styles.expenseTextRow}>
+                        <Entypo name="dot-single" size={wp(8)} color='lime' />
+                        <Text style={styles.dataText}>
+                            {item.name}  
+                        </Text>
+                        <Text style={styles.dataText}>
+                            {item.frequency}   
+                        </Text>
+                        <Text style={styles.dataText}>
+                        ${item.amount}   
+                        </Text>
+                    </View>
+                    )}
+                />
+                {/* Expense Data  */}
+                <FlatList 
+                    scrollEnabled={false}
+                    data={expenseData} 
+                    keyExtractor={(item) => item.name}
+                    renderItem={({ item}) => (
+                    <View style={styles.expenseTextRow}>
+                        <Entypo name="dot-single" size={wp(8)} color='yellow' />
+                        <Text style={styles.dataText}>
+                        {item.name}  
+                        </Text>
+                        <Text style={styles.dataText}>
+                        {item.frequency}   
+                        </Text>
+                        <Text style={styles.dataText}>
+                            ${item.amount}   
+                        </Text>
+                    </View>
+                    )}
+                />
+            </ScrollView> 
+        }
+    </> 
   )
 }
 
@@ -153,21 +150,10 @@ const styles = StyleSheet.create({
       borderWidth: wp(.25),
     },
     loadingDataContainer: {
-        backgroundColor: Colors.gray,
-        width: wp(95),
-        height: hp(20),
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        marginBottom: hp(2),
-        paddingLeft: wp(4),
-        position: 'absolute',
-        borderColor: Colors.primary,
-        borderWidth: wp(.25),
-        borderTopWidth: 0,
-        borderBottomWidth: 0,
+        marginTop: hp(20),
         alignItems: 'center',
         justifyContent: 'center',
-      },
+    },
     expenseTextRow: {
       flexDirection: 'row',
       gap: wp(3),

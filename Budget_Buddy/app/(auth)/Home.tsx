@@ -77,9 +77,6 @@ const Home = () => {
     await getData();
     convertData();
   }
-  const handleLoadingChange = (newState: boolean) => {
-    setLoading(newState); // sets expense type to new state
-  };
 
   const handleShowChange = (newState: string) => {
     setShow(newState); // sets shown to new state when changed from buttons
@@ -88,7 +85,9 @@ const Home = () => {
   useEffect(() => {
     setLoading(true)
       if (refresh) {
-        getDataAndConvert();
+        getDataAndConvert().then(() => { // gets all data and then converts it
+          setLoading(false) // then sets loading to false
+        })
         setRefresh(false)
       } else {
         console.log('Didnt reload')
@@ -105,7 +104,6 @@ const Home = () => {
         expenseData={expenseData} 
         incomeData={incomeData} 
         loading={loading}
-        loadingCompleted={handleLoadingChange} // when the loading state changes it will set loading to false
       />
     </View>
   )
