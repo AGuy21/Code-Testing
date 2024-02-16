@@ -4,7 +4,12 @@ import Slider from '@react-native-community/slider'
 import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-const AmountSlider = ({sendDataToParent, amountDataToChild}) => {
+interface AmountSliderProps {
+    sendDataToParent: (val: number) => void;
+    amountDataToChild: number;
+}
+
+const AmountSlider: React.FC<AmountSliderProps> = ({sendDataToParent, amountDataToChild}) => {
     /*
         This component is a slider that can change the
         amount of the expense and it can also be changed

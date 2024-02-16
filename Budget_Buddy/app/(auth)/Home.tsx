@@ -8,6 +8,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { AppContext } from '../_layout'
 import DataContainer from '../../components/rendered/DataContainer'
 import ButtonRow from '../../components/rendered/ButtonRow'
+import MoneyProgressBar from '../../components/rendered/MoneyProgressBar'
 
 const Home = () => {
   /*
@@ -30,6 +31,8 @@ const Home = () => {
   const [ incomeData, setIncomeData ] = useState<any[]>([]) // This is used to make all of the user data in an object
   const [ expenseData, setExpenseData ] = useState<any[]>([]) // This is used to make all of the user data in an object
 
+  const [ totalExpense, setTotalExpense ] = useState<number>(0) // This is used to get the total amount in income
+  const [ totalIncome, setTotalIncome ] = useState<number>(0) // This is used to get the total amount in income
 
   let tempIncomeData: { [key: string]:  [ string, number] } = {}; // This is used to make all of the user data in an object so it can be used in the leaderboard
   let tempExpenseData: { [key: string]:  [ string, number] } = {}; // This is used to make all of the user data in an object so it can be used in the leaderboard
@@ -96,6 +99,8 @@ const Home = () => {
   
   return (
     <View style={styles.container}>
+      
+      <MoneyProgressBar expenseTotal={2} incomeTotal={3}/>
 
       <ButtonRow sendDataToParent={handleShowChange} />
       

@@ -5,7 +5,14 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { Entypo } from '@expo/vector-icons';
 import Loader from './Loader';
 
-const DataContainer = ({ show, incomeData, expenseData, loading }) => {
+interface DataContainerProps {
+    show: string;
+    incomeData: any[];
+    expenseData: any[];
+    loading: boolean;
+}
+
+const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expenseData, loading }) => {
     /*
         This component takes in the data from Home
         and renders it in its respectable flatlists

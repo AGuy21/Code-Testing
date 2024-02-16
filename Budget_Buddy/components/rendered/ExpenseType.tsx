@@ -8,7 +8,12 @@ import { SelectList } from 'react-native-dropdown-select-list';
 
 import { Entypo} from '@expo/vector-icons';
 
-const ExpenseType = ({ sendDataToParent, typeDataToChild}) => {
+interface ExpenseTypeProps {
+    sendDataToParent: (val: string) => void;
+    typeDataToChild: string;
+}
+
+const ExpenseType: React.FC<ExpenseTypeProps> = ({ sendDataToParent, typeDataToChild}) => {
     /*
         This component is a dropdown to choose expense type
         the data for the expense is in the data var,

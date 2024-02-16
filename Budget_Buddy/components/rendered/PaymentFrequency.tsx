@@ -3,7 +3,12 @@ import Colors from '../../constants/Colors'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-const PaymentFrequency = ({ sendDataToParent, frequencyDataToChild}) => {
+interface PaymentFrequencyProps {
+    sendDataToParent: (val: string) => void;
+    frequencyDataToChild: string;
+}
+
+const PaymentFrequency: React.FC<PaymentFrequencyProps> = ({ sendDataToParent, frequencyDataToChild}) => {
     /*
         This component is a row of 3 buttons where
         the user can choose the frequency of their

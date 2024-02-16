@@ -3,7 +3,11 @@ import React, { useState } from 'react'
 import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-const ButtonRow = ({ sendDataToParent}) => {
+interface ButtonRowProps {
+    sendDataToParent: (name: string) => void;
+}
+
+const ButtonRow: React.FC<ButtonRowProps> = ({ sendDataToParent }) => {
     /*  
         This component renders the button row on top
         of the data container so the user can change what
