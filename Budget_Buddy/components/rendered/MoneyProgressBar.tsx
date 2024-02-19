@@ -7,6 +7,8 @@ interface MoneyProgressBarProps {
   expenseTotal: number;
   incomeTotal: number;
   show: string;
+  expenseData: any[];
+  incomeData: any[];
 }
 
 /**
@@ -14,7 +16,7 @@ interface MoneyProgressBarProps {
  * @param expenseTotal The total expense amount.
  * @param incomeTotal The total income amount.
  */
-const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incomeTotal, show }) => {
+const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incomeTotal, show, expenseData, incomeData }) => {
   // states for fixed totals so that it can be used in the progress bar
   const [fixedExpenseTotal, setFixedExpenseTotal] = useState<number>(0);
   const [fixedIncomeTotal, setFixedIncomeTotal] = useState<number>(0);
@@ -73,6 +75,17 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incom
               Expenses:   ${expenseTotal}
             </Text>
           </View>
+        </>
+      }
+      { show === 'Income' &&
+        <>
+          <Text>
+            {incomeData[0].name} = ${incomeData[0].amount}
+          </Text>
+        </>
+      }
+      { show === 'Expenses' &&
+        <>
         </>
       }
     </View>
