@@ -6,26 +6,29 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { router } from "expo-router";
 
 
+/**
+ * Renders a login component.
+ * Allows users to sign in with their email and password.
+ */
+
 export default function Login() {
-  /*
-    The users login info is set to states to then
-    be used to sign in the usser with the 
-    onSignInPress function then it will
-    set the user to active so that the user
-    can be directed to the main app
-    (this is done in main layout file)
-    the styles are also here
-  */
+
   const { signIn, setActive, isLoaded } = useSignIn();
  
   const [emailAddress, setEmailAddress] = useState<string>("");
   const [password, setPassword] = useState<string>("");
  
+  /**
+   * Function that handles the sign-in button press event.
+   * It attempts to sign in the user using the provided email address and password.
+   * If successful, it sets the active session and redirects the user to the authenticated page.
+   * If there is an error, it logs the error and displays an alert with the error message.
+   */
   const onSignInPress = async () => {
     if (!isLoaded) {
       return;
     }
- 
+
     try {
       const completeSignIn = await signIn.create({
         identifier: emailAddress,

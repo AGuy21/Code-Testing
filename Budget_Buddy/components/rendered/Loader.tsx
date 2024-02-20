@@ -4,16 +4,18 @@ import Colors from '../../constants/Colors';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 
+/**
+ * Renders a loader component with an activity indicator and a loading text.
+ * @returns JSX.Element
+ */
 export default function Loader() {
-  /*
-    This component is a basic loading indicator
-    to be used if an item is loading
-  */
+
   return (
     <>
       <ActivityIndicator 
         size={'large'}
         color={Colors.primary}
+        style={{ alignSelf: 'center'}}
       />
       <Text style={styles.text}>
         Loading Data...

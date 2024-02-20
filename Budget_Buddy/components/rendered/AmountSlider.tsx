@@ -4,20 +4,32 @@ import Slider from '@react-native-community/slider'
 import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
+/**
+ * Props for the AmountSlider component.
+ */
 interface AmountSliderProps {
+    /**
+     * Function to send data to the parent component.
+     * @param val The value to be sent to the parent component.
+     */
     sendDataToParent: (val: number) => void;
+    
+    /**
+     * The amount data passed from the parent component to the child component.
+     */
     amountDataToChild: number;
 }
 
+/**
+ * Represents the AmountSlider component.
+ * @component
+ */
 const AmountSlider: React.FC<AmountSliderProps> = ({sendDataToParent, amountDataToChild}) => {
-    /*
-        This component is a slider that can change the
-        amount of the expense and it can also be changed
-        by a user text input then it will send this data to the parent
-        and the parent will send this data to the database in future
-        and it will take parent data to reset state when needed
-    */
-    const [amount, setAmount] = useState<number>(0)
+
+    /**
+     * Represents the current amount value.
+     */
+    const [amount, setAmount] = useState<number>(0);
 
     useEffect(() => {
         sendDataToParent(amount)

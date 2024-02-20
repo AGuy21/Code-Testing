@@ -3,19 +3,32 @@ import Colors from '../../constants/Colors'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
+/**
+ * Props for the PaymentFrequency component.
+ */
 interface PaymentFrequencyProps {
-    sendDataToParent: (val: string) => void;
-    frequencyDataToChild: string;
+  /**
+   * Function to send data to the parent component.
+   * @param val - The value to be sent to the parent component.
+   */
+  sendDataToParent: (val: string) => void;
+  
+  /**
+   * Data received from the parent component.
+   */
+  frequencyDataToChild: string;
 }
 
+/**
+ * Renders a component for selecting payment frequency.
+ * @param {Object} props - The component props.
+ * @param {Function} props.sendDataToParent - The function to send the selected frequency to the parent component.
+ * @param {string} props.frequencyDataToChild - The selected frequency received from the parent component.
+ * @returns {JSX.Element} The rendered component.
+ */
+
 const PaymentFrequency: React.FC<PaymentFrequencyProps> = ({ sendDataToParent, frequencyDataToChild}) => {
-    /*
-        This component is a row of 3 buttons where
-        the user can choose the frequency of their
-        expenses and it will be sent to the parent for 
-        future use and has styles and when parent changes
-        data is changes it to be synced
-    */
+
   const [expenseFrequency, setExpenseFrequency] = useState<string>('');
   
   useEffect(() => { // this sends the parent the expense freq when changed

@@ -1,11 +1,11 @@
 import { StyleSheet, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import DataContainer from '../../components/rendered/DataContainer'
 import ButtonRow from '../../components/rendered/ButtonRow'
 import MoneyProgressBar from '../../components/rendered/MoneyProgressBar'
-import fetchUsableData from '../../components/hooks/useFetchUsableData'
+import useFetchUsableData from '../../components/hooks/useFetchUsableData'
 
 /**
  * Renders the Home component.
@@ -17,7 +17,6 @@ const Home = () => {
 
   /**
    * Handles the change of the show state.
-   * 
    * @param {string} show - The new value for the show state.
    */
   
@@ -31,7 +30,7 @@ const Home = () => {
     loading,
     totalExpense,
     totalIncome,
-  } = fetchUsableData()
+  } = useFetchUsableData()
 
   
   return (

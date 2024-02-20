@@ -1,8 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, FlatList } from 'react-native'
+import React from 'react'
 import Colors from '../../constants/Colors';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import useGetMoneyBarData from '../hooks/useGetMoneyBarData';
+import calculateMontlyTotal from '../functions/calculateMontlyTotal';
 
+/**
+ * Props for the MoneyProgressBar component.
+ */
 interface MoneyProgressBarProps {
   expenseTotal: number;
   incomeTotal: number;
@@ -11,51 +16,29 @@ interface MoneyProgressBarProps {
   incomeData: any[];
 }
 
-/**
- * Renders a money progress bar component.
- * @param expenseTotal The total expense amount.
- * @param incomeTotal The total income amount.
- */
+
 const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incomeTotal, show, expenseData, incomeData }) => {
-  // states for fixed totals so that it can be used in the progress bar
-  const [fixedExpenseTotal, setFixedExpenseTotal] = useState<number>(0);
-  const [fixedIncomeTotal, setFixedIncomeTotal] = useState<number>(0);
-  const [ incomePrecentage, setIncomePrecentage ] = useState<number>(0);
-  const [ expensePrecentage, setExpensePrecentage ] = useState<number>(0);
-  
+
   /**
-   * Calculates the percentage based on two values.
-   * @param value1 The first value.
-   * @param value2 The second value.
-   * @returns The calculated percentage. (value 1)
+   * Renders the MoneyProgressBar component.
+   * 
+   * @returns JSX.Element representing the MoneyProgressBar component.
    */
-  function getPrecentage(value1: number, value2: number) {
-    let mean = (value1 + value2) / 2
-    return ((value2 / mean) * 100) /2
-  }
+  const { 
+    incomePrecentage, 
+    expensePrecentage, 
+    fixedIncomeTotal, 
+    fixedExpenseTotal
+  } = useGetMoneyBarData(expenseTotal, incomeTotal);
+
   
-  // sets fixed totals on render
-  useEffect(() => {
-    // checks if it is 0 and if so makes sure it doesnt divide by 0
-    if (expenseTotal === 0) {
-      setFixedExpenseTotal(0.01);
-    } else if (incomeTotal === 0) {
-      setFixedIncomeTotal(0.01);
-    }
-
-    setFixedExpenseTotal((expenseTotal / incomeTotal));
-    setFixedIncomeTotal((incomeTotal / incomeTotal));
-
-    setExpensePrecentage(getPrecentage(expenseTotal, incomeTotal))
-    setIncomePrecentage(getPrecentage(incomeTotal, expenseTotal))
-  }, [expenseTotal, incomeTotal]);
   
   return (
     <View style={styles.container}>  
       { show === 'All' &&
         <>
           <View style={styles.allProgressBar}>
-            <View style={[styles.allIncomeIndicator, { flex: fixedIncomeTotal }]} >
+            <View style={[styles.incomeIndicator, { flex: fixedIncomeTotal }]} >
               <Text>
                 {expensePrecentage.toFixed(2)}%
               </Text>
@@ -78,11 +61,18 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incom
         </>
       }
       { show === 'Income' &&
-        <>
-          <Text>
-            {incomeData[0].name} = ${incomeData[0].amount}
-          </Text>
-        </>
+          <FlatList
+            style={{ flexDirection: 'row', height: hp(2.5), display: 'flex', width: wp(95), maxHeight: hp(2.5)}}
+            horizontal={true}
+            data={incomeData.slice(0,3)}
+            renderItem={({ item }) => (
+                <View style={[styles.incomeIndicator, { flex: incomeTotal / calculateMontlyTotal(item.amount, item.frequency) }]} >
+                  <Text>
+                    {expensePrecentage.toFixed(2)}%
+                  </Text>
+                </View>
+            )}
+          />
       }
       { show === 'Expenses' &&
         <>
@@ -111,7 +101,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: hp(2.5),
   },
-  allIncomeIndicator: {
+  incomeIndicator: {
     backgroundColor: 'lime',
     borderRadius: wp(5),
     alignItems: 'center',

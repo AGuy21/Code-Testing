@@ -3,26 +3,43 @@ import React, { useState } from 'react'
 import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
+/**
+ * Props for the ButtonRow component.
+ */
 interface ButtonRowProps {
+    /**
+     * Function to send data to the parent component.
+     * @param name - The name to be sent to the parent component.
+     */
     sendDataToParent: (name: string) => void;
 }
 
+/**
+ * ButtonRow component renders a row of filter buttons.
+ * @param {Object} props - The component props.
+ * @param {Function} props.sendDataToParent - A function to send data to the parent component.
+ * @returns {JSX.Element} - The rendered ButtonRow component.
+ */
 const ButtonRow: React.FC<ButtonRowProps> = ({ sendDataToParent }) => {
-    /*  
-        This component renders the button row on top
-        of the data container so the user can change what
-        they want to show in the data container as the 
-        show state will be sent to the parent to be used
-        by the data container
-    */
+
     const [ show, setShow ] = useState<string>('All')
     
-    function handleShow(name: string) { // this function takes in the type of data to show and shows it and sends it to parent
-        setShow(name) // it shows it so it can change the button style when active
+    /**
+     * Handles the click event of a filter button.
+     * @param {string} name - The type of data to show.
+     */
+    function handleShow(name: string) {
+        setShow(name)
         sendDataToParent(name)
     }
-    // this function takes in the name to pass to handle show and to render 
-    // but it also takes in if it is active which happens when the if statement before use is true
+    
+    /**
+     * Renders a filter button.
+     * @param {boolean} active - Indicates if the button is active.
+     * @param {string} name - The name of the button.
+     * @returns {JSX.Element} - The rendered filter button.
+     */
+    
     const FilterButton = ({ active, name}) => {
         if (active) {
             return (

@@ -1,3 +1,4 @@
+
 import { StyleSheet} from 'react-native'
 import React, { useEffect, useState } from 'react'
 
@@ -8,33 +9,44 @@ import { SelectList } from 'react-native-dropdown-select-list';
 
 import { Entypo} from '@expo/vector-icons';
 
+/**
+ * Props for the ExpenseType component.
+ */
 interface ExpenseTypeProps {
+    /**
+     * Function to send data to the parent component.
+     * @param val - The value to be sent to the parent component.
+     */
     sendDataToParent: (val: string) => void;
+    
+    /**
+     * Data received from the parent component.
+     */
     typeDataToChild: string;
 }
 
 const ExpenseType: React.FC<ExpenseTypeProps> = ({ sendDataToParent, typeDataToChild}) => {
-    /*
-        This component is a dropdown to choose expense type
-        the data for the expense is in the data var,
-        and when clicking the new expense in the dropdown
-        it will send the data to the parent for future use
-        in the database and can be reset by the parent
-        by taking in the params from the parent
-    */
+
     const [selected, setSelected] = useState<string>('')
 
     const [ selectionMade, setSelectionMade] = useState<boolean>(false)
-    const data = [ // data for dropdown
-        {key:'1', value:'Expense' },
-        {key:'2', value:'Income' },
-        {key:'3', value:'Budget' },
+    /**
+     * Represents the data for the dropdown in the ExpenseType component.
+     */
+    const data = [
+        { key: '1', value: 'Expense' },
+        { key: '2', value: 'Income' },
+        { key: '3', value: 'Budget' },
+    ];
 
-    ]
-
+    /**
+     * Handles the selection of an expense type.
+     * Sets the selectionMade state to true when a selection is made
+     * and sends the selected data to the parent component.
+     */
     const handleSelection = () => {
-        setSelectionMade(true) // to change selction made to true when selection is made
-        sendDataToParent(selected)
+        setSelectionMade(true);
+        sendDataToParent(selected);
     }
     
     useEffect(() => {

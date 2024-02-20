@@ -1,3 +1,4 @@
+
 import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native'
 import React, { useEffect } from 'react'
 import Colors from '../../constants/Colors'
@@ -5,6 +6,9 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 import { Entypo } from '@expo/vector-icons';
 import Loader from './Loader';
 
+/**
+ * Props for the DataContainer component.
+ */
 interface DataContainerProps {
     show: string;
     incomeData: any[];
@@ -12,18 +16,29 @@ interface DataContainerProps {
     loading: boolean;
 }
 
+/**
+ * Renders a container component that displays income or expense data based on the selected show prop.
+ * 
+ * @component
+ * @param {object} props - The component props.
+ * @param {string} props.show - The selected show prop, which determines whether to display income or expense data.
+ * @param {array} props.incomeData - The array of income data to be displayed.
+ * @param {array} props.expenseData - The array of expense data to be displayed.
+ * @param {boolean} props.loading - A boolean value indicating whether the data is currently loading.
+ * @returns {JSX.Element} The rendered DataContainer component.
+ */
+
 const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expenseData, loading }) => {
-    /*
-        This component takes in the data from Home
-        and renders it in its respectable flatlists
-        that are in a scroll view which is conditionally
-        rendered depending on what the user shows
-    */
 
   return (
     <View style={styles.container}>
         { show === 'Income' &&
             <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
+                { loading &&
+                    <View style={styles.loadingDataContainer}>
+                        <Loader />
+                    </View>
+                }
                 {/* Income Data  */}
                 <FlatList
                     scrollEnabled={false}
@@ -48,6 +63,11 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
         }
         { show === 'Expenses' &&
             <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
+            { loading &&
+                <View style={styles.loadingDataContainer}>
+                    <Loader />
+                </View>
+            }
             {/* Expense Data  */}
             <FlatList 
                 scrollEnabled={false}

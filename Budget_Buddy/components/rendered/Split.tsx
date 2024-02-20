@@ -3,19 +3,19 @@ import React from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Colors from '../../constants/Colors';
 
+/**
+ * Renders a split component with a line and text in the middle.
+ */
 const Split = () => {
-    /* 
-        This component renders a split line for the 
-        authenticate screen
-    */
+
   return (
     <View style={styles.split}>
-    <View style={styles.splitLine} />
-    <Text style={styles.splitText}>
-        Don't have an account?
-    </Text>
-    <View style={styles.splitLine} />
-</View>
+        <View style={styles.splitLine} />
+            <Text style={styles.splitText}>
+                Don't have an account?
+            </Text>
+        <View style={styles.splitLine} />
+    </View>
   )
 }
 

@@ -1,6 +1,3 @@
-import React, { useState } from 'react'
-
-
 /**
  * Calculates the total income based on the provided income array.
  * @param incomeArray - An array of income objects.
@@ -9,7 +6,6 @@ import React, { useState } from 'react'
 
 export default function incomeTotal(incomeArray: any[]) {
 
-    console.log(incomeArray)
 
     let incomeTotal = 0;
     

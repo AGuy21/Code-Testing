@@ -6,13 +6,15 @@ import expenseTotal from '../../components/functions/expenseTotal'
 import incomeTotal from '../../components/functions/incomeTotal'
 import { AppContext } from '../../app/_layout';
 
-
 /**
- * Fetches and processes user data for the Budget Buddy app.
- * @returns An object containing incomeData, expenseData, totalExpense, totalIncome, and loading.
+ * Custom hook for fetching and managing usable data from Firebase.
+ * This hook retrieves income and expense data for a user, converts it into usable format,
+ * and provides the total expense, total income, and loading state.
+ *
+ * @returns An object containing incomeData, expenseData, totalExpense, totalIncome, and loading state.
  */
 
-export default function fetchUsableData() {
+export default function useFetchUsableData() {
         // context states
         const appContext = React.useContext(AppContext); // This is used to refresh the screen
 
@@ -91,9 +93,6 @@ export default function fetchUsableData() {
                     setLoading(false) // then sets loading to false
                 })
                 setRefresh(false)
-
-            } else {
-                console.log('Didnt reload')
             }
         }, [refresh]);
 

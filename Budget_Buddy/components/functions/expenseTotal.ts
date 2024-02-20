@@ -1,5 +1,3 @@
-import React, { useState } from 'react'
-
 /**
  * Calculates the total expense based on the given expense array.
  * @param expenseArray - An array of expenses.
@@ -8,7 +6,6 @@ import React, { useState } from 'react'
 
 export default function expenseTotal(expenseArray: any[]) {
 
-    console.log(expenseArray)
 
     let expenseTotal = 0;
     
