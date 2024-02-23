@@ -35,5 +35,5 @@ export default function useGetMoneyBarData(
         setFixedIncomeTotal((incomeTotal / incomeTotal));
     }, [expenseTotal, incomeTotal]);
 
-    return { incomePrecentage, expensePrecentage, fixedExpenseTotal, fixedIncomeTotal }
+    return { incomePrecentage, expensePrecentage, fixedExpenseTotal, fixedIncomeTotal, getPrecentage }
 }

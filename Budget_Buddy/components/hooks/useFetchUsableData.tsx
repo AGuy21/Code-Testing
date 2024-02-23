@@ -5,6 +5,7 @@ import { useUser } from '@clerk/clerk-expo';
 import expenseTotal from '../../components/functions/expenseTotal'
 import incomeTotal from '../../components/functions/incomeTotal'
 import { AppContext } from '../../app/_layout';
+import calculateMontlyTotal from '../functions/calculateMontlyTotal';
 
 /**
  * Custom hook for fetching and managing usable data from Firebase.
@@ -63,20 +64,27 @@ export default function useFetchUsableData() {
                 name,
                 frequency: data[0],
                 amount: data[1],
-            })); // takes in all data and sets it into an array
-    
-            setIncomeData(incomeDataArray); // sets const to newly made array
-            incomeRef = incomeDataArray
+            }));
+
+            // Sort the incomeDataArray from highest calculated monthly income to lowest
+            incomeDataArray.sort((a, b) => calculateMontlyTotal(b.amount, b.frequency) - calculateMontlyTotal(a.amount, a.frequency));
+
+            setIncomeData(incomeDataArray);
+            incomeRef = incomeDataArray;
+
             // converts all expense data
             const expenseDataArray = Object.entries(tempExpenseData).map(([name, data]) => ({
                 name,
-                frequency: data[0], 
+                frequency: data[0],
                 amount: data[1],
-            })); 
-    
+            }));
+
+            // Sort the expenseDataARray from highest calculated monthly income to lowest
+            expenseDataArray.sort((a, b) => calculateMontlyTotal(b.amount, b.frequency) - calculateMontlyTotal(a.amount, a.frequency));
+
             setExpenseData(expenseDataArray);
-            expenseRef = expenseDataArray
-        }
+            expenseRef = expenseDataArray;
+        };
         
 
         const getAndUseData = async () => { // this function gets all data and then converts it via async and awaiting data retrieval

@@ -43,10 +43,19 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
                 <FlatList
                     scrollEnabled={false}
                     data={incomeData} 
-                    keyExtractor={(item) => item.name}
+                    keyExtractor={(_, index) => index.toString()}
                     renderItem={({ item}) => (
                     <View style={styles.expenseTextRow}>
-                        <Entypo name="dot-single" size={wp(8)} color='lime' />
+                        {/*The first 3 items of the array will be color identified for progress bar*/ }
+                        <Entypo name="dot-single" size={wp(8)} color={ 
+                            item.name === incomeData[0].name ? 'red' 
+                            : 
+                            item.name === incomeData[1].name ? 'orange'
+                            :
+                            item.name === incomeData[2].name ? 'yellow'
+                            : 
+                            'gray'
+                        }/>
                         <Text style={styles.dataText}>
                             {item.name}  
                         </Text>
@@ -63,32 +72,40 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
         }
         { show === 'Expenses' &&
             <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
-            { loading &&
-                <View style={styles.loadingDataContainer}>
-                    <Loader />
-                </View>
-            }
-            {/* Expense Data  */}
-            <FlatList 
-                scrollEnabled={false}
-                data={expenseData} 
-                keyExtractor={(item) => item.name}
-                renderItem={({ item}) => (
-                <View style={styles.expenseTextRow}>
-                    <Entypo name="dot-single" size={wp(8)} color='yellow' />
-                    <Text style={styles.dataText}>
-                        {item.name}  
-                    </Text>
-                    <Text style={styles.dataText}>
-                        {item.frequency}   
-                    </Text>
-                    <Text style={styles.dataText}>
-                        ${item.amount}   
-                    </Text>
-                </View>
-                )}
-            />
-            
+                { loading &&
+                    <View style={styles.loadingDataContainer}>
+                        <Loader />
+                    </View>
+                }
+                {/* Expense Data  */}
+                <FlatList 
+                    scrollEnabled={false}
+                    data={expenseData} 
+                    keyExtractor={(_, index) => index.toString()}
+                    renderItem={({ item}) => (
+                    <View style={styles.expenseTextRow}>
+                        {/*The first 3 items of the array will be color identified for progress bar*/ }
+                        <Entypo name="dot-single" size={wp(8)} color={ 
+                                item.name === expenseData[0].name ? 'red' 
+                                : 
+                                item.name === expenseData[1].name ? 'orange'
+                                :
+                                item.name === expenseData[2].name ? 'yellow'
+                                : 
+                                'gray'
+                            }/>
+                        <Text style={styles.dataText}>
+                            {item.name}  
+                        </Text>
+                        <Text style={styles.dataText}>
+                            {item.frequency}   
+                        </Text>
+                        <Text style={styles.dataText}>
+                            ${item.amount}   
+                        </Text>
+                    </View>
+                    )}
+                />
             </ScrollView>
         }
         { show === 'All' && 
@@ -102,10 +119,10 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
                 <FlatList
                     scrollEnabled={false}
                     data={incomeData} 
-                    keyExtractor={(item) => item.name}
+                    keyExtractor={(_, index) => index.toString()}
                     renderItem={({ item}) => (
                     <View style={styles.expenseTextRow}>
-                        <Entypo name="dot-single" size={wp(8)} color='lime' />
+                        <Entypo name="dot-single" size={wp(8)} color='lime'/>
                         <Text style={styles.dataText}>
                             {item.name}  
                         </Text>
@@ -113,7 +130,7 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
                             {item.frequency}   
                         </Text>
                         <Text style={styles.dataText}>
-                        ${item.amount}   
+                            ${item.amount}   
                         </Text>
                     </View>
                     )}
@@ -122,15 +139,15 @@ const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expense
                 <FlatList 
                     scrollEnabled={false}
                     data={expenseData} 
-                    keyExtractor={(item) => item.name}
+                    keyExtractor={(_, index) => index.toString()}
                     renderItem={({ item}) => (
                     <View style={styles.expenseTextRow}>
                         <Entypo name="dot-single" size={wp(8)} color='yellow' />
                         <Text style={styles.dataText}>
-                        {item.name}  
+                            {item.name}  
                         </Text>
                         <Text style={styles.dataText}>
-                        {item.frequency}   
+                            {item.frequency}   
                         </Text>
                         <Text style={styles.dataText}>
                             ${item.amount}   
