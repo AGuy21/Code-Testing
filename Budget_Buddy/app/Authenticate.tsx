@@ -7,14 +7,15 @@ import Split from '../components/rendered/Split';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 
+/**
+ * Renders the authentication screen.
+ * 
+ * @returns JSX.Element representing the authentication screen.
+ */
 export default function Authenticate() {
 
   return (
-    /*
-        user can log in using the log in componenet
-        or can go to the sign up screen to create an account
-        this is used to render and make the app look pretty
-    */
+
    <>
         <ImageBackground source={require('../assets/images/Login_BG.jpg')} style={styles.image}>
             <LinearGradient colors={[Colors.background,  Colors.transparent]} style={styles.container} start={{ x: 0, y: .15 }} >

@@ -3,9 +3,9 @@ import React, {  useState } from 'react'
 import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import DataContainer from '../../components/rendered/DataContainer'
-import ButtonRow from '../../components/rendered/ButtonRow'
 import MoneyProgressBar from '../../components/rendered/MoneyProgressBar'
 import useFetchUsableData from '../../components/hooks/useFetchUsableData'
+import FilterButtonRow from '../../components/rendered/FilterButtonRow';
 
 /**
  * Renders the Home component.
@@ -36,7 +36,7 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <ButtonRow sendDataToParent={handleShowChange} />
+        <FilterButtonRow sendDataToParent={handleShowChange} />
         <MoneyProgressBar 
           expenseTotal={totalExpense || 1} 
           incomeTotal={totalIncome || 1}  

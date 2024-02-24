@@ -6,7 +6,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 /**
  * Props for the ButtonRow component.
  */
-interface ButtonRowProps {
+interface FilterButtonRowProps {
     /**
      * Function to send data to the parent component.
      * @param name - The name to be sent to the parent component.
@@ -20,7 +20,7 @@ interface ButtonRowProps {
  * @param {Function} props.sendDataToParent - A function to send data to the parent component.
  * @returns {JSX.Element} - The rendered ButtonRow component.
  */
-const ButtonRow: React.FC<ButtonRowProps> = ({ sendDataToParent }) => {
+const FilterButtonRow: React.FC<FilterButtonRowProps> = ({ sendDataToParent }) => {
 
     const [ show, setShow ] = useState<string>('All')
     
@@ -81,7 +81,7 @@ const ButtonRow: React.FC<ButtonRowProps> = ({ sendDataToParent }) => {
     )
 }
 
-export default ButtonRow
+export default FilterButtonRow
 
 const styles = StyleSheet.create({
     buttonRow: {

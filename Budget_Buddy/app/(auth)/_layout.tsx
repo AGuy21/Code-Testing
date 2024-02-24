@@ -1,28 +1,36 @@
+/**
+ * Renders the navigation tabs for the signed-in user.
+ * @returns The JSX element representing the navigation tabs.
+ */
 import React from 'react';
 
-import { Tabs } from 'expo-router';
-import { View } from'react-native';
+import { Tabs, router } from 'expo-router';
+import { Pressable, View } from'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import { Ionicons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
 
 import { useUser } from '@clerk/clerk-react';
-
+import { useAuth } from '@clerk/clerk-expo';
 
 export default function SignedInNavigator() {
 
-  /*
-    This is the tabs layout file where
-    when the tabs are icons with no text
-    and when clicks will show a border under
-    the icons to signify that they are active
-  */
-
   const user = useUser();
+  
+  const { signOut } = useAuth();
 
+  /**
+   * Logs out the user and redirects to the authentication page.
+   */
+  const doLogout = () => {
+    signOut();
+    console.log(user.user?.emailAddresses[0]?.emailAddress + 'Signed out');
+    router.replace('Authenticate');
+  };
 
 
 
@@ -83,8 +91,22 @@ export default function SignedInNavigator() {
         }}/>
 
         <Tabs.Screen name="Profile" options={{
-          headerShown: false,
+          headerShown: true,
           title: '',
+          headerTintColor: Colors.primary,
+          headerTitle: 'Profile',
+          headerTitleAlign: 'center',
+          headerTitleAllowFontScaling: true,
+          headerShadowVisible: false,
+          headerStyle: {
+            backgroundColor: Colors.background,
+            height: hp(12),
+          },
+          headerRight: () => (
+            <Pressable onPress={doLogout} style={{ marginRight: wp(4)}}>
+              <Octicons name="sign-out" size={wp(6)} color={Colors.primary} />
+            </Pressable>
+          ),
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center', paddingTop: hp(1), gap: hp(.2)}}>
               <Ionicons name="settings-sharp" size={size} color={color} />
@@ -99,6 +121,7 @@ export default function SignedInNavigator() {
                 />
               )}
             </View>
+            
           ),
         }}/>
 

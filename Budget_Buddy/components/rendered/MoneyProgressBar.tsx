@@ -18,14 +18,23 @@ interface MoneyProgressBarProps {
   incomeData: any[];
 }
 
-
+/**
+ * Renders the MoneyProgressBar component.
+ * 
+ * @remarks
+ * This component displays a progress bar that represents the income and expense percentages.
+ * 
+ * @param expenseTotal - The total expense amount.
+ * @param incomeTotal - The total income amount.
+ * @param show - The display mode of the progress bar ('All', 'Income', 'Expenses').
+ * @param expenseData - An array of expense data.
+ * @param incomeData - An array of income data.
+ * 
+ * @returns The rendered MoneyProgressBar component.
+ */
 const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incomeTotal, show, expenseData, incomeData }) => {
 
-  /**
-   * Renders the MoneyProgressBar component.
-   * 
-   * @returns JSX.Element representing the MoneyProgressBar component.
-   */
+
   const { 
     incomePrecentage, 
     expensePrecentage, 

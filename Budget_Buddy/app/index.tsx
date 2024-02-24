@@ -1,3 +1,7 @@
+/**
+ * Landing page component for the Budget Buddy app.
+ * Renders the initial screen with animations and components.
+ */
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TouchableOpacity,  } from 'react-native';
 import Colors from '../constants/Colors';
@@ -15,9 +19,9 @@ export default function LandingPage() {
   // if the user is signed in it routes to home to avoid bugs
   useSignedInCheck();
   return (
-    /*
-      This will take all components for the beginning screen
-      and render them here with animations for asctetic
+    /** 
+      * This will take all components for the beginning screen
+      * and render them here with animations for aesthetic
     */
     <View style={styles.container}>
 
@@ -29,7 +33,7 @@ export default function LandingPage() {
         entering={FadeInUp.springify().duration(3500).delay(500)}
       >
         <Text style={styles.title}> BudgetBuddy</Text>
-        <Text style={styles.text}> Take Control of your finanaces</Text>
+        <Text style={styles.text}> Take Control of your finances</Text>
       </Animated.View>
       <Animated.View
         entering={BounceInDown.duration(1500).delay(200).damping(20).easing(Easing.ease)}

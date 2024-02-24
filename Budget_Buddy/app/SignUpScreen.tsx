@@ -26,20 +26,25 @@ export default function SignUpScreen() {
   const [code, setCode] = useState<string>("");
  
   // start the sign up process.
-  const onSignUpPress = async () => {
+  /**
+   * Function that handles the sign up process.
+   * 
+   * @returns {Promise<void>} A promise that resolves when the sign up process is completed.
+   */
+  const onSignUpPress = async (): Promise<void> => {
     if (!isLoaded) {
       return;
     }
- 
+
     try {
       await signUp.create({
         emailAddress,
         password,
       });
- 
+
       // send the email.
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
- 
+
       // change the UI to our pending section.
       setPendingVerification(true);
     } catch (err: any) {

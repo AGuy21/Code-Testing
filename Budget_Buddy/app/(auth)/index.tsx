@@ -1,3 +1,5 @@
+
+
 import {  Button, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, {  useState } from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
@@ -11,18 +13,18 @@ import {  FIREBASE_DB } from '../../FirebaseConfig';
 import { useUser } from '@clerk/clerk-expo';
 import { AppContext } from '../_layout';
 
+/**
+ * This component renders a screen for creating expenses.
+ * It includes child components for selecting expense type, payment frequency, and amount.
+ * The data entered by the user is submitted to the Firebase database.
+ * 
+ * @returns {JSX.Element} The JSX element representing the CreateExpenseScreen component.
+ */
+
 const CreateExpenseScreen = () => {
-  /*
-    This component renders all needed child components while taking
-    in the data from the child components and being able
-    to reset them to 0 upon completion.
-    
-    This component also alows for submission of the data to the
-    database when the handleCreateExpense function is called.
-  */
   const appContext = React.useContext(AppContext); 
 
-  const setRefresh = appContext?.setRefresh // This is used to refresh the screen on Home.tsx
+  const setRefresh = appContext?.setRefresh 
   // states
   const [expenseType, setExpenseType] = useState<string>('');
   const [expenseFrequency, setExpenseFrequency] = useState<string>('');
@@ -43,25 +45,30 @@ const CreateExpenseScreen = () => {
   // all below is used to create new sub-collection with users data
   const user = useUser();
   
-  const createCollection = async () => {
-    // creates a new collection ref with the users data
-      const collectionRef = collection(FIREBASE_DB, "User Data", user.user?.emailAddresses[0]?.emailAddress, expenseType)
-      await addDoc(collectionRef, { // adds doc with all needed data
-          Name: expenseName,
-          Frequency: expenseFrequency,
-          Amount: amount,
-      })
+  /**
+   * Creates a new collection in the Firebase database with the user's data.
+   * 
+   * @returns {Promise<void>} A promise that resolves when the collection is created.
+   */
 
-      console.log('-----------------------------');
-      console.log('     New expense created!    ');
-      console.log('-----------------------------');
-      console.log(' Expense Name: ', expenseName);
-      console.log(' Expense type: ', expenseType);
-      console.log(' Expense frequency: ', expenseFrequency);
-      console.log(' Amount: ', amount);
-      console.log('-----------------------------');
+  const createCollection = async (): Promise<void> => {
+    // creates a new collection ref with the users data
+    const collectionRef = collection(FIREBASE_DB, "User Data", user.user?.emailAddresses[0]?.emailAddress, expenseType)
+    await addDoc(collectionRef, { // adds doc with all needed data
+      Name: expenseName,
+      Frequency: expenseFrequency,
+      Amount: amount,
+    })
   }
 
+  /**
+   * Handles the creation of an expense.
+   * - Calls the createCollection function.
+   * - Sets the refresh state to true, which refreshes the screen on Home.
+   * - Resets the amount to 0 when creating a new expense.
+   * - Resets the expense frequency to an empty string when creating a new expense.
+   * - Resets the expense name.
+   */
   const handleCreateExpense = async () => {
     createCollection()
     setRefresh(true); // refreshes the screen on Home
