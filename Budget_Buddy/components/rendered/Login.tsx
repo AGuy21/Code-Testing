@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View, StyleSheet} from "react-native";
 import { useSignIn } from "@clerk/clerk-expo";
-import Colors from '../../constants/Colors';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { router } from "expo-router";
-
+import {useGetLoginStyles } from "../../constants/styles";
+import { AppContext } from "../../app/_layout";
 
 /**
  * Renders a login component.
@@ -12,6 +11,10 @@ import { router } from "expo-router";
  */
 
 export default function Login() {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
+
+  const styles = useGetLoginStyles(Colors);
 
   const { signIn, setActive, isLoaded } = useSignIn();
  
@@ -49,7 +52,7 @@ export default function Login() {
       <View>
         <TextInput
           style={styles.input}
-          placeholderTextColor={Colors.primary}
+          placeholderTextColor={Colors?.primary}
           autoCapitalize="none"
           value={emailAddress}
           placeholder="Email..."
@@ -60,7 +63,7 @@ export default function Login() {
       <View>
         <TextInput
           style={styles.input}
-          placeholderTextColor={Colors.primary}
+          placeholderTextColor={Colors?.primary}
           value={password}
           placeholder="Password..."
           secureTextEntry={true}
@@ -78,47 +81,3 @@ export default function Login() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-    paddingTop: hp(5),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  mainText: {
-      color: Colors.primary,
-      fontSize: wp(6),
-      fontFamily: 'Lato-Bold',
-  },
-  input: {
-    color: Colors.primary,
-    fontSize: wp(5),
-    fontFamily: 'Lato-Reg',
-    width: wp(80),
-    height: hp(5),
-    borderWidth: wp(.5),
-    borderColor: Colors.primary,
-    borderRadius: 10,
-    paddingLeft: wp(5),
-    marginTop: hp(5),
-  },
-  signInButton: {
-    width: wp(60),
-    height: hp(5),
-    borderWidth: wp(.5),
-    borderColor: Colors.background,
-    backgroundColor: Colors.primary,
-    opacity: 0.86,
-    borderRadius: wp(100),
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: wp(10),
-    marginVertical: hp(5),
-  },
-  signInButtonText:{
-    fontFamily: 'Lato-Bold',
-    fontSize: wp(4),
-    color: Colors.background,
-  }
-});

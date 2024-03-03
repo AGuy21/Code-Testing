@@ -1,10 +1,11 @@
 
-import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native'
-import React, { useEffect } from 'react'
-import Colors from '../../constants/Colors'
+import { Text, View, ScrollView, FlatList } from 'react-native'
+import React from 'react'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { Entypo } from '@expo/vector-icons';
 import Loader from './Loader';
+import { AppContext } from '../../app/_layout';
+import { useGetDataContainerStyles } from '../../constants/styles';
 
 /**
  * Props for the DataContainer component.
@@ -29,175 +30,141 @@ interface DataContainerProps {
  */
 
 const DataContainer: React.FC<DataContainerProps> = ({ show, incomeData, expenseData, loading }) => {
+    const colorContext = React.useContext(AppContext);
+    const Colors = colorContext?.Colors;
+  
+    const styles = useGetDataContainerStyles(Colors);
 
-  return (
-    <View style={styles.container}>
-        { show === 'Income' &&
-            <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
-                { loading &&
-                    <View style={styles.loadingDataContainer}>
-                        <Loader />
-                    </View>
-                }
-                {/* Income Data  */}
-                <FlatList
-                    scrollEnabled={false}
-                    data={incomeData} 
-                    keyExtractor={(_, index) => index.toString()}
-                    renderItem={({ item}) => (
-                    <View style={styles.expenseTextRow}>
-                        {/*The first 3 items of the array will be color identified for progress bar*/ }
-                        <Entypo name="dot-single" size={wp(8)} color={ 
-                            item.name === incomeData[0].name ? 'red' 
-                            : 
-                            item.name === incomeData[1].name ? 'orange'
-                            :
-                            item.name === incomeData[2].name ? 'yellow'
-                            : 
-                            'gray'
-                        }/>
-                        <Text style={styles.dataText}>
-                            {item.name}  
-                        </Text>
-                        <Text style={styles.dataText}>
-                            {item.frequency}   
-                        </Text>
-                        <Text style={styles.dataText}>
-                            ${item.amount}   
-                        </Text>
-                    </View>
-                    )}
-                />
-            </ScrollView>
-        }
-        { show === 'Expenses' &&
-            <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
-                { loading &&
-                    <View style={styles.loadingDataContainer}>
-                        <Loader />
-                    </View>
-                }
-                {/* Expense Data  */}
-                <FlatList 
-                    scrollEnabled={false}
-                    data={expenseData} 
-                    keyExtractor={(_, index) => index.toString()}
-                    renderItem={({ item}) => (
-                    <View style={styles.expenseTextRow}>
-                        {/*The first 3 items of the array will be color identified for progress bar*/ }
-                        <Entypo name="dot-single" size={wp(8)} color={ 
-                                item.name === expenseData[0].name ? 'red' 
+    return (
+        <View style={styles.container}>
+            { show === 'Income' &&
+                <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
+                    { loading &&
+                        <View style={styles.loadingDataContainer}>
+                            <Loader />
+                        </View>
+                    }
+                    {/* Income Data  */}
+                    <FlatList
+                        scrollEnabled={false}
+                        data={incomeData} 
+                        keyExtractor={(_, index) => index.toString()}
+                        renderItem={({ item}) => (
+                        <View style={styles.expenseTextRow}>
+                            {/*The first 3 items of the array will be color identified for progress bar*/ }
+                            <Entypo name="dot-single" size={wp(8)} color={ 
+                                item.name === incomeData[0].name ? Colors?.first
                                 : 
-                                item.name === expenseData[1].name ? 'orange'
+                                item.name === incomeData[1].name ? Colors?.second
                                 :
-                                item.name === expenseData[2].name ? 'yellow'
+                                item.name === incomeData[2].name ? Colors?.third
                                 : 
-                                'gray'
+                                Colors?.other
                             }/>
-                        <Text style={styles.dataText}>
-                            {item.name}  
-                        </Text>
-                        <Text style={styles.dataText}>
-                            {item.frequency}   
-                        </Text>
-                        <Text style={styles.dataText}>
-                            ${item.amount}   
-                        </Text>
-                    </View>
-                    )}
-                />
-            </ScrollView>
-        }
-        { show === 'All' && 
-            <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>  
-                { loading &&
-                    <View style={styles.loadingDataContainer}>
-                        <Loader />
-                    </View>
-                }
-                {/* Income Data  */}
-                <FlatList
-                    scrollEnabled={false}
-                    data={incomeData} 
-                    keyExtractor={(_, index) => index.toString()}
-                    renderItem={({ item}) => (
-                    <View style={styles.expenseTextRow}>
-                        <Entypo name="dot-single" size={wp(8)} color='lime'/>
-                        <Text style={styles.dataText}>
-                            {item.name}  
-                        </Text>
-                        <Text style={styles.dataText}>
-                            {item.frequency}   
-                        </Text>
-                        <Text style={styles.dataText}>
-                            ${item.amount}   
-                        </Text>
-                    </View>
-                    )}
-                />
-                {/* Expense Data  */}
-                <FlatList 
-                    scrollEnabled={false}
-                    data={expenseData} 
-                    keyExtractor={(_, index) => index.toString()}
-                    renderItem={({ item}) => (
-                    <View style={styles.expenseTextRow}>
-                        <Entypo name="dot-single" size={wp(8)} color='yellow' />
-                        <Text style={styles.dataText}>
-                            {item.name}  
-                        </Text>
-                        <Text style={styles.dataText}>
-                            {item.frequency}   
-                        </Text>
-                        <Text style={styles.dataText}>
-                            ${item.amount}   
-                        </Text>
-                    </View>
-                    )}
-                />
-            </ScrollView> 
-        }
-    </View> 
-  )
+                            <Text style={styles.dataText}>
+                                {item.name}  
+                            </Text>
+                            <Text style={styles.dataText}>
+                                {item.frequency}   
+                            </Text>
+                            <Text style={styles.dataText}>
+                                ${item.amount}   
+                            </Text>
+                        </View>
+                        )}
+                    />
+                </ScrollView>
+            }
+            { show === 'Expenses' &&
+                <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>
+                    { loading &&
+                        <View style={styles.loadingDataContainer}>
+                            <Loader />
+                        </View>
+                    }
+                    {/* Expense Data  */}
+                    <FlatList 
+                        scrollEnabled={false}
+                        data={expenseData} 
+                        keyExtractor={(_, index) => index.toString()}
+                        renderItem={({ item}) => (
+                        <View style={styles.expenseTextRow}>
+                            {/*The first 3 items of the array will be color identified for progress bar*/ }
+                            <Entypo name="dot-single" size={wp(8)} color={ 
+                                    item.name === expenseData[0].name ? Colors?.first
+                                    : 
+                                    item.name === expenseData[1].name ? Colors?.second
+                                    :
+                                    item.name === expenseData[2].name ? Colors?.third
+                                    : 
+                                    Colors?.other
+                                }/>
+                            <Text style={styles.dataText}>
+                                {item.name}  
+                            </Text>
+                            <Text style={styles.dataText}>
+                                {item.frequency}   
+                            </Text>
+                            <Text style={styles.dataText}>
+                                ${item.amount}   
+                            </Text>
+                        </View>
+                        )}
+                    />
+                </ScrollView>
+            }
+            { show === 'All' && 
+                <ScrollView style={styles.dataContainer} showsVerticalScrollIndicator={false}>  
+                    { loading &&
+                        <View style={styles.loadingDataContainer}>
+                            <Loader />
+                        </View>
+                    }
+                    {/* Income Data  */}
+                    <FlatList
+                        scrollEnabled={false}
+                        data={incomeData} 
+                        keyExtractor={(_, index) => index.toString()}
+                        renderItem={({ item}) => (
+                        <View style={styles.expenseTextRow}>
+                            <Entypo name="dot-single" size={wp(8)} color={Colors?.income}/>
+                            <Text style={styles.dataText}>
+                                {item.name}  
+                            </Text>
+                            <Text style={styles.dataText}>
+                                {item.frequency}   
+                            </Text>
+                            <Text style={styles.dataText}>
+                                ${item.amount}   
+                            </Text>
+                        </View>
+                        )}
+                    />
+                    {/* Expense Data  */}
+                    <FlatList 
+                        scrollEnabled={false}
+                        data={expenseData} 
+                        keyExtractor={(_, index) => index.toString()}
+                        renderItem={({ item}) => (
+                        <View style={styles.expenseTextRow}>
+                            <Entypo name="dot-single" size={wp(8)} color={Colors?.expense} />
+                            <Text style={styles.dataText}>
+                                {item.name}  
+                            </Text>
+                            <Text style={styles.dataText}>
+                                {item.frequency}   
+                            </Text>
+                            <Text style={styles.dataText}>
+                                ${item.amount}   
+                            </Text>
+                        </View>
+                        )}
+                    />
+                </ScrollView> 
+            }
+        </View> 
+    )
 }
 
 export default DataContainer
 
-const styles = StyleSheet.create({
-    container: { // container used to be relative to the parent component
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: hp(50),
-        width: wp(75),
-        paddingBottom: hp(2.5),
-    },
-    dataContainer: {
-      backgroundColor: Colors.gray,
-      width: wp(75),
-      height: hp(50),
-      borderColor: Colors.primary,
-      borderRadius: wp(10),
-      padding: wp(5),  
-      borderWidth: wp(.25),
-    },
-    loadingDataContainer: {
-        height: hp(45),
-        width: wp(70),
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    expenseTextRow: {
-      flexDirection: 'row',
-      gap: wp(3),
-      height: hp(5),
-      width: wp(75),
-      alignItems: 'center',
-
-    },
-    dataText: {
-      color: Colors.white,
-      fontSize: wp(3),
-      fontFamily: 'Lato-Bold'
-    }
-
-})

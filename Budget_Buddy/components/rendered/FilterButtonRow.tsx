@@ -1,7 +1,7 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import Colors from '../../constants/Colors'
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { AppContext } from '../../app/_layout';
+import { useGetFilterButtonRowStyles } from '../../constants/styles';
 
 /**
  * Props for the ButtonRow component.
@@ -20,8 +20,12 @@ interface FilterButtonRowProps {
  * @param {Function} props.sendDataToParent - A function to send data to the parent component.
  * @returns {JSX.Element} - The rendered ButtonRow component.
  */
-const FilterButtonRow: React.FC<FilterButtonRowProps> = ({ sendDataToParent }) => {
-
+const FilterButtonRow: React.FC<FilterButtonRowProps> = ({ sendDataToParent }: { sendDataToParent: Function; }): JSX.Element => {
+    const colorContext = React.useContext(AppContext);
+    const Colors = colorContext?.Colors;
+  
+    const styles = useGetFilterButtonRowStyles(Colors);
+    
     const [ show, setShow ] = useState<string>('All')
     
     /**
@@ -83,45 +87,3 @@ const FilterButtonRow: React.FC<FilterButtonRowProps> = ({ sendDataToParent }) =
 
 export default FilterButtonRow
 
-const styles = StyleSheet.create({
-    buttonRow: {
-        backgroundColor: Colors.gray,
-        width: wp(95),
-        height: hp(6),
-        borderColor: Colors.primary,
-        borderWidth: wp(.25),
-        flexDirection: 'row',
-        gap: wp(5),
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        paddingHorizontal: wp(7),
-        borderRadius: wp(5)
-    },
-    button: {
-        width: wp(25),
-        height: hp(4),
-        borderRadius: hp(100),
-        backgroundColor: Colors.gray,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: wp(.25),
-        borderColor: Colors.white60,
-      },
-      activeButton: {
-        width: wp(25),
-        height: hp(4),
-        borderRadius: hp(100),
-        backgroundColor: Colors.white60,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: wp(.3),
-      },
-    buttonText: {
-        color: Colors.white,
-        fontFamily: 'Lato-Bold',
-        fontSize: wp(3.5),
-        alignSelf: 'center',
-        paddingLeft: wp(2),
-        paddingRight: wp(2),
-    }
-})

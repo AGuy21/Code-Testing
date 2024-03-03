@@ -3,24 +3,23 @@
  * @returns The JSX element representing the navigation tabs.
  */
 import React from 'react';
-
 import { Tabs, router } from 'expo-router';
 import { Pressable, View } from'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
 import { Ionicons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
-
-import Colors from '../../constants/Colors';
-
 import { useUser } from '@clerk/clerk-react';
 import { useAuth } from '@clerk/clerk-expo';
+import { AppContext } from '../_layout';
+
 
 export default function SignedInNavigator() {
+  const colorContext = React.useContext(AppContext);
+  
+  const Colors = colorContext?.Colors;
 
   const user = useUser();
-  
   const { signOut } = useAuth();
 
   /**
@@ -36,14 +35,14 @@ export default function SignedInNavigator() {
 
   return (
       <Tabs screenOptions={{
-        tabBarActiveBackgroundColor: Colors.gray,
-        tabBarInactiveBackgroundColor: Colors.gray,
+        tabBarActiveBackgroundColor: Colors?.gray,
+        tabBarInactiveBackgroundColor: Colors?.gray,
 
-        tabBarActiveTintColor: Colors.white,
-        tabBarInactiveTintColor: Colors.white,
+        tabBarActiveTintColor: Colors?.white,
+        tabBarInactiveTintColor: Colors?.white,
         
         tabBarStyle: { // adds red to top of tab bar
-          borderTopColor: Colors.primary,
+          borderTopColor: Colors?.primary,
           borderTopWidth: hp(.15),
         }
       }}>
@@ -93,18 +92,18 @@ export default function SignedInNavigator() {
         <Tabs.Screen name="Profile" options={{
           headerShown: true,
           title: '',
-          headerTintColor: Colors.primary,
+          headerTintColor: Colors?.primary,
           headerTitle: 'Profile',
           headerTitleAlign: 'center',
           headerTitleAllowFontScaling: true,
           headerShadowVisible: false,
           headerStyle: {
-            backgroundColor: Colors.background,
+            backgroundColor: Colors?.background,
             height: hp(12),
           },
           headerRight: () => (
             <Pressable onPress={doLogout} style={{ marginRight: wp(4)}}>
-              <Octicons name="sign-out" size={wp(6)} color={Colors.primary} />
+              <Octicons name="sign-out" size={wp(6)} color={Colors?.primary} />
             </Pressable>
           ),
           tabBarIcon: ({ color, size, focused }) => (

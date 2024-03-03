@@ -1,27 +1,29 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
-import { useAuth, useUser } from '@clerk/clerk-expo';
-import Colors from '../../constants/Colors';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen'
+import { useUser } from '@clerk/clerk-expo';
+import ThemeChangeButton from '../../components/rendered/ThemeChangingButton';
+import { AppContext } from '../_layout';
+import { useGetProfileStyles } from '../../constants/styles';
+
 export default function Profile() {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
+
+  const styles = useGetProfileStyles(Colors);
 
   const user = useUser();
-
+  
   return (
     <View style={styles.container}>
 
-        <Text style={{ color: Colors.primary}}> {user.user?.emailAddresses[0].emailAddress} </Text>
-
+      <Text style={{ color: Colors?.primary}}> {user.user?.emailAddresses[0].emailAddress} </Text>
+      
+      <View style={styles.themeButtonContainer}>
+        <ThemeChangeButton type='light' />
+        <ThemeChangeButton type='basic' />
+      </View>
     </View>
   )
 }
 
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.background,
-    flex: 1,
-    padding: wp(5),
-  },
-  
-})

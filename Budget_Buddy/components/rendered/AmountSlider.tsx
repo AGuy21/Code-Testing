@@ -1,8 +1,9 @@
-import { StyleSheet, TextInput, Text, View } from 'react-native'
+import {TextInput, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Slider from '@react-native-community/slider'
-import Colors from '../../constants/Colors'
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { AppContext } from '../../app/_layout';
+import {useGetAmountSliderStyles } from '../../constants/styles';
 
 /**
  * Props for the AmountSlider component.
@@ -13,7 +14,6 @@ interface AmountSliderProps {
      * @param val The value to be sent to the parent component.
      */
     sendDataToParent: (val: number) => void;
-    
     /**
      * The amount data passed from the parent component to the child component.
      */
@@ -25,6 +25,10 @@ interface AmountSliderProps {
  * @component
  */
 const AmountSlider: React.FC<AmountSliderProps> = ({sendDataToParent, amountDataToChild}) => {
+    const colorContext = React.useContext(AppContext);
+    const Colors = colorContext?.Colors;
+  
+    const styles = useGetAmountSliderStyles(Colors);
 
     /**
      * Represents the current amount value.
@@ -55,9 +59,9 @@ const AmountSlider: React.FC<AmountSliderProps> = ({sendDataToParent, amountData
                 style={{width: wp(90), height: hp(3)}}
                 minimumValue={10}
                 maximumValue={1000}
-                minimumTrackTintColor={Colors.primary}
-                maximumTrackTintColor={Colors.white60}
-                thumbTintColor={Colors.primary}
+                minimumTrackTintColor={Colors?.primary}
+                maximumTrackTintColor={Colors?.white60}
+                thumbTintColor={Colors?.primary}
                 step={10}
                 onValueChange={(value) => setAmount(value)}
             
@@ -69,34 +73,3 @@ const AmountSlider: React.FC<AmountSliderProps> = ({sendDataToParent, amountData
 
 export default AmountSlider
 
-const styles = StyleSheet.create({
-    input: {
-        width: wp(15),
-        height: hp(4),
-        backgroundColor: Colors.gray,
-        borderRadius: wp(100),
-        display: 'flex',
-        borderWidth: wp(.25),
-        borderColor: Colors.white60,
-        opacity: .7,
-        marginTop: hp(1),
-        color: Colors.primary,
-        textAlign: 'center',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    container: {
-        width: wp(90),
-        height: hp(5),
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        
-    },
-    text: {
-        color: Colors.primary,
-        fontSize: wp(3.5),
-        fontFamily: 'Lato-Reg',
-    }
-})

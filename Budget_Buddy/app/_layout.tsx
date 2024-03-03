@@ -9,11 +9,11 @@ import { useCallback, useState } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import Colors from '../constants/Colors';
 import * as SecureStore from "expo-secure-store";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { Stack } from 'expo-router';
 import React from 'react'
+import colorLib from '../constants/colorLib';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,8 +48,25 @@ const tokenCache = {
     }
   },
 };
+type ColorTypes = {
+  primary: string,
+  background: string,
+  income: string,
+  expense: string,
+  first: string,
+  second: string,
+  third: string,
+  other: string,
+  gray: string,
+  gray60: string,
+  white: string,
+  white60: string,
+  transparent: string,
+}
 
 type AppContextType = {
+  Colors: ColorTypes,
+  setColors: React.Dispatch<React.SetStateAction<any>>,
   refresh: boolean,
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>,
 }
@@ -64,8 +81,11 @@ export const AppContext = React.createContext<AppContextType | null>(null);
 export default function App() {
   // context related declerations
   const [refresh, setRefresh] = useState<boolean>(true);
-
+  const [Colors, setColors] = useState<any>(colorLib.basic);
+  
   const appContextValues = {
+    Colors,
+    setColors,
     refresh,
     setRefresh,
   }
@@ -124,7 +144,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: 'black',
     paddingTop: hp(5),
   },
 });

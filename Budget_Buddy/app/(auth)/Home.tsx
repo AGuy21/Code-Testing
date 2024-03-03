@@ -1,18 +1,23 @@
-import { StyleSheet, View } from 'react-native'
+import {View } from 'react-native'
 import React, {  useState } from 'react'
-import Colors from '../../constants/Colors'
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import DataContainer from '../../components/rendered/DataContainer'
 import MoneyProgressBar from '../../components/rendered/MoneyProgressBar'
 import useFetchUsableData from '../../components/hooks/useFetchUsableData'
 import FilterButtonRow from '../../components/rendered/FilterButtonRow';
+import { useGetHomeStyles } from '../../constants/styles';
+import { AppContext } from '../_layout'
 
 /**
  * Renders the Home component.
  * 
  * @returns JSX.Element
  */
-const Home = () => {
+export default function Home () {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
+
+  const styles = useGetHomeStyles(Colors);
+  
   const [show, setShow] = useState<string>('All')
 
   /**
@@ -58,31 +63,4 @@ const Home = () => {
   )
 }
 
-export default Home
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,  
-        backgroundColor: Colors.background,
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-    },
-    topContainer: {
-      alignItems: 'center',
-      justifyContent: 'space-evenly',
-      flex: 1,
-    },
-    endContainer: {
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      position: 'relative',
-      flex: 1.2,
-    },
-    subContainer: {
-      backgroundColor: Colors.background,
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      height: hp(75),
-      width: wp(85),
-    },
-})

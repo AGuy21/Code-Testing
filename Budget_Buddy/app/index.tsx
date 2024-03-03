@@ -3,8 +3,7 @@
  * Renders the initial screen with animations and components.
  */
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TouchableOpacity,  } from 'react-native';
-import Colors from '../constants/Colors';
+import { Text, View, Image, TouchableOpacity,  } from 'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Animated, {
   BounceInDown, Easing, FadeInUp,
@@ -12,10 +11,16 @@ import Animated, {
 import React from 'react'
 import { router } from 'expo-router';
 import { useSignedInCheck } from '../components/hooks/userSignedIn';
+import { AppContext } from './_layout';
+import { useGetLandingPageStyles } from '../constants/styles';
 
 // Keep the splash screen visible while we fetch resources
 
 export default function LandingPage() {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
+
+  const styles = useGetLandingPageStyles(Colors);
   // if the user is signed in it routes to home to avoid bugs
   useSignedInCheck();
   return (
@@ -50,42 +55,3 @@ export default function LandingPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  title: {
-    color: '#ffffff',
-    fontSize: wp(10),
-    fontFamily: 'Lato-Bold',
-    fontWeight: '700',
-    lineHeight: wp(10),
-    textAlign: 'center',
-  },
-  text: {
-    color: '#ffffff',
-    fontSize: wp(4),
-    fontFamily: 'Lato-Bold',
-    fontWeight: '500',
-    lineHeight: wp(8),
-    textAlign: 'center',
-  },
-  startedBtn: {
-    backgroundColor: Colors.primary,
-    width: wp(60),
-    height: hp(6),
-    borderRadius: wp(60),
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: hp(10),
-    marginHorizontal: wp(3),
-    },
-    btnText: {
-        color: Colors.white,
-        fontFamily: 'Lato-Bold',
-        fontSize: wp(4),
-    }
-});

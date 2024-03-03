@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Colors from '../../constants/Colors'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { Pressable, Text, View } from 'react-native'
+import { AppContext } from '../../app/_layout';
 
+import { useGetPaymentFrequencyStyles } from '../../constants/styles';
 /**
  * Props for the PaymentFrequency component.
  */
@@ -28,7 +28,11 @@ interface PaymentFrequencyProps {
  */
 
 const PaymentFrequency: React.FC<PaymentFrequencyProps> = ({ sendDataToParent, frequencyDataToChild}) => {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
 
+  const styles = useGetPaymentFrequencyStyles(Colors);
+  
   const [expenseFrequency, setExpenseFrequency] = useState<string>('');
   
   useEffect(() => { // this sends the parent the expense freq when changed
@@ -89,41 +93,3 @@ const PaymentFrequency: React.FC<PaymentFrequencyProps> = ({ sendDataToParent, f
 
 export default PaymentFrequency
 
-const styles = StyleSheet.create({
-    button: {
-        width: wp(25),
-        height: hp(5),
-        borderRadius: hp(100),
-        backgroundColor: Colors.gray,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: wp(.25),
-        borderColor: Colors.white60,
-      },
-      activeButton: {
-        width: wp(25),
-        height: hp(5),
-        borderRadius: hp(100),
-        backgroundColor: Colors.white60,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderWidth: wp(.25),
-        borderColor: Colors.primary,
-      },
-      activeButtonText: {
-        color: Colors.primary,
-        fontFamily: 'Lato-Reg',
-        fontSize: wp(3),
-      },
-      buttonRowContainer: {
-        width: wp(90),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent:'space-evenly',
-      },
-      buttonText: {
-        color: Colors.white60,
-        fontFamily: 'Lato-Reg',
-        fontSize: wp(3),
-      }
-})

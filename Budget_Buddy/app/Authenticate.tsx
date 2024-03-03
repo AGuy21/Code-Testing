@@ -1,11 +1,11 @@
 import { Text, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native'
 import React from 'react'
 import Login from '../components/rendered/Login'
-import Colors from '../constants/Colors';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Split from '../components/rendered/Split';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { AppContext } from './_layout';
+import { useGetAuthenticateStyles } from '../constants/styles';
 
 /**
  * Renders the authentication screen.
@@ -13,12 +13,15 @@ import { router } from 'expo-router';
  * @returns JSX.Element representing the authentication screen.
  */
 export default function Authenticate() {
+    const colorContext = React.useContext(AppContext);
+    const Colors = colorContext?.Colors;
+  
+    const styles = useGetAuthenticateStyles(Colors);
 
-  return (
+    return (
 
-   <>
         <ImageBackground source={require('../assets/images/Login_BG.jpg')} style={styles.image}>
-            <LinearGradient colors={[Colors.background,  Colors.transparent]} style={styles.container} start={{ x: 0, y: .15 }} >
+            <LinearGradient colors={[Colors?.background,  Colors?.transparent]} style={styles.container} start={{ x: 0, y: .15 }} >
                 <Text style={styles.mainText}>
                     Login!
                 </Text>
@@ -33,40 +36,6 @@ export default function Authenticate() {
                 </TouchableOpacity>
             </LinearGradient>
         </ImageBackground>
-    </>
-  )
+    )
 }
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    image: {
-        height: hp(100),
-        width: wp(100),
-        resizeMode: 'contain',
-    },
-    mainText: {
-        color: Colors.primary,
-        fontSize: wp(7),
-        fontFamily: 'Lato-Bold',
-        marginBottom: hp(4)
-    },
-    signUpButton: {
-        width: wp(60),
-        height: hp(5),
-        borderWidth: 1,
-        borderColor: Colors.primary,
-        borderRadius: 4,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    signUpButtonText:{
-        fontFamily: 'Lato-Bold',
-        fontSize: wp(4),
-        color: Colors.primary,
-    }
-  });
-  

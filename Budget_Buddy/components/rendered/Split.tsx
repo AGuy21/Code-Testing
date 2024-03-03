@@ -1,13 +1,16 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import Colors from '../../constants/Colors';
-
+import { AppContext } from '../../app/_layout';
+import { useGetSplitStyles } from '../../constants/styles';
 /**
  * Renders a split component with a line and text in the middle.
  */
-const Split = () => {
 
+const Split = () => {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
+
+  const styles = useGetSplitStyles(Colors);
   return (
     <View style={styles.split}>
         <View style={styles.splitLine} />
@@ -21,22 +24,3 @@ const Split = () => {
 
 export default Split
 
-const styles = StyleSheet.create({
-    split: {
-        flexDirection: 'row',
-        gap: wp(1),
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: hp(4)
-    },
-    splitText: {
-        color: Colors.primary,
-        fontSize: wp(3.3),
-        fontFamily: 'Lato-Light',
-    },
-    splitLine: {
-        width: wp(20),
-        height: hp(.1),
-        backgroundColor: Colors.primary,
-    },
-})

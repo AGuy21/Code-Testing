@@ -1,14 +1,9 @@
-
-import { StyleSheet} from 'react-native'
 import React, { useEffect, useState } from 'react'
-
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
-import Colors from '../../constants/Colors';
 import { SelectList } from 'react-native-dropdown-select-list';
-
 import { Entypo} from '@expo/vector-icons';
-
+import { useGetExpenseTypeStyles } from '../../constants/styles';
+import { AppContext } from '../../app/_layout';
 /**
  * Props for the ExpenseType component.
  */
@@ -26,10 +21,14 @@ interface ExpenseTypeProps {
 }
 
 const ExpenseType: React.FC<ExpenseTypeProps> = ({ sendDataToParent, typeDataToChild}) => {
+    const colorContext = React.useContext(AppContext);
+    const Colors = colorContext?.Colors;
+  
+    const styles = useGetExpenseTypeStyles(Colors);
 
     const [selected, setSelected] = useState<string>('')
-
     const [ selectionMade, setSelectionMade] = useState<boolean>(false)
+    
     /**
      * Represents the data for the dropdown in the ExpenseType component.
      */
@@ -76,7 +75,7 @@ const ExpenseType: React.FC<ExpenseTypeProps> = ({ sendDataToParent, typeDataToC
                     dropdownStyles={styles.dropdown}
                     boxStyles={styles.box}
 
-                    arrowicon={<Entypo name="chevron-down" size={wp(4)} color={Colors.white} />}
+                    arrowicon={<Entypo name="chevron-down" size={wp(4)} color={Colors?.white} />}
                 />
             ) : (
                 <SelectList 
@@ -96,7 +95,7 @@ const ExpenseType: React.FC<ExpenseTypeProps> = ({ sendDataToParent, typeDataToC
                     dropdownStyles={styles.dropdown}
                     boxStyles={styles.box}
 
-                    arrowicon={<Entypo name="chevron-down" size={wp(4)} color={Colors.white} />}
+                    arrowicon={<Entypo name="chevron-down" size={wp(4)} color={Colors?.white} />}
                 />
             )}
         </>
@@ -105,35 +104,3 @@ const ExpenseType: React.FC<ExpenseTypeProps> = ({ sendDataToParent, typeDataToC
 
 export default ExpenseType
 
-const styles = StyleSheet.create({
-    input: { // search input style
-        color: Colors.white60,
-        fontFamily: 'Lato-Reg',
-    },
-    input2: { // search input style 2
-        color: Colors.white,
-        fontFamily: 'Lato-Reg',
-    },
-    box: { // main dropdown click box style
-        backgroundColor: Colors.gray,
-        width: wp(80),
-        height: hp(5),
-        borderRadius: hp(3),
-        alignItems: 'center',
-    },
-    dropdown: { // items that dropdown style
-        backgroundColor: Colors.gray,
-        width: wp(80),
-        height: hp(14),
-        borderRadius: hp(1),
-        justifyContent: 'space-evenly'
-    },
-    dropdownItem: { // items that dropdown style
-        backgroundColor: Colors.gray,
-        justifyContent: 'center',
-    },
-    text: {
-        color: Colors.white,
-        fontFamily: 'Lato-Reg',
-    }
-})

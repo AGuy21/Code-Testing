@@ -1,20 +1,23 @@
 import React, {} from 'react';
-import {StyleSheet, ActivityIndicator, Text} from 'react-native';
-import Colors from '../../constants/Colors';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
+import { ActivityIndicator, Text} from 'react-native';
+import { AppContext } from '../../app/_layout';
+import { useGetLoaderStyles } from '../../constants/styles';
 
 /**
  * Renders a loader component with an activity indicator and a loading text.
  * @returns JSX.Element
  */
 export default function Loader() {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
+
+  const styles = useGetLoaderStyles(Colors);
 
   return (
     <>
       <ActivityIndicator 
         size={'large'}
-        color={Colors.primary}
+        color={Colors?.primary}
         style={{ alignSelf: 'center'}}
       />
       <Text style={styles.text}>
@@ -23,10 +26,3 @@ export default function Loader() {
     </>
   );
 }
-const styles = StyleSheet.create({
-  text: {
-    fontSize: wp(3.5),
-    color: Colors.white,
-    fontFamily: 'Lato-Bold'
-  },
-});

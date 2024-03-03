@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native'
+import { Text, View } from 'react-native'
 import React from 'react'
-import Colors from '../../constants/Colors';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import useGetMoneyBarData from '../hooks/useGetMoneyBarData';
 import calculateMontlyTotal from '../functions/calculateMontlyTotal';
 import getIncomeOtherTotal from '../functions/getIncomeOtherTotal';
 import getExpenseOtherTotal from '../functions/getExpenseOtherTotal';
+import { AppContext } from '../../app/_layout';
+import { useGetMoneyProgressBarStyles } from '../../constants/styles';
 
 /**
  * Props for the MoneyProgressBar component.
@@ -33,8 +34,10 @@ interface MoneyProgressBarProps {
  * @returns The rendered MoneyProgressBar component.
  */
 const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incomeTotal, show, expenseData, incomeData }) => {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
 
-
+  const styles = useGetMoneyProgressBarStyles(Colors);
   const { 
     incomePrecentage, 
     expensePrecentage, 
@@ -82,7 +85,7 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incom
               <View style={[styles.incomeIndicator, { 
                 flex: calculateMontlyTotal(item.amount, item.frequency), 
                 flexDirection: 'row', 
-                backgroundColor: index === 0 ? 'red' : index === 1 ? 'orange' : 'yellow'
+                backgroundColor: index === 0 ? Colors?.first : index === 1 ? Colors?.second : Colors?.third
               }]} 
                 key={index}
               >
@@ -93,7 +96,7 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incom
             ))}
             {incomeData.length > 3 && (
             <View style={[styles.incomeIndicator, { 
-              flex: incomeLastThreeTotal, flexDirection: 'row', backgroundColor: 'gray' }]}>
+              flex: incomeLastThreeTotal, flexDirection: 'row', backgroundColor: Colors?.other }]}>
 
               <Text style={{textAlign: 'center', fontSize: wp(2.5)}}>
                 ${incomeLastThreeTotal}
@@ -124,7 +127,7 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incom
               <View style={[styles.expenseIndicator, { 
                 flex: calculateMontlyTotal(item.amount, item.frequency), 
                 flexDirection: 'row', 
-                backgroundColor: index === 0 ? 'red' : index === 1 ? 'orange' : 'yellow'
+                backgroundColor: index === 0 ? Colors?.first : index === 1 ? Colors?.second : Colors?.third
               }]} 
                 key={index}
               >
@@ -135,7 +138,7 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incom
             ))}
             {expenseData.length > 3 && (
             <View style={[styles.expenseIndicator, { 
-              flex: expenseLastThreeTotal, flexDirection: 'row', backgroundColor: 'gray' }]}>
+              flex: expenseLastThreeTotal, flexDirection: 'row', backgroundColor: Colors?.other }]}>
               <Text style={{ color: Colors.white, fontSize: wp(2.5)}}>
                 Other: ${expenseLastThreeTotal}
               </Text>
@@ -164,60 +167,3 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({ expenseTotal, incom
 
 export default MoneyProgressBar
 
-const styles = StyleSheet.create({
-  container: {
-    height: hp(10),
-    width: wp(95),
-    backgroundColor: Colors.gray,
-    alignItems: 'flex-start',
-    justifyContent: 'space-evenly',
-    borderRadius: wp(5),
-    paddingHorizontal: wp(5),
-    borderWidth: wp(.25),
-    borderColor: Colors.primary,
-  },
-  progressBarContainer: {
-    flexDirection: 'row',
-    height: hp(2.5),
-  },
-  incomeIndicator: {
-    display: 'flex',
-    backgroundColor: 'lime',
-    borderRadius: wp(5),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  expenseIndicator: {
-    display: 'flex',
-    backgroundColor: 'yellow',
-    borderRadius: wp(5),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  expenseTextContainer: {
-    width: wp(85),
-    flexDirection: 'row',
-    paddingHorizontal: wp(5),
-    marginTop: hp(1),
-  },
-  expenseText: {
-    color: 'yellow',
-    fontSize: wp(3),
-    fontFamily: 'Lato-Bold'
-  },
-  incomeText: {
-    color: 'lime',
-    fontSize: wp(3),
-    fontFamily: 'Lato-Bold'
-  },
-  moneyBarTextContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: wp(85),
-  },
-  moneyBarText: {
-    color: Colors.primary,
-    fontSize: wp(2.5),
-    fontFamily: 'Lato-Reg'
-  }
-})
