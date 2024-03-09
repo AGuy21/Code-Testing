@@ -45,7 +45,7 @@ export const useGetThemeChangingButtonsStyles = (Colors: ColorTypes) =>
       borderWidth: wp(0.225),
       borderRadius: wp(4),
       height: hp(5),
-      width: wp(45),
+      width: wp(40),
     },
     buttonText: {
       fontFamily: "Lato-Reg",
@@ -114,6 +114,11 @@ export const useGetPaymentFrequencyStyles = (Colors: ColorTypes) =>
     },
   });
 
+/**
+ * Returns the styles for the money progress bar component.
+ * @param Colors - The color types for the component.
+ * @returns The stylesheet object containing the styles for the money progress bar component.
+ */
 export const useGetMoneyProgressBarStyles = (Colors: ColorTypes) =>
   StyleSheet.create({
     container: {
@@ -167,7 +172,7 @@ export const useGetMoneyProgressBarStyles = (Colors: ColorTypes) =>
       width: wp(85),
     },
     moneyBarText: {
-      color: Colors?.primary,
+      color: Colors?.text,
       fontSize: wp(2.5),
       fontFamily: "Lato-Reg",
     },
@@ -513,25 +518,54 @@ export const useGetProfileStyles = (Colors: ColorTypes) =>
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: Colors?.background,
-    },
+    }, 
+  });
+export const useGetThemeSelectionStyles = (Colors: ColorTypes) => 
+  StyleSheet.create({
     themeBtnCollumn: {
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-      gap: hp(5),
-      height: hp(40),
-      width: wp(50),
+      height: hp(30),
+      width: wp(48),
       padding: wp(2.5),
     },
     themeButtonContainer: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-evenly",
-      gap: wp(5),
       paddingHorizontal: wp(2.5),
+      height: hp(30),
+      width: wp(95),
+      backgroundColor: Colors?.gray,
+      borderRadius: wp(5),
+      borderTopRightRadius: 0,
+      borderTopLeftRadius: 0,
+      borderColor: Colors?.primary,
+      borderWidth: wp(0.25),
+      borderTopWidth: 0,
+    },
+    mainContainer: {
+      height: hp(50),
       marginTop: hp(5),
-      height: hp(40),
-      width: wp(100),
+    },
+    themeButtonContainerHeader: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      height: hp(5),
+      width: wp(95),
+      backgroundColor: Colors?.gray,
+      borderRadius: wp(5),
+      borderBottomRightRadius: 0,
+      borderBottomLeftRadius: 0,
+      borderColor: Colors?.primary,
+      borderWidth: wp(0.25),
+    },
+    themeButtonContainerHeaderText: {
+      color: Colors?.text,
+      fontSize: wp(5),
+      fontFamily: "Lato-Bold",
     },
   });
 export const useGetCreateExpenseScreenStyles = (Colors: ColorTypes) =>

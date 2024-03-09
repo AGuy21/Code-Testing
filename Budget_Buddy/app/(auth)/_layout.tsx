@@ -15,22 +15,25 @@ import { Entypo } from "@expo/vector-icons";
 import { useUser } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-expo";
 import { AppContext } from "../_layout";
+import useFetchUserTheme from "../../components/hooks/useFetchUserTheme";
+import colorLib from "../../constants/colorLib";
 
 export default function SignedInNavigator() {
   const colorContext = React.useContext(AppContext);
 
   const Colors = colorContext?.Colors;
+  const setColors = colorContext?.setColors;
 
   const user = useUser();
   const { signOut } = useAuth();
+  // fetches the user's theme only when signed in 
+  useFetchUserTheme();
 
-  /**
-   * Logs out the user and redirects to the authentication page.
-   */
   const doLogout = () => {
     signOut();
+    setColors(colorLib.Basic)
     console.log(user.user?.emailAddresses[0]?.emailAddress + "Signed out");
-    router.replace("Authenticate");
+    router.replace("../Authenticate"); //TODO: This causes a bug but not a full crash fix later @AGuy21 3/29/22
   };
 
   return (

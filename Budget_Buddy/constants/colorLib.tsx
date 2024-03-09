@@ -8,7 +8,7 @@ export default {
     inactive: "#FFFFFF60",
     active: "#FFFFFF",
 
-    text: "white",
+    text: "#CFD7E2",
     secondaryText: "black",
     background: "#141414", // Dark gray
     TabBarButtons: "#FFFFFF", // White
@@ -119,7 +119,7 @@ export default {
     inactive: "#FFFFFF60",
     active: "#FFFFFF",
 
-    text: "#99A3A4", // White
+    text: "#99A3A4", // Light gray
     secondaryText: "#CFD7E295", // Light blue
     background: "#282C34", // Dark blue
     TabBarButtons: "#FFFFFF", // White

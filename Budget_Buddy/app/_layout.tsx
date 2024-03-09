@@ -5,7 +5,7 @@
  */
 
 import { View, StyleSheet } from "react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
@@ -14,6 +14,7 @@ import { ClerkProvider } from "@clerk/clerk-expo";
 import { Stack } from "expo-router";
 import React from "react";
 import colorLib from "../constants/colorLib";
+import useFetchUserTheme from "../components/hooks/useFetchUserTheme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -86,10 +87,12 @@ export const AppContext = React.createContext<AppContextType | null>(null);
  * It provides a context for the app and renders the main view.
  * @returns The rendered JSX elements.
  */
+
+
 export default function App() {
   // context related declerations
   const [refresh, setRefresh] = useState<boolean>(true);
-  const [Colors, setColors] = useState<any>(colorLib.Basic);
+  const [Colors, setColors] = useState(colorLib.Basic);
 
   const appContextValues = {
     Colors,
@@ -122,7 +125,6 @@ export default function App() {
   if (!fontsLoaded && !fontError) {
     return null;
   }
-
   return (
     /**
      * It provides a context for the app and renders the main view.

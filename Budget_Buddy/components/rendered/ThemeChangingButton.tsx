@@ -3,20 +3,32 @@ import { Pressable, Text } from "react-native";
 import { AppContext } from "../../app/_layout";
 import colorLib from "../../constants/colorLib";
 import { useGetThemeChangingButtonsStyles } from "../../constants/styles";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { FIREBASE_DB } from "../../FirebaseConfig";
+import { useUser } from "@clerk/clerk-expo";
 
 interface ThemeChangeButtonProps {
   type: "Basic" | "Oceanic" | "Sunrise" | "Modern" | "Island" | "NightSky";
 }
 export default function ThemeChangeButton({ type }: ThemeChangeButtonProps) {
-  // for some reason i cant change the type to string @AGuy21
   const colorContext = React.useContext(AppContext);
   const Colors = colorContext?.Colors;
   const styles = useGetThemeChangingButtonsStyles(Colors);
 
   const setColors = colorContext?.setColors;
+  const user = useUser();
+  const docRef = doc(FIREBASE_DB, "User Data", user.user?.emailAddresses[0].emailAddress!);
 
-  function handleThemeChange(change: string) {
+  // Cant seem to put this in own file @AGuy21
+  /**
+   * Handles the change of theme.
+   * 
+   * @param change - The theme change to apply.
+   * @returns {Promise<void>} - A promise that resolves when the theme change is applied.
+   */
+  const handleThemeChange = async (change: string): Promise<void> => {
     setColors(colorLib[change]);
+    await updateDoc(docRef, { Theme: change });
   }
 
   return (
