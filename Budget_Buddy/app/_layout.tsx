@@ -4,20 +4,20 @@
  * The App component provides a context and renders the main view of the app.
  */
 
-import { View, StyleSheet } from 'react-native'
-import { useCallback, useState } from 'react';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import {heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { View, StyleSheet } from "react-native";
+import { useCallback, useState } from "react";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import * as SecureStore from "expo-secure-store";
 import { ClerkProvider } from "@clerk/clerk-expo";
-import { Stack } from 'expo-router';
-import React from 'react'
-import colorLib from '../constants/colorLib';
+import { Stack } from "expo-router";
+import React from "react";
+import colorLib from "../constants/colorLib";
 
 SplashScreen.preventAutoHideAsync();
 
-const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
+const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 // token cache for saving users sessions on device
 const tokenCache = {
@@ -49,27 +49,35 @@ const tokenCache = {
   },
 };
 type ColorTypes = {
-  primary: string,
-  background: string,
-  income: string,
-  expense: string,
-  first: string,
-  second: string,
-  third: string,
-  other: string,
-  gray: string,
-  gray60: string,
-  white: string,
-  white60: string,
-  transparent: string,
-}
+  primary: string;
+  secondary: string;
+  text: string;
+  secondaryText: string;
+  background: string;
+
+  inactive: string;
+  active: string;
+
+  TabBarButtons: string;
+
+  income: string;
+  expense: string;
+  first: string;
+  second: string;
+  third: string;
+  other: string;
+
+  gray: string;
+  gray60: string;
+  transparent: string;
+};
 
 type AppContextType = {
-  Colors: ColorTypes,
-  setColors: React.Dispatch<React.SetStateAction<any>>,
-  refresh: boolean,
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>,
-}
+  Colors: ColorTypes;
+  setColors: React.Dispatch<React.SetStateAction<any>>;
+  refresh: boolean;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 export const AppContext = React.createContext<AppContextType | null>(null);
 
@@ -81,14 +89,14 @@ export const AppContext = React.createContext<AppContextType | null>(null);
 export default function App() {
   // context related declerations
   const [refresh, setRefresh] = useState<boolean>(true);
-  const [Colors, setColors] = useState<any>(colorLib.basic);
-  
+  const [Colors, setColors] = useState<any>(colorLib.Basic);
+
   const appContextValues = {
     Colors,
     setColors,
     refresh,
     setRefresh,
-  }
+  };
 
   // Load fonts
   /**
@@ -96,12 +104,12 @@ export default function App() {
    * @returns A tuple containing the status of font loading and any font loading errors.
    */
   const [fontsLoaded, fontError] = useFonts({
-    'Lato-Bold': require('../assets/fonts/Lato-Bold.ttf'),
-    'Lato-Bold-Italic': require('../assets/fonts/Lato-BoldItalic.ttf'),
-    'Lato-Reg-Italic': require('../assets/fonts/Lato-Italic.ttf'),
-    'Lato-Reg': require('../assets/fonts/Lato-Regular.ttf'),
-    'Lato-Light': require('../assets/fonts/Lato-Light.ttf'),
-    'Lato-Thin': require('../assets/fonts/Lato-Thin.ttf'),
+    "Lato-Bold": require("../assets/fonts/Lato-Bold.ttf"),
+    "Lato-Bold-Italic": require("../assets/fonts/Lato-BoldItalic.ttf"),
+    "Lato-Reg-Italic": require("../assets/fonts/Lato-Italic.ttf"),
+    "Lato-Reg": require("../assets/fonts/Lato-Regular.ttf"),
+    "Lato-Light": require("../assets/fonts/Lato-Light.ttf"),
+    "Lato-Thin": require("../assets/fonts/Lato-Thin.ttf"),
   });
 
   // makes sure fonts are loaded (stolen from expo docs :P)
@@ -124,27 +132,27 @@ export default function App() {
      * @param {Stack} - The Stack component that provides the navigation stack for the app.
      * @returns The rendered JSX elements.
      */
-    <ClerkProvider 
+    <ClerkProvider
       tokenCache={tokenCache}
       publishableKey={CLERK_PUBLISHABLE_KEY}
-    > 
+    >
       <AppContext.Provider value={appContextValues}>
         <View style={styles.container} onLayout={onLayoutRootView}>
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index"  />
-            <Stack.Screen name="Authenticate"  />
+            <Stack.Screen name="index" />
+            <Stack.Screen name="Authenticate" />
             <Stack.Screen name="SignUpScreen" />
           </Stack>
         </View>
       </AppContext.Provider>
     </ClerkProvider>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: "black",
     paddingTop: hp(5),
   },
 });

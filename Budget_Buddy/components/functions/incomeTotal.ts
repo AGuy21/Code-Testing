@@ -5,20 +5,17 @@
  */
 
 export default function incomeTotal(incomeArray: any[]) {
+  let incomeTotal = 0;
 
-
-    let incomeTotal = 0;
-    
-    for (let i = 0; i < incomeArray.length; i++) {
-        if (incomeArray[i].frequency === 'Weekly') {
-        incomeTotal += incomeArray[i].amount * 4
-        } else if (incomeArray[i].frequency === 'Bi-Weekly') {
-        incomeTotal += incomeArray[i].amount * 2
-        } else if (incomeArray[i].frequency === 'Monthly') {
-        incomeTotal += incomeArray[i].amount 
-        }
+  for (let i = 0; i < incomeArray.length; i++) {
+    if (incomeArray[i].frequency === "Weekly") {
+      incomeTotal += incomeArray[i].amount * 4;
+    } else if (incomeArray[i].frequency === "Bi-Weekly") {
+      incomeTotal += incomeArray[i].amount * 2;
+    } else if (incomeArray[i].frequency === "Monthly") {
+      incomeTotal += incomeArray[i].amount;
     }
-    
+  }
 
-    return incomeTotal
+  return incomeTotal;
 }

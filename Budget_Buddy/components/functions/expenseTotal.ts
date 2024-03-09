@@ -5,20 +5,17 @@
  */
 
 export default function expenseTotal(expenseArray: any[]) {
+  let expenseTotal = 0;
 
-
-    let expenseTotal = 0;
-    
-    for (let i = 0; i < expenseArray.length; i++) {
-        if (expenseArray[i].frequency === 'Weekly') {
-        expenseTotal += expenseArray[i].amount * 4
-        } else if (expenseArray[i].frequency === 'Bi-Weekly') {
-        expenseTotal += expenseArray[i].amount * 2
-        } else if (expenseArray[i].frequency === 'Monthly') {
-        expenseTotal += expenseArray[i].amount 
-        }
+  for (let i = 0; i < expenseArray.length; i++) {
+    if (expenseArray[i].frequency === "Weekly") {
+      expenseTotal += expenseArray[i].amount * 4;
+    } else if (expenseArray[i].frequency === "Bi-Weekly") {
+      expenseTotal += expenseArray[i].amount * 2;
+    } else if (expenseArray[i].frequency === "Monthly") {
+      expenseTotal += expenseArray[i].amount;
     }
-    
+  }
 
-    return expenseTotal
+  return expenseTotal;
 }

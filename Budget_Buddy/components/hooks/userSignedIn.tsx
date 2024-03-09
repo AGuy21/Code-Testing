@@ -1,7 +1,6 @@
-
-import { useEffect } from 'react'
-import { useAuth } from '@clerk/clerk-expo';
-import { router } from 'expo-router';
+import { useEffect } from "react";
+import { useAuth } from "@clerk/clerk-expo";
+import { router } from "expo-router";
 
 /**
  * Custom hook to check if the user is signed in.
@@ -9,14 +8,12 @@ import { router } from 'expo-router';
  * If the user is not signed in, it logs a message to the console.
  */
 export const useSignedInCheck = () => {
-    const { isSignedIn } = useAuth();
-    return (
-        useEffect(() => {
-            if (isSignedIn) {
-                router.replace('(auth)')
-            } else {
-                console.log('User not signed in!')
-            }
-        })
-    )
-}
+  const { isSignedIn } = useAuth();
+  return useEffect(() => {
+    if (isSignedIn) {
+      router.replace("(auth)");
+    } else {
+      console.log("User not signed in!");
+    }
+  });
+};

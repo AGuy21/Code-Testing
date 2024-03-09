@@ -1,5 +1,11 @@
 import React from "react";
-import { Text, TextInput, TouchableOpacity, View, ImageBackground } from "react-native";
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ImageBackground,
+} from "react-native";
 import { useSignUp } from "@clerk/clerk-expo";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -14,15 +20,16 @@ export default function SignUpScreen() {
   const styles = useGetSignUpScreenStyles(Colors);
 
   const { isLoaded, signUp, setActive } = useSignUp();
-  
+
   const [emailAddress, setEmailAddress] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   /**
    * Represents the state of pending verification.
    */
-  const [pendingVerification, setPendingVerification] = useState<boolean>(false);
+  const [pendingVerification, setPendingVerification] =
+    useState<boolean>(false);
   const [code, setCode] = useState<string>("");
- 
+
   /**
    * Function that handles the sign up button press event.
    * It creates a new user account, prepares email address verification,
@@ -48,19 +55,19 @@ export default function SignUpScreen() {
       alert(err.errors[0].message);
     }
   };
- 
+
   const onPressVerify = async () => {
     if (!isLoaded) {
       return;
     }
- 
+
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
- 
+
       await setActive({ session: completeSignUp.createdSessionId });
-      router.replace('(auth)')
+      router.replace("(auth)");
     } catch (err: any) {
       console.log(JSON.stringify(err, null, 2));
       alert(err.errors[0].message);
@@ -68,15 +75,20 @@ export default function SignUpScreen() {
   };
 
   return (
-    <ImageBackground source={require('../assets/images/Login_BG.jpg')} style={styles.image}>
-      <LinearGradient colors={[Colors?.background,  Colors?.transparent]} style={styles.container} start={{ x: 0, y: .15 }} >
+    <ImageBackground
+      source={require("../assets/images/Login_BG.jpg")}
+      style={styles.image}
+    >
+      <LinearGradient
+        colors={[Colors?.background, Colors?.transparent]}
+        style={styles.container}
+        start={{ x: 0, y: 0.15 }}
+      >
         <View>
           {!pendingVerification && (
             <View>
               <View>
-                <Text style={styles.mainText}>
-                  Sign Up!
-                </Text>
+                <Text style={styles.mainText}>Sign Up!</Text>
                 <TextInput
                   autoCapitalize="none"
                   placeholderTextColor={Colors?.primary}
@@ -86,7 +98,7 @@ export default function SignUpScreen() {
                   style={styles.input}
                 />
               </View>
-    
+
               <View>
                 <TextInput
                   value={password}
@@ -97,11 +109,12 @@ export default function SignUpScreen() {
                   style={styles.input}
                 />
               </View>
-    
-              <TouchableOpacity onPress={onSignUpPress} style={styles.signUpButton}>
-                <Text style={styles.signUpButtonText}>
-                  Sign up
-                </Text>
+
+              <TouchableOpacity
+                onPress={onSignUpPress}
+                style={styles.signUpButton}
+              >
+                <Text style={styles.signUpButtonText}>Sign up</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -116,10 +129,11 @@ export default function SignUpScreen() {
                   onChangeText={(code) => setCode(code)}
                 />
               </View>
-              <TouchableOpacity onPress={onPressVerify} style={styles.signUpButton}>
-                <Text style={styles.signUpButtonText}>
-                  Verify Email
-                </Text>
+              <TouchableOpacity
+                onPress={onPressVerify}
+                style={styles.signUpButton}
+              >
+                <Text style={styles.signUpButtonText}>Verify Email</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -128,4 +142,3 @@ export default function SignUpScreen() {
     </ImageBackground>
   );
 }
-

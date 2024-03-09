@@ -1,7 +1,7 @@
-import React, {} from 'react';
-import { ActivityIndicator, Text} from 'react-native';
-import { AppContext } from '../../app/_layout';
-import { useGetLoaderStyles } from '../../constants/styles';
+import React from "react";
+import { ActivityIndicator, Text } from "react-native";
+import { AppContext } from "../../app/_layout";
+import { useGetLoaderStyles } from "../../constants/styles";
 
 /**
  * Renders a loader component with an activity indicator and a loading text.
@@ -15,14 +15,12 @@ export default function Loader() {
 
   return (
     <>
-      <ActivityIndicator 
-        size={'large'}
+      <ActivityIndicator
+        size={"large"}
         color={Colors?.primary}
-        style={{ alignSelf: 'center'}}
+        style={{ alignSelf: "center" }}
       />
-      <Text style={styles.text}>
-        Loading Data...
-      </Text>
+      <Text style={styles.text}>Loading Data...</Text>
     </>
   );
 }

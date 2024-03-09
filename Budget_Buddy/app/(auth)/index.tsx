@@ -1,26 +1,28 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useState } from 'react'
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
-import ExpenseType from '../../components/rendered/ExpenseType';
-import PaymentFrequency from '../../components/rendered/PaymentFrequency';
-import AmountSlider from '../../components/rendered/AmountSlider';
-import { collection, addDoc } from 'firebase/firestore';
-import { FIREBASE_DB } from '../../FirebaseConfig';
-import { useUser } from '@clerk/clerk-expo';
-import { AppContext } from '../_layout';
-import { useGetCreateExpenseScreenStyles } from '../../constants/styles';
-
+import ExpenseType from "../../components/rendered/ExpenseType";
+import PaymentFrequency from "../../components/rendered/PaymentFrequency";
+import AmountSlider from "../../components/rendered/AmountSlider";
+import { collection, addDoc } from "firebase/firestore";
+import { FIREBASE_DB } from "../../FirebaseConfig";
+import { useUser } from "@clerk/clerk-expo";
+import { AppContext } from "../_layout";
+import { useGetCreateExpenseScreenStyles } from "../../constants/styles";
 
 /**
  * This component renders a screen for creating expenses.
  * It includes child components for selecting expense type, payment frequency, and amount.
  * The data entered by the user is submitted to the Firebase database.
- * 
+ *
  * @returns {JSX.Element} The JSX element representing the CreateExpenseScreen component.
  */
 
-function CreateExpenseScreen (): JSX.Element  {
+function CreateExpenseScreen(): JSX.Element {
   const appContext = React.useContext(AppContext);
 
   const Colors = appContext?.Colors;
@@ -28,10 +30,10 @@ function CreateExpenseScreen (): JSX.Element  {
 
   const styles = useGetCreateExpenseScreenStyles(Colors);
   // states
-  const [expenseType, setExpenseType] = useState<string>('');
-  const [expenseFrequency, setExpenseFrequency] = useState<string>('');
+  const [expenseType, setExpenseType] = useState<string>("");
+  const [expenseFrequency, setExpenseFrequency] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
-  const [expenseName, setExpenseName] = useState<string>('')
+  const [expenseName, setExpenseName] = useState<string>("");
 
   const handleExpenseTypeChange = (newState: string) => {
     setExpenseType(newState); // sets expense type to new state
@@ -43,25 +45,31 @@ function CreateExpenseScreen (): JSX.Element  {
 
   const handleAmountChange = (newState: number) => {
     setAmount(newState); // sets amount to new state
-  }
+  };
   // all below is used to create new sub-collection with users data
   const user = useUser();
 
   /**
    * Creates a new collection in the Firebase database with the user's data.
-   * 
+   *
    * @returns {Promise<void>} A promise that resolves when the collection is created.
    */
 
   const createCollection = async (): Promise<void> => {
     // creates a new collection ref with the users data
-    const collectionRef = collection(FIREBASE_DB, "User Data", user.user?.emailAddresses[0]?.emailAddress, expenseType)
-    await addDoc(collectionRef, { // adds doc with all needed data
+    const collectionRef = collection(
+      FIREBASE_DB,
+      "User Data",
+      user.user?.emailAddresses[0]?.emailAddress,
+      expenseType
+    );
+    await addDoc(collectionRef, {
+      // adds doc with all needed data
       Name: expenseName,
       Frequency: expenseFrequency,
       Amount: amount,
-    })
-  }
+    });
+  };
 
   /**
    * Handles the creation of an expense.
@@ -72,55 +80,63 @@ function CreateExpenseScreen (): JSX.Element  {
    * - Resets the expense name.
    */
   const handleCreateExpense = async () => {
-    createCollection()
+    createCollection();
     setRefresh(true); // refreshes the screen on Home
 
     setAmount(0); // resets amount to 0 when creating new expense
-    setExpenseFrequency(''); // resets expense frequency to empty string when creating new expense
-    setExpenseName('') // resets expense name
-  }
+    setExpenseFrequency(""); // resets expense frequency to empty string when creating new expense
+    setExpenseName(""); // resets expense name
+  };
   return (
     <View style={styles.container}>
-
-      <Text style={styles.titleText}>
-        Expense Tracker
-      </Text>
-      <Text style={styles.subTitleText}>
-        Add your expenses here
-      </Text>
+      <Text style={styles.titleText}>Expense Tracker</Text>
+      <Text style={styles.subTitleText}>Add your expenses here</Text>
       {/* When the user selects an expense type, the expense type is sent to the parent component 
       and the parent can send its data on reset for components to be synced*/}
-      <ExpenseType sendDataToParent={handleExpenseTypeChange} typeDataToChild={expenseType} />
+      <ExpenseType
+        sendDataToParent={handleExpenseTypeChange}
+        typeDataToChild={expenseType}
+      />
 
-      <Text style={styles.mainText}>
-        Payment Frequency
-      </Text>
+      <Text style={styles.mainText}>Payment Frequency</Text>
 
-      <PaymentFrequency sendDataToParent={handlePaymentFrequencyChange} frequencyDataToChild={expenseFrequency} />
+      <PaymentFrequency
+        sendDataToParent={handlePaymentFrequencyChange}
+        frequencyDataToChild={expenseFrequency}
+      />
 
-      <Text style={styles.mainText}>
-        Amount
-      </Text>
+      <Text style={styles.mainText}>Amount</Text>
 
-      <AmountSlider sendDataToParent={handleAmountChange} amountDataToChild={amount} />
+      <AmountSlider
+        sendDataToParent={handleAmountChange}
+        amountDataToChild={amount}
+      />
 
       <View style={{ marginTop: hp(10) }} />
 
-
       <TextInput
-        placeholder='Enter Expense Name'
+        placeholder="Enter Expense Name"
         value={expenseName}
         placeholderTextColor={Colors?.primary}
         onChangeText={(text) => setExpenseName(text)}
-        style={{ textAlign: 'center', borderWidth: 2, borderColor: Colors?.primary, width: wp(60), height: hp(5), color: Colors?.primary }}
+        style={{
+          textAlign: "center",
+          borderWidth: 2,
+          borderColor: Colors?.primary,
+          width: wp(60),
+          height: hp(5),
+          color: Colors?.primary,
+        }}
       />
       <View style={{ marginTop: hp(10) }} />
 
-      <Button title='Create Expense' onPress={handleCreateExpense} color={Colors?.primary} />
-
+      <Button
+        title="Create Expense"
+        onPress={handleCreateExpense}
+        color={Colors?.primary}
+      />
     </View>
-  )
+  );
 }
 
-export default CreateExpenseScreen
-
+export default CreateExpenseScreen;
