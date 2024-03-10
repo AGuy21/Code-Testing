@@ -11,7 +11,7 @@ export const useSignedInCheck = () => {
   const { isSignedIn } = useAuth();
   return useEffect(() => {
     if (isSignedIn) {
-      router.replace("(auth)");
+      router.replace("(auth)/Home");
     } else {
       console.log("User not signed in!");
     }

@@ -4,7 +4,10 @@ import { useUser } from "@clerk/clerk-expo";
 import { AppContext } from "../_layout";
 import { useGetProfileStyles } from "../../constants/styles";
 import ThemeSelection from "../../components/rendered/ThemeSelection";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function Profile() {
   const colorContext = React.useContext(AppContext);
@@ -15,10 +18,23 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      <Text style={{ color: Colors?.text, fontSize: wp(5), fontFamily: 'Lato-Bold', marginBottom: hp(1)}}>
+      <Text
+        style={{
+          color: Colors?.text,
+          fontSize: wp(5),
+          fontFamily: "Lato-Bold",
+          marginBottom: hp(1),
+        }}
+      >
         Signed in as:
       </Text>
-      <Text style={{ color: Colors?.primary, fontSize: wp(3), fontFamily: 'Lato-Bold'}}>
+      <Text
+        style={{
+          color: Colors?.primary,
+          fontSize: wp(3),
+          fontFamily: "Lato-Bold",
+        }}
+      >
         {user.user?.emailAddresses[0].emailAddress}!
       </Text>
 

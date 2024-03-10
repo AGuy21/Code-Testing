@@ -73,6 +73,7 @@ function CreateExpenseScreen(): JSX.Element {
 
   /**
    * Handles the creation of an expense.
+   * - Checks if the user has selected an expense type, payment frequency, and amount.
    * - Calls the createCollection function.
    * - Sets the refresh state to true, which refreshes the screen on Home.
    * - Resets the amount to 0 when creating a new expense.
@@ -80,6 +81,22 @@ function CreateExpenseScreen(): JSX.Element {
    * - Resets the expense name.
    */
   const handleCreateExpense = async () => {
+    if (expenseType === "") {
+      alert("Please select an expense type");
+      return;
+    }
+    if (expenseFrequency === "") {
+      alert("Please select a payment frequency");
+      return;
+    }
+    if (amount === 0) {
+      alert("Please select an amount");
+      return;
+    }
+    if (expenseName === "") {
+      alert("Please enter an expense name");
+      return;
+    }
     createCollection();
     setRefresh(true); // refreshes the screen on Home
 

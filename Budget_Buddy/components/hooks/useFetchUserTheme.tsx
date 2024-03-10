@@ -11,10 +11,10 @@ import { AppContext } from "../../app/_layout";
  */
 const useFetchUserTheme = () => {
     const user = useUser();
-
     const colorContext = React.useContext(AppContext);
     const setColors = colorContext?.setColors;
 
+    const [complete, setComplete] = useState<boolean>(false);
     const docRef = doc(
         FIREBASE_DB,
         "User Data",
@@ -28,8 +28,10 @@ const useFetchUserTheme = () => {
         const getThemeData = await getDoc(docRef).then((doc) => {
             if (doc.exists()) {
                 setColors(colorLib[doc.data()?.Theme]);
+                setComplete(true);
             } else {
                 setColors(colorLib.Basic);
+                setComplete(true);
             }
         });
     };
@@ -37,6 +39,8 @@ const useFetchUserTheme = () => {
     useEffect(() => {
         getAndSetData();
     }, []);
+
+    return complete;
 };
 
 export default useFetchUserTheme;

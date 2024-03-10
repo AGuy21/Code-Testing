@@ -88,7 +88,6 @@ export const AppContext = React.createContext<AppContextType | null>(null);
  * @returns The rendered JSX elements.
  */
 
-
 export default function App() {
   // context related declerations
   const [refresh, setRefresh] = useState<boolean>(true);
