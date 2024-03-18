@@ -1,13 +1,20 @@
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
-import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  TextInput,
+  View,
+	ImageBackground,
+} from "react-native";
+import React, {  useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-import ExpenseType from "../../components/rendered/ExpenseType";
-import PaymentFrequency from "../../components/rendered/PaymentFrequency";
-import AmountSlider from "../../components/rendered/AmountSlider";
+import ExpenseType from "../../components/ui/ExpenseType";
+import PaymentFrequency from "../../components/ui/PaymentFrequency";
+import AmountSlider from "../../components/ui/AmountSlider";
 import { collection, addDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../../FirebaseConfig";
 import { useUser } from "@clerk/clerk-expo";
@@ -34,6 +41,8 @@ function CreateExpenseScreen(): JSX.Element {
   const [expenseFrequency, setExpenseFrequency] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [expenseName, setExpenseName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [complete, setComplete] = useState<boolean>(false);
 
   const handleExpenseTypeChange = (newState: string) => {
     setExpenseType(newState); // sets expense type to new state
@@ -81,6 +90,7 @@ function CreateExpenseScreen(): JSX.Element {
    * - Resets the expense name.
    */
   const handleCreateExpense = async () => {
+    setLoading(true); // sets loading to true
     if (expenseType === "") {
       alert("Please select an expense type");
       return;
@@ -97,62 +107,94 @@ function CreateExpenseScreen(): JSX.Element {
       alert("Please enter an expense name");
       return;
     }
-    createCollection();
+    await createCollection();
     setRefresh(true); // refreshes the screen on Home
-
     setAmount(0); // resets amount to 0 when creating new expense
     setExpenseFrequency(""); // resets expense frequency to empty string when creating new expense
     setExpenseName(""); // resets expense name
+    setLoading(false); // sets loading to false
+    setComplete(true); // sets complete to true
+    let duration = setTimeout(() => {
+      setComplete(false);
+    }, 2000);
   };
   return (
-    <View style={styles.container}>
-      <Text style={styles.titleText}>Expense Tracker</Text>
-      <Text style={styles.subTitleText}>Add your expenses here</Text>
-      {/* When the user selects an expense type, the expense type is sent to the parent component 
-      and the parent can send its data on reset for components to be synced*/}
-      <ExpenseType
-        sendDataToParent={handleExpenseTypeChange}
-        typeDataToChild={expenseType}
-      />
+    <>
+      {loading ? (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color={Colors?.primary} />
+          <Text style={styles.titleText}>Creating Expense...</Text>
+        </View>
+      ) : (
+        <>
+          {complete ? (
+            <>
+							<ImageBackground
+								source={require("../../assets/gifs/Completed-Background-Gif.gif")}
+								style={{
+									width: wp(100),
+									height: hp(100),
+									alignItems: "center",
+									justifyContent: "center",
+								}}
+							>
+							<Text style={styles.titleText}>Expense Created!</Text>
+								
+							</ImageBackground>
+            </>
+          ) : (
+            <View style={styles.container}>
+              <Text style={styles.titleText}>Expense Tracker</Text>
+              <Text style={styles.subTitleText}>Add your expenses here</Text>
+              {/* When the user selects an expense type, the expense type is sent to the parent component 
+						and the parent can send its data on reset for components to be synced*/}
+              <ExpenseType
+                sendDataToParent={handleExpenseTypeChange}
+                typeDataToChild={expenseType}
+              />
 
-      <Text style={styles.mainText}>Payment Frequency</Text>
+              <Text style={styles.mainText}>Payment Frequency</Text>
 
-      <PaymentFrequency
-        sendDataToParent={handlePaymentFrequencyChange}
-        frequencyDataToChild={expenseFrequency}
-      />
+              <PaymentFrequency
+                sendDataToParent={handlePaymentFrequencyChange}
+                frequencyDataToChild={expenseFrequency}
+              />
 
-      <Text style={styles.mainText}>Amount</Text>
+              <Text style={styles.mainText}>Amount</Text>
 
-      <AmountSlider
-        sendDataToParent={handleAmountChange}
-        amountDataToChild={amount}
-      />
+              <AmountSlider
+                sendDataToParent={handleAmountChange}
+                amountDataToChild={amount}
+              />
 
-      <View style={{ marginTop: hp(10) }} />
+              <View style={{ marginTop: hp(10) }} />
 
-      <TextInput
-        placeholder="Enter Expense Name"
-        value={expenseName}
-        placeholderTextColor={Colors?.primary}
-        onChangeText={(text) => setExpenseName(text)}
-        style={{
-          textAlign: "center",
-          borderWidth: 2,
-          borderColor: Colors?.primary,
-          width: wp(60),
-          height: hp(5),
-          color: Colors?.primary,
-        }}
-      />
-      <View style={{ marginTop: hp(10) }} />
+              <TextInput
+                placeholder="Enter Expense Name"
+                value={expenseName}
+                placeholderTextColor={Colors?.primary}
+                onChangeText={(text) => setExpenseName(text)}
+                style={{
+                  textAlign: "center",
+                  borderBottomWidth: 2,
+                  borderBottomColor: Colors?.primary,
+                  width: wp(40),
+                  height: hp(5),
+                  color: Colors?.primary,
+                }}
+              />
+              <View style={{ marginTop: hp(10) }} />
 
-      <Button
-        title="Create Expense"
-        onPress={handleCreateExpense}
-        color={Colors?.primary}
-      />
-    </View>
+              <Button
+                title="Create Expense"
+                onPress={handleCreateExpense}
+                color={Colors?.primary}
+              />
+            </View>
+          )}
+        </>
+      )}
+    </>
   );
 }
 

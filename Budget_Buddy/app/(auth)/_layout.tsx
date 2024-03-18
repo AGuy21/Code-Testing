@@ -17,7 +17,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import { AppContext } from "../_layout";
 import useFetchUserTheme from "../../components/hooks/useFetchUserTheme";
 import colorLib from "../../constants/colorLib";
-import AuthLayoutLoading from "../../components/rendered/AuthLayoutLoading";
+import AuthLayoutLoading from "../../components/ui/AuthLayoutLoading";
 
 export default function SignedInNavigator() {
   const colorContext = React.useContext(AppContext);

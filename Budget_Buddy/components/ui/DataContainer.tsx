@@ -8,17 +8,25 @@ import { Entypo } from "@expo/vector-icons";
 import Loader from "./Loader";
 import { AppContext } from "../../app/_layout";
 import { useGetDataContainerStyles } from "../../constants/styles";
+import calculateMontlyTotal from "../functions/calculateMontlyTotal";
 
 /**
  * Props for the DataContainer component.
  */
-interface DataContainerProps {
+type DataContainerPropTypes = {
   show: string;
   incomeData: any[];
   expenseData: any[];
   loading: boolean;
+};
+
+interface allDataItemType {
+  name: string;
+  amount: number;
+  frequency: string;
 }
 
+interface allDataTypes extends Array<allDataItemType> {}
 /**
  * Renders a container component that displays income or expense data based on the selected show prop.
  *
@@ -30,12 +38,12 @@ interface DataContainerProps {
  * @returns {JSX.Element} The rendered DataContainer component.
  */
 
-const DataContainer: React.FC<DataContainerProps> = ({
+const DataContainer = ({
   show,
   incomeData,
   expenseData,
   loading,
-}) => {
+}: DataContainerPropTypes): JSX.Element => {
   const colorContext = React.useContext(AppContext);
   const Colors = colorContext?.Colors;
 
@@ -77,6 +85,9 @@ const DataContainer: React.FC<DataContainerProps> = ({
                 <Text style={styles.dataText}>{item.name}</Text>
                 <Text style={styles.dataText}>{item.frequency}</Text>
                 <Text style={styles.dataText}>${item.amount}</Text>
+                <Text style={[styles.dataText, {color: Colors?.income}]}>
+                  ${calculateMontlyTotal(item.amount, item.frequency)}
+                </Text>
               </View>
             )}
           />
@@ -116,6 +127,9 @@ const DataContainer: React.FC<DataContainerProps> = ({
                 <Text style={styles.dataText}>{item.name}</Text>
                 <Text style={styles.dataText}>{item.frequency}</Text>
                 <Text style={styles.dataText}>${item.amount}</Text>
+                <Text style={[styles.dataText, {color: Colors?.expense}]}>
+                  ${calculateMontlyTotal(item.amount, item.frequency)}
+                </Text>
               </View>
             )}
           />
@@ -142,6 +156,9 @@ const DataContainer: React.FC<DataContainerProps> = ({
                 <Text style={styles.dataText}>{item.name}</Text>
                 <Text style={styles.dataText}>{item.frequency}</Text>
                 <Text style={styles.dataText}>${item.amount}</Text>
+                <Text style={[styles.dataText, {color: Colors?.income}]}>
+                  ${calculateMontlyTotal(item.amount, item.frequency)}
+                </Text>
               </View>
             )}
           />
@@ -160,6 +177,9 @@ const DataContainer: React.FC<DataContainerProps> = ({
                 <Text style={styles.dataText}>{item.name}</Text>
                 <Text style={styles.dataText}>{item.frequency}</Text>
                 <Text style={styles.dataText}>${item.amount}</Text>
+                <Text style={[styles.dataText, { color: Colors?.expense }]}>
+                  ${calculateMontlyTotal(item.amount, item.frequency)}
+                </Text>
               </View>
             )}
           />

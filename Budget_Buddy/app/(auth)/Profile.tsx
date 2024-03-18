@@ -3,7 +3,7 @@ import React from "react";
 import { useUser } from "@clerk/clerk-expo";
 import { AppContext } from "../_layout";
 import { useGetProfileStyles } from "../../constants/styles";
-import ThemeSelection from "../../components/rendered/ThemeSelection";
+import ThemeSelection from "../../components/ui/ThemeSelection";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

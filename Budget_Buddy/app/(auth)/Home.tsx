@@ -1,11 +1,12 @@
 import { View } from "react-native";
 import React, { useState } from "react";
-import DataContainer from "../../components/rendered/DataContainer";
-import MoneyProgressBar from "../../components/rendered/MoneyProgressBar";
+import DataContainer from "../../components/ui/DataContainer";
+import MoneyProgressBar from "../../components/ui/MoneyProgressBar";
 import useFetchUsableData from "../../components/hooks/useFetchUsableData";
-import FilterButtonRow from "../../components/rendered/FilterButtonRow";
+import FilterButtonRow from "../../components/ui/FilterButtonRow";
 import { useGetHomeStyles } from "../../constants/styles";
 import { AppContext } from "../_layout";
+import DataContainerHeader from "../../components/ui/DataContainerHeader";
 
 /**
  * Renders the Home component.
@@ -46,6 +47,7 @@ export default function Home() {
       </View>
 
       <View style={styles.endContainer}>
+        <DataContainerHeader />
         <DataContainer
           show={show}
           expenseData={expenseData}

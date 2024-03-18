@@ -1,12 +1,11 @@
 import {
   Text,
-  StyleSheet,
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
 import React from "react";
-import Login from "../components/rendered/Login";
-import Split from "../components/rendered/Split";
+import Login from "../components/ui/Login";
+import Split from "../components/ui/Split";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { AppContext } from "./_layout";

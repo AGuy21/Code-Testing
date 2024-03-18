@@ -320,23 +320,25 @@ export const useGetDataContainerStyles = (Colors: ColorTypes) =>
       alignItems: "center",
       justifyContent: "center",
       height: hp(50),
-      width: wp(75),
+      width: wp(85),
     },
     dataContainer: {
       backgroundColor: Colors?.gray,
-      width: wp(75),
+      width: wp(85),
       height: hp(50),
       borderColor: Colors?.primary,
-      borderBottomRightRadius: 0,
-      borderBottomLeftRadius: 0,
-      borderRadius: wp(10),
-      padding: wp(5),
+      paddingHorizontal: wp(5),
+      paddingBottom: hp(10),
       borderWidth: wp(0.25),
       borderBottomWidth: 0,
     },
+    scrollDataContainer: {
+      width: wp(85),
+      height: hp(100),
+    },
     loadingDataContainer: {
       height: hp(45),
-      width: wp(70),
+      width: wp(80),
       alignItems: "center",
       justifyContent: "center",
     },
@@ -344,7 +346,7 @@ export const useGetDataContainerStyles = (Colors: ColorTypes) =>
       flexDirection: "row",
       gap: wp(3),
       height: hp(5),
-      width: wp(75),
+      width: wp(85),
       alignItems: "center",
     },
     dataText: {
@@ -353,7 +355,31 @@ export const useGetDataContainerStyles = (Colors: ColorTypes) =>
       fontFamily: "Lato-Bold",
     },
   });
-
+export const useGetDataContainerHeaderStyles = (Colors: ColorTypes) =>
+  StyleSheet.create({
+    container: {
+      width: wp(85),
+      height: hp(6),
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+    },
+    text: {
+      color: Colors?.text,
+      fontSize: wp(3),
+      fontFamily: "Lato-Bold",
+      overflow: 'visible'
+    },
+    itemSegment: {
+      backgroundColor: Colors?.gray,
+      width: wp(85/4),
+      height: hp(6),
+      borderColor: Colors?.primary,
+      borderWidth: wp(0.25),
+      alignItems: "center",
+      justifyContent: "center",
+    }
+  });
 export const useGetLandingPageStyles = (Colors: ColorTypes) =>
   StyleSheet.create({
     container: {
@@ -518,9 +544,9 @@ export const useGetProfileStyles = (Colors: ColorTypes) =>
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: Colors?.background,
-    }, 
+    },
   });
-export const useGetThemeSelectionStyles = (Colors: ColorTypes) => 
+export const useGetThemeSelectionStyles = (Colors: ColorTypes) =>
   StyleSheet.create({
     themeBtnCollumn: {
       flexDirection: "column",
