@@ -6,6 +6,7 @@ import expenseTotal from "../../components/functions/expenseTotal";
 import incomeTotal from "../../components/functions/incomeTotal";
 import { AppContext } from "../../app/_layout";
 import calculateMontlyTotal from "../functions/calculateMontlyTotal";
+import { moneyDataArrayProps } from "../../constants/types";
 
 /**
  * Custom hook for fetching and managing usable data from Firebase.
@@ -26,8 +27,8 @@ export default function useFetchUsableData() {
   // states for hook
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [incomeData, setIncomeData] = useState<any[]>([]); // This is used to make all of the user data in an object
-  const [expenseData, setExpenseData] = useState<any[]>([]); // This is used to make all of the user data in an object
+  const [incomeData, setIncomeData] = useState<moneyDataArrayProps>([]); // This is used to make all of the user data in an object
+  const [expenseData, setExpenseData] = useState<moneyDataArrayProps>([]); // This is used to make all of the user data in an object
 
   const [totalExpense, setTotalExpense] = useState<number>(1); // This is used to make all of the user data in an object
   const [totalIncome, setTotalIncome] = useState<number>(1); // This is used to make all of the user data in an object
@@ -119,8 +120,8 @@ export default function useFetchUsableData() {
   };
 
   useEffect(() => {
-    setLoading(true);
     if (refresh) {
+      setLoading(true); // sets loading to true only if needs to get data.
       getAndUseData().then(() => {
         // gets all data and then converts it
         setTotalExpense(expenseTotal(expenseRef));

@@ -93,18 +93,27 @@ function CreateExpenseScreen(): JSX.Element {
     setLoading(true); // sets loading to true
     if (expenseType === "") {
       alert("Please select an expense type");
+      setLoading(false);
       return;
     }
     if (expenseFrequency === "") {
       alert("Please select a payment frequency");
+      setLoading(false);
       return;
     }
     if (amount === 0) {
       alert("Please select an amount");
+      setLoading(false);
       return;
     }
     if (expenseName === "") {
       alert("Please enter an expense name");
+      setLoading(false);
+      return;
+    }
+    if (expenseName.length > 25) {
+      alert("Please enter an expense name with less than 25 characters");
+      setLoading(false);
       return;
     }
     await createCollection();

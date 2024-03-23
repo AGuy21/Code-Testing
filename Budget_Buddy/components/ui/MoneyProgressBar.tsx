@@ -10,6 +10,7 @@ import getIncomeOtherTotal from "../functions/getIncomeOtherTotal";
 import getExpenseOtherTotal from "../functions/getExpenseOtherTotal";
 import { AppContext } from "../../app/_layout";
 import { useGetMoneyProgressBarStyles } from "../../constants/styles";
+import { moneyDataArrayProps } from "../../constants/types";
 
 /**
  * Props for the MoneyProgressBar component.
@@ -18,8 +19,8 @@ interface MoneyProgressBarProps {
   expenseTotal: number;
   incomeTotal: number;
   show: string;
-  expenseData: any[];
-  incomeData: any[];
+  expenseData: moneyDataArrayProps;
+  incomeData: moneyDataArrayProps;
 }
 
 /**

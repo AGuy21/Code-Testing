@@ -20,6 +20,10 @@ export default {
     third: "yellow",
     other: "gray",
 
+    monthly: "#c2392b",   // Muted red 
+    bi_weekly: "#ff8040",  // Muted orange
+    weekly: "#ffff80",   // Muted yellow
+
     gray: "#282828", // Dark gray
     gray60: "#202020", // Darker gray
     transparent: "rgba(0,0,0,0)", // Transparent
@@ -36,11 +40,15 @@ export default {
     TabBarButtons: "#FFFFFF", // White
 
     income: "#29B6F6", // Blue
-    expense: "#ff8080", // Red
+    expense: "#ff8080", // Coral red
     first: "#5DADE2", // Blue
     second: "#2ECC71", // Green
     third: "#BDC3C7", // Light gray
     other: "#CFD7E2", // Light blue
+
+    monthly: "#c2392b",   // Muted red 
+    bi_weekly: "#FFE0B2",   // Light yellow
+    weekly: "#4CAF50",  // Light blue 
 
     gray: "#282828", // Dark gray
     gray60: "#202020", // Darker gray
@@ -64,6 +72,10 @@ export default {
     third: "#FFEB3B", // Light yellow
     other: "#FFE0B2", // Light orange
 
+    monthly: "#E03946",
+    bi_weekly: "#b5f4f1",  // Light blue 
+    weekly: "#ff60df",   // Light gray
+
     gray: "#424242", // Gray
     gray60: "#202020", // Darker gray
     transparent: "rgba(0,0,0,0)", // Transpare
@@ -86,12 +98,15 @@ export default {
     third: "#9E9E9E", // Light gray
     other: "#CFD7E2", // Light blue
 
+    monthly: "#c2392b",   // Muted red 
+    bi_weekly: "#b5f4f1",  // Light blue 
+    weekly: "#2ECC71",   // Green
+
     gray: "#282828", // Dark gray
     gray60: "#000000", // Black
     transparent: "rgba(0,0,0,0)", // Transparent
   },
   Island: {
-    // TODO: Change the colors
     primary: "#00C853", // Dark teal (more prominent green)
     secondary: "#FFFFFF", // White (remains the same)
     inactive: "#FFFFFF60", // White with 60% opacity (remains the same)
@@ -103,11 +118,15 @@ export default {
     TabBarButtons: "#FFFFFF", // White (remains the same)
 
     income: "#00E08A", // Even lighter, cooler green (more prominent)
-    expense: "#FFEA8A", // Light orange (remains the same)
+    expense: "#FFEA8A", // Light orange 
     first: "#0070C0", // Dark saturated blue (adjusted for more contrast)
     second: "#2ECC71", // Green (remains the same for comparison)
     third: "#D3D3D3", // Light greenish-gray (subtle green hint)
     other: "#BDBDBD", // Light greenish-gray (subtle green hint)
+
+    monthly: "#ff8080",   // Muted red 
+    bi_weekly: "#fafcb6", // Light yellow
+    weekly: "#5DADE2",  // Light blue 
 
     gray: "#777777", // Medium greenish-gray (stronger green presence)
     gray60: "#555555", // Darker greenish-gray (stronger green presence)
@@ -124,6 +143,10 @@ export default {
     background: "#282C34", // Dark blue
     TabBarButtons: "#FFFFFF", // White
 
+    monthly: "#ff8080", // Muted red
+    bi_weekly: "#FFEA8A",  // Light blue 
+    weekly: "#f2f2f2",   // Light gray
+    
     income: "#C62828", // Red
     expense: "#E03946", // Pink
     first: "#9B59B6", // Purple

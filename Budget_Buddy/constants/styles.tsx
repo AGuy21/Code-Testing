@@ -3,7 +3,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-
+import { ColorTypes } from "../constants/types";
 /**
  * Styles for all componenets that change the theme of the app.
  * uses the AppContext to get the current theme colors.
@@ -11,29 +11,7 @@ import {
  * @returns A stylesheet object.
  */
 
-type ColorTypes = {
-  primary: string;
-  secondary: string;
-  text: string;
-  secondaryText: string;
-  background: string;
 
-  inactive: string;
-  active: string;
-
-  TabBarButtons: string;
-
-  income: string;
-  expense: string;
-  first: string;
-  second: string;
-  third: string;
-  other: string;
-
-  gray: string;
-  gray60: string;
-  transparent: string;
-};
 
 export const useGetThemeChangingButtonsStyles = (Colors: ColorTypes) =>
   StyleSheet.create({
@@ -363,6 +341,7 @@ export const useGetDataContainerHeaderStyles = (Colors: ColorTypes) =>
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "row",
+      overflow: "hidden",
     },
     text: {
       color: Colors?.text,
