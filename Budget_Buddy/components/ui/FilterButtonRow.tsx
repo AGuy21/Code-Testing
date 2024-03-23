@@ -79,10 +79,10 @@ const FilterButtonRow: React.FC<FilterButtonRowProps> = ({
       ) : (
         <FilterButton active={false} name="Income" />
       )}
-      {show === "Expenses" ? (
-        <FilterButton active={true} name="Expenses" />
+      {show === "Expense" ? (
+        <FilterButton active={true} name="Expense" />
       ) : (
-        <FilterButton active={false} name="Expenses" />
+        <FilterButton active={false} name="Expense" />
       )}
     </View>
   );

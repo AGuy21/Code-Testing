@@ -13,10 +13,11 @@ import { moneyDataArrayProps } from "../../constants/types";
  * This hook retrieves income and expense data for a user, converts it into usable format,
  * and provides the total expense, total income, and loading state.
  *
+ * @param {boolean} BypassRefresh - A boolean value indicating whether to bypass the refresh state.
  * @returns An object containing incomeData, expenseData, totalExpense, totalIncome, and loading state.
  */
 
-export default function useFetchUsableData() {
+export default function useFetchUsableData({  BypassRefresh }: { BypassRefresh: boolean }) {
   // context states
   const appContext = React.useContext(AppContext); // This is used to refresh the screen
 
@@ -33,8 +34,8 @@ export default function useFetchUsableData() {
   const [totalExpense, setTotalExpense] = useState<number>(1); // This is used to make all of the user data in an object
   const [totalIncome, setTotalIncome] = useState<number>(1); // This is used to make all of the user data in an object
 
-  let tempIncomeData: { [key: string]: [string, number] } = {}; // This is used to make all of the user data in an object so it can be used in the leaderboard
-  let tempExpenseData: { [key: string]: [string, number] } = {}; // This is used to make all of the user data in an object so it can be used in the leaderboard
+  let tempIncomeData: { [key: string]: [string, number, string] } = {}; // This is used to make all of the user data in an object so it can be used in the leaderboard
+  let tempExpenseData: { [key: string]: [string, number, string] } = {}; // This is used to make all of the user data in an object so it can be used in the leaderboard
   // used as refs for total data as state is not updated in time
   let incomeRef = [];
   let expenseRef = [];
@@ -53,6 +54,7 @@ export default function useFetchUsableData() {
       tempIncomeData[doc.data()?.Name] = [
         doc.data()?.Frequency,
         doc.data()?.Amount,
+        doc.id,
       ];
     });
 
@@ -69,9 +71,11 @@ export default function useFetchUsableData() {
       tempExpenseData[doc.data()?.Name] = [
         doc.data()?.Frequency,
         doc.data()?.Amount,
+        doc.id,
       ];
     });
   };
+  
 
   const convertData = () => {
     // converts all income data
@@ -80,6 +84,7 @@ export default function useFetchUsableData() {
         name,
         frequency: data[0],
         amount: data[1],
+        id: data[2],
       })
     );
 
@@ -99,6 +104,7 @@ export default function useFetchUsableData() {
         name,
         frequency: data[0],
         amount: data[1],
+        id: data[2],
       })
     );
 
@@ -120,7 +126,7 @@ export default function useFetchUsableData() {
   };
 
   useEffect(() => {
-    if (refresh) {
+    if (refresh || BypassRefresh) {
       setLoading(true); // sets loading to true only if needs to get data.
       getAndUseData().then(() => {
         // gets all data and then converts it

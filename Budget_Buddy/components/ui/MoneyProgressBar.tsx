@@ -158,7 +158,7 @@ const MoneyProgressBar: React.FC<MoneyProgressBarProps> = ({
           </View>
         </>
       )}
-      {show === "Expenses" && (
+      {show === "Expense" && (
         <>
           <View style={styles.progressBarContainer}>
             {expenseData.slice(0, 3).map((item, index) => (

@@ -9,16 +9,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Ionicons } from "@expo/vector-icons";
-import { Octicons } from "@expo/vector-icons";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Feather, Octicons, Ionicons } from "@expo/vector-icons";
 import { useUser } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-expo";
 import { AppContext } from "../_layout";
 import useFetchUserTheme from "../../components/hooks/useFetchUserTheme";
 import colorLib from "../../constants/colorLib";
 import AuthLayoutLoading from "../../components/ui/AuthLayoutLoading";
-
 export default function SignedInNavigator() {
   const colorContext = React.useContext(AppContext);
 
@@ -97,7 +94,35 @@ export default function SignedInNavigator() {
               ),
             }}
           />
-
+          <Tabs.Screen
+            name="Modify"
+            options={{
+              headerShown: false,
+              title: "",
+              tabBarIcon: ({ color, size, focused }) => (
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingTop: hp(1),
+                    gap: hp(0.2),
+                  }}
+                >
+                  <Feather name="edit-3" size={size} color={color} />
+                  {focused && (
+                    <View
+                      style={{
+                        borderRadius: hp(1), // make it rounded
+                        borderWidth: hp(0.15),
+                        borderColor: Colors?.primary, // red border
+                        width: size * 1.2,
+                      }}
+                    />
+                  )}
+                </View>
+              ),
+            }}
+          />
           <Tabs.Screen
             name="Home"
             options={{

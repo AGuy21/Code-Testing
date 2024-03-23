@@ -31,7 +31,7 @@ export default function Home() {
   };
 
   const { incomeData, expenseData, loading, totalExpense, totalIncome } =
-    useFetchUsableData();
+    useFetchUsableData({ BypassRefresh: false});
 
   return (
     <View style={styles.container}>
