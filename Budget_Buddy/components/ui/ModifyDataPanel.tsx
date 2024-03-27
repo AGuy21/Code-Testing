@@ -32,6 +32,7 @@ export default function ModifyDataPanel({
                 name={item.name}
                 frequency={item.frequency}
                 amount={item.amount}
+                type={"Income"}
               />
             </View>
           )}
@@ -48,6 +49,7 @@ export default function ModifyDataPanel({
                 name={item.name}
                 frequency={item.frequency}
                 amount={item.amount}
+                type={"Expense"}
               />
             </View>
           )}
@@ -65,6 +67,7 @@ export default function ModifyDataPanel({
                 name={item.name}
                 frequency={item.frequency}
                 amount={item.amount}
+                type={"Income"}
               />
               </View>
             )}
@@ -79,6 +82,7 @@ export default function ModifyDataPanel({
                 name={item.name}
                 frequency={item.frequency}
                 amount={item.amount}
+                type={"Expense"}
               />
               </View>
             )}

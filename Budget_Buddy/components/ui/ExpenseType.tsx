@@ -59,6 +59,10 @@ const ExpenseType: React.FC<ExpenseTypeProps> = ({
     if (typeDataToChild === "") {
       // when the typeDataToChild is empty it will set the selectionMade to false
       setSelectionMade(false);
+    } else {
+      // when the typeDataToChild is not empty it will set the selectionMade to true
+      setSelectionMade(true);
+      setSelected(typeDataToChild.toString());
     }
   }, [typeDataToChild]);
 
@@ -71,7 +75,7 @@ const ExpenseType: React.FC<ExpenseTypeProps> = ({
           data={data}
           save="value"
           search={false}
-          placeholder="Select Expense Type"
+          placeholder= {selected}
           fontFamily="Lato-Reg"
           inputStyles={styles.input2}
           dropdownTextStyles={styles.text}

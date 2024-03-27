@@ -7,6 +7,7 @@ interface ModifyDataButtonProps {
   name: string;
   frequency: string;
   amount: number;
+  type: string;
 }
 
 const ModifyDataButton = ({
@@ -14,10 +15,11 @@ const ModifyDataButton = ({
   name,
   frequency,
   amount,
+  type,
 }: ModifyDataButtonProps) => {
   const handleButtonPress = () => {
     router.setParams
-    router.push({pathname: "ExpenseModifierScreen", params: {id: id, name: name, frequency: frequency, amount: amount}});
+    router.push({pathname: "ExpenseModifierScreen", params: {id: id, name: name, frequency: frequency, amount: amount, type: type}});
   };
 
   return (

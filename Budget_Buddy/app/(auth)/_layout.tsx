@@ -200,6 +200,17 @@ export default function SignedInNavigator() {
               ),
             }}
           />
+          <Tabs.Screen 
+            name="ExpenseModifierScreen"
+            options={{
+              title: '',
+              tabBarItemStyle: {
+                display: "none",
+                height: 0,
+                width: 0,
+              }
+            }}
+          />
         </Tabs>
       )}
     </>

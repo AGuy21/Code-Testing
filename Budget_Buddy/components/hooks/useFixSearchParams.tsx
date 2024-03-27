@@ -8,6 +8,8 @@ interface useFixSearchParamsProps {
   name: string | string[];
   frequency: string | string[];
   amount: string | string[];
+  type: string | string[];
+  id: string | string[];
 }
 
 /**
@@ -21,20 +23,28 @@ const useFixSearchParams = ({
   name,
   frequency,
   amount,
+  type,
+  id
 }: useFixSearchParamsProps) => {
   const [fixedName, setFixedName] = useState<string>("");
   const [fixedFrequency, setFixedFrequency] = useState<string>("");
   const [fixedAmount, setFixedAmount] = useState<number>(0);
+  const [fixedType, setFixedType] = useState<string>("");
+  const [fixedId, setFixedId] = useState<string>("");
   useEffect(() => {
     setFixedName(name.toString());
     setFixedFrequency(frequency.toString());
     setFixedAmount(+amount.toString());
+    setFixedType(type.toString());
+    setFixedId(id.toString());
   });
 
   return {
     fixedName: fixedName,
     fixedFrequency: fixedFrequency,
     fixedAmount: fixedAmount,
+    fixedType: fixedType,
+    fixedId: fixedId,
   };
 };
 
