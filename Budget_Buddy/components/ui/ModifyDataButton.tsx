@@ -1,6 +1,8 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TouchableOpacity } from "react-native";
 import React from "react";
 import { router } from "expo-router";
+import { AppContext } from "../../app/_layout";
+import { useGetModifyButtonStyles } from "../../constants/styles";
 
 interface ModifyDataButtonProps {
   id: string;
@@ -17,18 +19,27 @@ const ModifyDataButton = ({
   amount,
   type,
 }: ModifyDataButtonProps) => {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
+  const styles = useGetModifyButtonStyles(Colors);
   const handleButtonPress = () => {
-    router.setParams
-    router.push({pathname: "ExpenseModifierScreen", params: {id: id, name: name, frequency: frequency, amount: amount, type: type}});
+    router.setParams;
+    router.push({
+      pathname: "ExpenseModifierScreen",
+      params: {
+        id: id,
+        name: name,
+        frequency: frequency,
+        amount: amount,
+        type: type,
+      },
+    });
   };
 
   return (
-    <View>
-      <Button
-        title={name + " " + frequency + " " + amount}
-        onPress={() => handleButtonPress()}
-      />
-    </View>
+    <TouchableOpacity style={styles.button} onPress={() => handleButtonPress()}>
+      <Text style={styles.buttonText}>{name}</Text>
+    </TouchableOpacity>
   );
 };
 

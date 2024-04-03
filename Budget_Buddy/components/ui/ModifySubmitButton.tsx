@@ -10,7 +10,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useUser } from "@clerk/clerk-expo";
-
+import { router } from "expo-router";
 // props of params passed into the button
 interface ModifySubmitButtonProps {
   editedName: string;
@@ -39,6 +39,8 @@ const ModifySubmitButton = ({
   editedFrequency,
   id,
 }: ModifySubmitButtonProps) => {
+  const colorContext = React.useContext(AppContext);
+  const Colors = colorContext?.Colors;
   const user = useUser();
   /**
    * This function will run when the modified expense has the same type
@@ -65,7 +67,7 @@ const ModifySubmitButton = ({
    * This is because we delete the doc and add a new doc
    * this deletes the doc specified and adds a new doc into the mew specified collection
    * @returns {Promise<void>} - A promise that resolves when the doc is updated which.
-  */
+   */
   const handleDiffrentTypeSubmit = async (): Promise<void> => {
     console.log(fixedType, editedType);
     const docRef = doc(
@@ -96,21 +98,27 @@ const ModifySubmitButton = ({
    * This function will run when the user presses the submit button
    * This will see if the types are the same and then run the respective functions.
    * Then after it is complete it will refresh the users phone.
-  */
+   */
   const HandleSubmit = async () => {
     if (fixedType === editedType) {
       handleSameTypeSubmit().then(() => {
         setRefresh(true);
+        router.replace("Home");
       });
     } else {
       handleDiffrentTypeSubmit().then(() => {
         setRefresh(true);
+        router.replace("Home");
       });
     }
   };
   return (
     <View>
-      <Button title="Submit" onPress={() => HandleSubmit()} />
+      <Button
+        title="Submit Modification"
+        onPress={() => HandleSubmit()}
+        color={Colors.primary}
+      />
     </View>
   );
 };

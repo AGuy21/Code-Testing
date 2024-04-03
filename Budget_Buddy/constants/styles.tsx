@@ -11,8 +11,6 @@ import { ColorTypes } from "../constants/types";
  * @returns A stylesheet object.
  */
 
-
-
 export const useGetThemeChangingButtonsStyles = (Colors: ColorTypes) =>
   StyleSheet.create({
     themeBtn: {
@@ -351,17 +349,17 @@ export const useGetDataContainerHeaderStyles = (Colors: ColorTypes) =>
       color: Colors?.text,
       fontSize: wp(3),
       fontFamily: "Lato-Bold",
-      overflow: 'visible'
+      overflow: "visible",
     },
     itemSegment: {
       backgroundColor: Colors?.gray,
-      width: wp(85/4),
+      width: wp(85 / 4),
       height: hp(6),
       borderColor: Colors?.primary,
       borderWidth: wp(0.25),
       alignItems: "center",
       justifyContent: "center",
-    }
+    },
   });
 export const useGetLandingPageStyles = (Colors: ColorTypes) =>
   StyleSheet.create({
@@ -653,5 +651,68 @@ export const useGetHomeStyles = (Colors: ColorTypes) =>
       alignItems: "center",
       justifyContent: "flex-end",
       flex: 1.2,
+    },
+  });
+
+export const useGetModifyScreenStyles = (Colors: ColorTypes) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: Colors?.background,
+      flex: 1,
+      alignItems: "center",
+    },
+    loadingContainer: {
+      backgroundColor: Colors?.background,
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    title: {
+      color: Colors?.text,
+      fontSize: wp(6),
+      fontFamily: "Lato-Bold",
+      marginVertical: hp(2),
+    },
+  });
+
+export const useGetModifyPanelStyles = (Colors: ColorTypes) =>
+  StyleSheet.create({
+    container: {
+      width: wp(85),
+      height: hp(75),
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: hp(10),
+    },
+    mainContainer: {
+      backgroundColor: Colors?.background,
+      width: wp(95),
+      height: hp(75),
+    },
+  });
+export const useGetModifyButtonStyles = (Colors: ColorTypes) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: Colors?.background,
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    button: {
+      width: wp(60),
+      height: hp(5),
+      borderWidth: wp(0.5),
+      borderColor: Colors?.primary,
+      backgroundColor: Colors?.inactive,
+      opacity: 1,
+      borderRadius: wp(100),
+      alignItems: "center",
+      justifyContent: "center",
+      marginVertical: hp(1),
+    },
+    buttonText: {
+      fontFamily: "Lato-Bold",
+      fontSize: wp(4),
+      color: Colors?.text,
     },
   });

@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import React, { useState } from "react";
 import DataContainer from "../../components/ui/DataContainer";
 import MoneyProgressBar from "../../components/ui/MoneyProgressBar";
@@ -7,7 +7,6 @@ import FilterButtonRow from "../../components/ui/FilterButtonRow";
 import { useGetHomeStyles } from "../../constants/styles";
 import { AppContext } from "../_layout";
 import DataContainerHeader from "../../components/ui/DataContainerHeader";
-
 /**
  * Renders the Home component.
  *
@@ -31,7 +30,7 @@ export default function Home() {
   };
 
   const { incomeData, expenseData, loading, totalExpense, totalIncome } =
-    useFetchUsableData({ BypassRefresh: false});
+    useFetchUsableData({ BypassRefresh: false });
 
   return (
     <View style={styles.container}>

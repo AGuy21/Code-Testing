@@ -16,6 +16,7 @@ import { AppContext } from "../_layout";
 import useFetchUserTheme from "../../components/hooks/useFetchUserTheme";
 import colorLib from "../../constants/colorLib";
 import AuthLayoutLoading from "../../components/ui/AuthLayoutLoading";
+
 export default function SignedInNavigator() {
   const colorContext = React.useContext(AppContext);
 
@@ -200,15 +201,16 @@ export default function SignedInNavigator() {
               ),
             }}
           />
-          <Tabs.Screen 
+          <Tabs.Screen
             name="ExpenseModifierScreen"
             options={{
-              title: '',
+              title: "",
               tabBarItemStyle: {
                 display: "none",
                 height: 0,
                 width: 0,
-              }
+              },
+              headerShown: false,
             }}
           />
         </Tabs>

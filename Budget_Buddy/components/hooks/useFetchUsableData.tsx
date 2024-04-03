@@ -17,7 +17,11 @@ import { moneyDataArrayProps } from "../../constants/types";
  * @returns An object containing incomeData, expenseData, totalExpense, totalIncome, and loading state.
  */
 
-export default function useFetchUsableData({  BypassRefresh }: { BypassRefresh: boolean }) {
+export default function useFetchUsableData({
+  BypassRefresh,
+}: {
+  BypassRefresh: boolean;
+}) {
   // context states
   const appContext = React.useContext(AppContext); // This is used to refresh the screen
 
@@ -75,7 +79,6 @@ export default function useFetchUsableData({  BypassRefresh }: { BypassRefresh: 
       ];
     });
   };
-  
 
   const convertData = () => {
     // converts all income data
