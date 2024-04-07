@@ -28,7 +28,7 @@ interface ModifySubmitButtonProps {
  * @param {string} editedType - The type of the expense.
  * @param {string} fixedType - The type of the expense.
  * @param {string} editedFrequency - The frequency of the expense.
- * @param {string} id - The id of the expense.
+ * @param  {string} id  - The id of the expense.
  * @returns {JSX.Element} The JSX element representing the ModifySubmitButton component.
  */
 const ModifySubmitButton = ({

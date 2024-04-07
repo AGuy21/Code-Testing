@@ -4,6 +4,9 @@ import { useGetThemeSelectionStyles } from "../../constants/styles";
 import { AppContext } from "../../app/_layout";
 import ThemeChangeButton from "./ThemeChangingButton";
 
+/**
+ * Component for selecting a theme for the user.
+ */
 const ThemeSelection = () => {
   const colorContext = React.useContext(AppContext);
   const Colors = colorContext?.Colors;

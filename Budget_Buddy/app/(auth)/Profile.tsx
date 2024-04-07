@@ -9,6 +9,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
+/**
+ * Renders the user profile component.
+ * Displays the signed-in user's email address and provides a theme selection option.
+ */
 export default function Profile() {
   const colorContext = React.useContext(AppContext);
   const Colors = colorContext?.Colors;

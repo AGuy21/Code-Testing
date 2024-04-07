@@ -42,7 +42,7 @@ export default function LandingPage() {
       </Animated.View>
 
       <Animated.View entering={FadeInUp.springify().duration(3500).delay(500)}>
-        <Text style={styles.title}> BudgetBuddy</Text>
+        <Text style={styles.title}> BudgetBuddy </Text>
         <Text style={styles.text}> Take Control of your finances</Text>
       </Animated.View>
       <Animated.View
