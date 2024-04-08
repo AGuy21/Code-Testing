@@ -6,6 +6,7 @@ import Loader from "../../components/ui/Loader";
 import { AppContext } from "../_layout";
 import { useGetModifyScreenStyles } from "../../constants/styles";
 import FilterButtonRow from "../../components/ui/FilterButtonRow";
+import { DataContext } from "./_layout";
 
 /**
  * Represents the ModifyScreen component.
@@ -13,13 +14,14 @@ import FilterButtonRow from "../../components/ui/FilterButtonRow";
  */
 export default function ModifyScreen() {
   const colorContext = React.useContext(AppContext);
+  const data = React.useContext(DataContext);
+  
+  const { incomeData, expenseData, loading, totalExpense, totalIncome } = data;
   const Colors = colorContext?.Colors;
   const styles = useGetModifyScreenStyles(Colors);
   
   // Fetching income and expense data using a custom hook
-  const { incomeData, expenseData, loading } = useFetchUsableData({
-    BypassRefresh: true,
-  });
+
 
   const [show, setShow] = useState<string>("All");
 

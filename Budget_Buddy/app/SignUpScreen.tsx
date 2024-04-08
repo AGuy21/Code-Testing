@@ -67,7 +67,7 @@ export default function SignUpScreen() {
       });
 
       await setActive({ session: completeSignUp.createdSessionId });
-      router.replace("(auth)");
+      router.replace("(auth)/Home.tsx");
     } catch (err: any) {
       console.log(JSON.stringify(err, null, 2));
       alert(err.errors[0].message);

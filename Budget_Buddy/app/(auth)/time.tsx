@@ -1,15 +1,26 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import {  Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 
-const time = () => {
+const Time = () => {
+  const [currentTime, setCurrentTime] = useState(moment().format('MMMM Do YYYY, h:mm:ss a'));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(moment().format('MMMM Do YYYY, h:mm:ss a'));
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <View>
-      <Text>{moment().add(1, 'days').calendar()}</Text>
+      <Text>{currentTime}</Text>
     </View>
-  )
-}
+  );
+};
 
-export default time
+export default Time;
 

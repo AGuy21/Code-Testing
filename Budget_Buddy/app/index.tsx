@@ -19,8 +19,7 @@ import { useSignedInCheck } from "../components/hooks/userSignedIn";
 import { AppContext } from "./_layout";
 import { useGetLandingPageStyles } from "../constants/styles";
 
-// Keep the splash screen visible while we fetch resources
-
+// Keep the splash screen visible while we fetch resource
 export default function LandingPage() {
   const colorContext = React.useContext(AppContext);
   const Colors = colorContext?.Colors;

@@ -7,6 +7,7 @@ import FilterButtonRow from "../../components/ui/FilterButtonRow";
 import { useGetHomeStyles } from "../../constants/styles";
 import { AppContext } from "../_layout";
 import DataContainerHeader from "../../components/ui/DataContainerHeader";
+import { DataContext } from "./_layout";
 /**
  * Renders the Home component.
  *
@@ -14,6 +15,9 @@ import DataContainerHeader from "../../components/ui/DataContainerHeader";
  */
 export default function Home() {
   const colorContext = React.useContext(AppContext);
+  const data = React.useContext(DataContext);
+  
+  const { incomeData, expenseData, loading, totalExpense, totalIncome } = data;
   const Colors = colorContext?.Colors;
 
   const styles = useGetHomeStyles(Colors);
@@ -29,8 +33,7 @@ export default function Home() {
     setShow(show);
   };
 
-  const { incomeData, expenseData, loading, totalExpense, totalIncome } =
-    useFetchUsableData({ BypassRefresh: false });
+
 
   return (
     <View style={styles.container}>

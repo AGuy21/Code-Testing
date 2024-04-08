@@ -16,7 +16,16 @@ import { AppContext } from "../_layout";
 import useFetchUserTheme from "../../components/hooks/useFetchUserTheme";
 import colorLib from "../../constants/colorLib";
 import AuthLayoutLoading from "../../components/ui/AuthLayoutLoading";
+import useFetchUsableData from "../../components/hooks/useFetchUsableData";
 
+
+export const DataContext = React.createContext({
+  incomeData: [],
+  expenseData: [],
+  loading: true,
+  totalExpense: 0,
+  totalIncome: 0,
+});
 export default function SignedInNavigator() {
   const colorContext = React.useContext(AppContext);
 
@@ -30,11 +39,11 @@ export default function SignedInNavigator() {
   // sets the loading state to false when the theme data is fetched
   useEffect(() => {
     if (complete) {
-      setLoading(false);
+      setLayoutLoading(false);
     }
   }, [complete]);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [layoutLoading, setLayoutLoading] = useState<boolean>(true);
 
   /**
    * Logs out the user, resets the colors, and navigates to the authentication page.
@@ -46,174 +55,187 @@ export default function SignedInNavigator() {
     router.replace("../Authenticate"); //TODO: This causes a bug but not a full crash fix later @AGuy21 3/29/22
   };
 
+  const { incomeData, expenseData, loading, totalExpense, totalIncome } =
+    useFetchUsableData({ BypassRefresh: false });
+
+
+  const DataContextValues = {
+    incomeData,
+    expenseData,
+    loading,
+    totalExpense,
+    totalIncome,
+  };
   return (
     <>
-      {loading ? (
+      {layoutLoading ? (
         <AuthLayoutLoading />
       ) : (
-        <Tabs
-          screenOptions={{
-            tabBarActiveBackgroundColor: Colors?.gray,
-            tabBarInactiveBackgroundColor: Colors?.gray,
+        <DataContext.Provider value={DataContextValues}>
+          <Tabs
+            screenOptions={{
+              tabBarActiveBackgroundColor: Colors?.gray,
+              tabBarInactiveBackgroundColor: Colors?.gray,
 
-            tabBarActiveTintColor: Colors?.TabBarButtons,
-            tabBarInactiveTintColor: Colors?.TabBarButtons,
+              tabBarActiveTintColor: Colors?.TabBarButtons,
+              tabBarInactiveTintColor: Colors?.TabBarButtons,
 
-            tabBarStyle: {
-              // adds red to top of tab bar
-              borderTopColor: Colors?.primary,
-              borderTopWidth: hp(0.15),
-            },
-          }}
-        >
-          <Tabs.Screen
-            name="index"
-            options={{
-              headerShown: false,
-              title: "",
-              tabBarIcon: ({ color, size, focused }) => (
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingTop: hp(1),
-                    gap: hp(0.2),
-                  }}
-                >
-                  <Ionicons name="add" size={size} color={color} />
-                  {focused && (
-                    <View
-                      style={{
-                        borderRadius: hp(1), // make it rounded
-                        borderWidth: hp(0.15),
-                        borderColor: Colors?.primary, // red border
-                        width: size * 1.2,
-                      }}
-                    />
-                  )}
-                </View>
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="Modify"
-            options={{
-              headerShown: false,
-              title: "",
-              tabBarIcon: ({ color, size, focused }) => (
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingTop: hp(1),
-                    gap: hp(0.2),
-                  }}
-                >
-                  <Feather name="edit-3" size={size} color={color} />
-                  {focused && (
-                    <View
-                      style={{
-                        borderRadius: hp(1), // make it rounded
-                        borderWidth: hp(0.15),
-                        borderColor: Colors?.primary, // red border
-                        width: size * 1.2,
-                      }}
-                    />
-                  )}
-                </View>
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="Home"
-            options={{
-              headerShown: false,
-              title: "",
-              tabBarIcon: ({ color, size, focused }) => (
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingTop: hp(1),
-                    gap: hp(0.2),
-                  }}
-                >
-                  <Entypo name="home" size={size} color={color} />
-                  {focused && (
-                    <View
-                      style={{
-                        borderRadius: hp(1), // make it rounded
-                        borderWidth: hp(0.15),
-                        borderColor: Colors?.primary, // red border
-                        width: size * 1.2,
-                      }}
-                    />
-                  )}
-                </View>
-              ),
-            }}
-          />
-
-          <Tabs.Screen
-            name="Profile"
-            options={{
-              headerShown: true,
-              title: "",
-              headerTintColor: Colors?.primary,
-              headerTitle: "Profile",
-              headerTitleAlign: "center",
-              headerTitleAllowFontScaling: true,
-              headerShadowVisible: false,
-              headerStyle: {
-                backgroundColor: Colors?.background,
-                height: hp(12),
+              tabBarStyle: {
+                // adds red to top of tab bar
+                borderTopColor: Colors?.primary,
+                borderTopWidth: hp(0.15),
               },
-              headerRight: () => (
-                <Pressable onPress={doLogout} style={{ marginRight: wp(4) }}>
-                  <Octicons
-                    name="sign-out"
-                    size={wp(6)}
-                    color={Colors?.primary}
-                  />
-                </Pressable>
-              ),
-              tabBarIcon: ({ color, size, focused }) => (
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingTop: hp(1),
-                    gap: hp(0.2),
-                  }}
-                >
-                  <Ionicons name="settings-sharp" size={size} color={color} />
-                  {focused && (
-                    <View
-                      style={{
-                        borderRadius: hp(1), // make it rounded
-                        borderWidth: hp(0.15),
-                        borderColor: Colors?.primary, // red border
-                        width: size * 1.2,
-                      }}
+            }}
+          >
+            <Tabs.Screen
+              name="index"
+              options={{
+                headerShown: false,
+                title: "",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <View
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingTop: hp(1),
+                      gap: hp(0.2),
+                    }}
+                  >
+                    <Ionicons name="add" size={size} color={color} />
+                    {focused && (
+                      <View
+                        style={{
+                          borderRadius: hp(1), // make it rounded
+                          borderWidth: hp(0.15),
+                          borderColor: Colors?.primary, // red border
+                          width: size * 1.2,
+                        }}
+                      />
+                    )}
+                  </View>
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="Modify"
+              options={{
+                headerShown: false,
+                title: "",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <View
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingTop: hp(1),
+                      gap: hp(0.2),
+                    }}
+                  >
+                    <Feather name="edit-3" size={size} color={color} />
+                    {focused && (
+                      <View
+                        style={{
+                          borderRadius: hp(1), // make it rounded
+                          borderWidth: hp(0.15),
+                          borderColor: Colors?.primary, // red border
+                          width: size * 1.2,
+                        }}
+                      />
+                    )}
+                  </View>
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="Home"
+              options={{
+                headerShown: false,
+                title: "",
+                tabBarIcon: ({ color, size, focused }) => (
+                  <View
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingTop: hp(1),
+                      gap: hp(0.2),
+                    }}
+                  >
+                    <Entypo name="home" size={size} color={color} />
+                    {focused && (
+                      <View
+                        style={{
+                          borderRadius: hp(1), // make it rounded
+                          borderWidth: hp(0.15),
+                          borderColor: Colors?.primary, // red border
+                          width: size * 1.2,
+                        }}
+                      />
+                    )}
+                  </View>
+                ),
+              }}
+            />
+
+            <Tabs.Screen
+              name="Profile"
+              options={{
+                headerShown: true,
+                title: "",
+                headerTintColor: Colors?.primary,
+                headerTitle: "Profile",
+                headerTitleAlign: "center",
+                headerTitleAllowFontScaling: true,
+                headerShadowVisible: false,
+                headerStyle: {
+                  backgroundColor: Colors?.background,
+                  height: hp(12),
+                },
+                headerRight: () => (
+                  <Pressable onPress={doLogout} style={{ marginRight: wp(4) }}>
+                    <Octicons
+                      name="sign-out"
+                      size={wp(6)}
+                      color={Colors?.primary}
                     />
-                  )}
-                </View>
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="ExpenseModifierScreen"
-            options={{
-              title: "",
-              tabBarItemStyle: {
-                display: "none",
-                height: 0,
-                width: 0,
-              },
-              headerShown: false,
-            }}
-          />
-        </Tabs>
+                  </Pressable>
+                ),
+                tabBarIcon: ({ color, size, focused }) => (
+                  <View
+                    style={{
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingTop: hp(1),
+                      gap: hp(0.2),
+                    }}
+                  >
+                    <Ionicons name="settings-sharp" size={size} color={color} />
+                    {focused && (
+                      <View
+                        style={{
+                          borderRadius: hp(1), // make it rounded
+                          borderWidth: hp(0.15),
+                          borderColor: Colors?.primary, // red border
+                          width: size * 1.2,
+                        }}
+                      />
+                    )}
+                  </View>
+                ),
+              }}
+            />
+            <Tabs.Screen
+              name="ExpenseModifierScreen"
+              options={{
+                title: "",
+                tabBarItemStyle: {
+                  display: "none",
+                  height: 0,
+                  width: 0,
+                },
+                headerShown: false,
+              }}
+            />
+          </Tabs>
+        </DataContext.Provider>
       )}
     </>
   );
