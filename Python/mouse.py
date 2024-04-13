@@ -34,7 +34,7 @@ def on_press(key):
         return False  # stop listener
     else:
         print(f"Key pressed: {k}")
-
+ 
 # Key listener setup
 listener = keyboard.Listener(on_press=on_press)
 listener.start()  # start to listen on a separate thread
