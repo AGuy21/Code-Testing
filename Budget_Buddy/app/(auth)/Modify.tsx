@@ -15,13 +15,12 @@ import { DataContext } from "./_layout";
 export default function ModifyScreen() {
   const colorContext = React.useContext(AppContext);
   const data = React.useContext(DataContext);
-  
+
   const { incomeData, expenseData, loading, totalExpense, totalIncome } = data;
   const Colors = colorContext?.Colors;
   const styles = useGetModifyScreenStyles(Colors);
-  
-  // Fetching income and expense data using a custom hook
 
+  // Fetching income and expense data using a custom hook
 
   const [show, setShow] = useState<string>("All");
 

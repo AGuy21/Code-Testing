@@ -17,15 +17,23 @@ import useFetchUserTheme from "../../components/hooks/useFetchUserTheme";
 import colorLib from "../../constants/colorLib";
 import AuthLayoutLoading from "../../components/ui/AuthLayoutLoading";
 import useFetchUsableData from "../../components/hooks/useFetchUsableData";
+import { moneyDataArrayProps } from "../../constants/types";
 
-
-export const DataContext = React.createContext({
+export const DataContext = React.createContext<DataContextProps>({
   incomeData: [],
   expenseData: [],
   loading: true,
   totalExpense: 0,
   totalIncome: 0,
 });
+
+interface DataContextProps {
+  incomeData: moneyDataArrayProps;
+  expenseData: moneyDataArrayProps;
+  loading: boolean;
+  totalExpense: number;
+  totalIncome: number;
+}
 export default function SignedInNavigator() {
   const colorContext = React.useContext(AppContext);
 
@@ -57,7 +65,6 @@ export default function SignedInNavigator() {
 
   const { incomeData, expenseData, loading, totalExpense, totalIncome } =
     useFetchUsableData({ BypassRefresh: false });
-
 
   const DataContextValues = {
     incomeData,

@@ -1,26 +1,27 @@
-import {  Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import moment from 'moment'
+import { Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { DataContext } from "./_layout";
+import calculateGoalArrival from "../../components/functions/calculateGoalArrival";
 
+/**
+ * Represents a component that displays the goal arrival information based on income and expense data.
+ */
 const Time = () => {
-  const [currentTime, setCurrentTime] = useState(moment().format('MMMM Do YYYY, h:mm:ss a'));
+  // This will get the data from the data context
+  const data = React.useContext(DataContext);
+  const { incomeData, expenseData, totalExpense, totalIncome } = data;
+  const [goalArrival, setGoalArrival] = useState<string>();
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(moment().format('MMMM Do YYYY, h:mm:ss a'));
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    setGoalArrival(calculateGoalArrival({ incomeData, expenseData, goal: 680, totalExpense, totalIncome}));
+    console.log(goalArrival);
   }, []);
 
   return (
     <View>
-      <Text>{currentTime}</Text>
+      <Text>{goalArrival}</Text>
     </View>
   );
 };
 
 export default Time;
-

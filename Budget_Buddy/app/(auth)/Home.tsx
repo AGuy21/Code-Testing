@@ -16,7 +16,7 @@ import { DataContext } from "./_layout";
 export default function Home() {
   const colorContext = React.useContext(AppContext);
   const data = React.useContext(DataContext);
-  
+
   const { incomeData, expenseData, loading, totalExpense, totalIncome } = data;
   const Colors = colorContext?.Colors;
 
@@ -32,8 +32,6 @@ export default function Home() {
   const handleShowChange = (show: string) => {
     setShow(show);
   };
-
-
 
   return (
     <View style={styles.container}>

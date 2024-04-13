@@ -4,9 +4,9 @@ import {
   Text,
   TextInput,
   View,
-	ImageBackground,
+  ImageBackground,
 } from "react-native";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -138,18 +138,17 @@ function CreateExpenseScreen(): JSX.Element {
         <>
           {complete ? (
             <>
-							<ImageBackground
-								source={require("../../assets/gifs/Completed-Background-Gif.gif")}
-								style={{
-									width: wp(100),
-									height: hp(100),
-									alignItems: "center",
-									justifyContent: "center",
-								}}
-							>
-							<Text style={styles.titleText}>Expense Created!</Text>
-								
-							</ImageBackground>
+              <ImageBackground
+                source={require("../../assets/gifs/Completed-Background-Gif.gif")}
+                style={{
+                  width: wp(100),
+                  height: hp(100),
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={styles.titleText}>Expense Created!</Text>
+              </ImageBackground>
             </>
           ) : (
             <View style={styles.container}>
