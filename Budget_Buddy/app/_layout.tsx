@@ -4,13 +4,14 @@
  * The App component provides a context and renders the main view of the app.
  */
 
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
+import { Slot } from 'expo-router'
 import { View, StyleSheet } from "react-native";
 import { useCallback, useState } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import * as SecureStore from "expo-secure-store";
-import { ClerkProvider } from "@clerk/clerk-expo";
 import { Stack } from "expo-router";
 import React from "react";
 import colorLib from "../constants/colorLib";
@@ -18,7 +19,14 @@ import { ColorTypes } from "../constants/types";
 
 SplashScreen.preventAutoHideAsync();
 
-const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!
+
+if (!publishableKey) {
+  throw new Error(
+    'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env',
+  )
+}
+
 
 // token cache for saving users sessions on device
 const tokenCache = {
@@ -112,7 +120,7 @@ export default function App() {
      */
     <ClerkProvider
       tokenCache={tokenCache}
-      publishableKey={CLERK_PUBLISHABLE_KEY}
+      publishableKey={publishableKey}
     >
       <AppContext.Provider value={appContextValues}>
         <View style={styles.container} onLayout={onLayoutRootView}>
