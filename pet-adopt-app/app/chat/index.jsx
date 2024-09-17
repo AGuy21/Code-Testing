@@ -6,6 +6,7 @@ import { db } from "../../Configs/FirebaseConfig";
 import { useUser } from "@clerk/clerk-expo";
 import { GiftedChat } from "react-native-gifted-chat";
 import moment from 'moment'
+
 export default function ChatScreen() {
   const { user } = useUser();
 

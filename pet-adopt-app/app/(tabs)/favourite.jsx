@@ -1,10 +1,10 @@
 import { View, Text, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
-import Shared from "./../../Shared/Shared";
+import Shared from "../../Shared/Shared";
 import { useUser } from "@clerk/clerk-expo";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../Configs/FirebaseConfig";
-import PetListItem from "./../../components/PetListItem";
+import PetListItem from "../../components/PetListItem";
 export default function Favourite() {
   const { user } = useUser();
   
