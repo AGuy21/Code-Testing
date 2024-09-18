@@ -10,6 +10,7 @@ export default function Inbox() {
 
   const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState([]);
+  
   useEffect(() => {
     user && GetUserList();
   }, []);
@@ -40,7 +41,7 @@ export default function Inbox() {
       );
       const result = {
         docId: item.id,
-        ...otherUser[1],
+        ...otherUser[0],
       };
       list.push(result);
     });
