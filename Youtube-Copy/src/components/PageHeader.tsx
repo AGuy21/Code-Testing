@@ -12,22 +12,21 @@ import { useState } from "react";
  * @returns PageHeader
  */
 const PageHeader = () => {
+  /* showFullWidthSearch is true if the user clicks to search icon which is shown if screen size is too small to fit full width search bar
+  when the full width search bar is shown it also shows a back arrow which will set showFullWidthSearch to false */
   const [showFullWidthSearch, setShowFullWidthSearch] = useState(false);
 
-  // string interpolation wasn't working so we make a const that holds the value of if FullWidthSearch should be used
-  // getShowFullWidthSearchStyleHide is for when the show full is true we want to show and vice versa for getShowFullWidthSearchStyleShow
-  const getShowFullWidthSearchStyleHide = showFullWidthSearch
-    ? "hidden"
-    : "flex";
-  const getShowFullWidthSearchStyleShow = showFullWidthSearch
-    ? "flex"
-    : "hidden md:flex ";
+  /* string interpolation wasn't working so we make a const that holds the value of if FullWidthSearch should be used
+  getShowFullWidthSearchStyleHide is for when the show full is true we want to show and vice versa for getShowFullWidthSearchStyleShow */
+
   return (
     <div className="flex gap-10 lg:gap-20 justify-between pd-2 mb-6 mx-4">
       {/*Left side of  Header  has the menu button and youtube logo*/}
       <div
         className={
-          "gap-4 items-center flex-shrink-0 " + getShowFullWidthSearchStyleHide
+          showFullWidthSearch
+            ? "gap-4 items-center flex-shrink-0 hidden"
+            : "gap-4 items-center flex-shrink-0 flex"
         }
       >
         <Button variant="ghost" size="icon">
@@ -42,7 +41,9 @@ const PageHeader = () => {
       {/* Middle of Header used to search up anything with either typing or voice */}
       <form
         className={
-          "gap-4 flex-grow justify-center " + getShowFullWidthSearchStyleShow
+          showFullWidthSearch
+            ? "gap-4 flex-grow justify-center flex"
+            : "gap-4 flex-grow justify-center hidden"
         }
       >
         {/* If we are going to need to show the full search on a small screen we need the back button
@@ -75,7 +76,11 @@ const PageHeader = () => {
       </form>
 
       <div
-        className={"flex-shrink-0 md:gap-2 " + getShowFullWidthSearchStyleHide}
+        className={
+          showFullWidthSearch
+            ? "flex-shrink-0 md:gap-2 hidden"
+            : "flex-shrink-0 md:gap-2 flex"
+        }
       >
         {/*We use md:hidden here so when the screen size is medium or higher the buttons will not show as 
         the main search bar will show when the screen size is medium or larger */}
