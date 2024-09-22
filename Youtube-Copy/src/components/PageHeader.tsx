@@ -16,9 +16,6 @@ const PageHeader = () => {
   when the full width search bar is shown it also shows a back arrow which will set showFullWidthSearch to false */
   const [showFullWidthSearch, setShowFullWidthSearch] = useState(false);
 
-  /* string interpolation wasn't working so we make a const that holds the value of if FullWidthSearch should be used
-  getShowFullWidthSearchStyleHide is for when the show full is true we want to show and vice versa for getShowFullWidthSearchStyleShow */
-
   return (
     <div className="flex gap-10 lg:gap-20 justify-between pd-2 mb-6 mx-4">
       {/*Left side of  Header  has the menu button and youtube logo*/}
