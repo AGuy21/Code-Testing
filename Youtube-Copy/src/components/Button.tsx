@@ -49,9 +49,9 @@ type ButtonProps = VariantProps<typeof buttonStyles> & ComponentProps<"button">;
  * The button will also take in className for further custom styling and take basic button component props
  * @param className - Basic className for all other styling but will not override button variations or other styling in @function buttonStyles
  * This component will also take in child props that would be taken in from button components aswell
- * @returns A custom button with style variants and added classnames and all child props needed
+ * @returns {JSX.Element} A custom button with style variants and added classnames and all child props needed
  */
-export function Button({ variant, size, className, ...props }: ButtonProps) {
+export function Button({ variant, size, className, ...props }: ButtonProps): JSX.Element {
   return (
     <button
       {...props}

@@ -26,13 +26,13 @@ const TRANSLATION_AMOUNT = 200; // default is 200px
  * @param categories - The categories that the user has given by parent function from user's data
  * @param selectedCategory - The selected category that is given by parent function
  * @param onSelect - A void function that will change the selected category in the parent function
- * @returns 
+ * @returns {JSX.Element} Category Pills Element
  */
 const CategoryPills = ({
   categories,
   selectedCategory,
   onSelect,
-}: CategoryPillProps) => {
+}: CategoryPillProps): JSX.Element => {
 
   const [translate, setTranslate] = useState(0); // how much the page is translated to the right
   const [isLeftNotVisible, setIsLeftNotVisible] = useState(false); // are the left side pills visible

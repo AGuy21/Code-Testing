@@ -9,9 +9,10 @@ import { useState } from "react";
  * 1. Left side with menu and logo
  * 2. Middle with search bar and microphone search
  * 3. Account change, notifications, and other icons
- * @returns PageHeader
+ * 
+ * @returns {JSX.Element} PageHeader Element
  */
-const PageHeader = () => {
+const PageHeader = (): JSX.Element => {
   /* showFullWidthSearch is true if the user clicks to search icon which is shown if screen size is too small to fit full width search bar
   when the full width search bar is shown it also shows a back arrow which will set showFullWidthSearch to false */
   const [showFullWidthSearch, setShowFullWidthSearch] = useState(false);
