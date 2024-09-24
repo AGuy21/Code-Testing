@@ -9,7 +9,7 @@ import { twMerge } from "tailwind-merge";
  * If no specific style is specified it will default to @variation {variant} default & @variation {size} default
  * The basic style that will always be active no matter the variation will be "transition-colors"
  */
-const buttonStyles = cva(["transition-colors"], {
+export const buttonStyles = cva(["transition-colors"], {
   variants: {
     variant: {
       default: ["bg-secondary", "hover:bg-secondary-hover"],
