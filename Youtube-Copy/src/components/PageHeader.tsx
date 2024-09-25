@@ -27,7 +27,7 @@ const PageHeader = (): JSX.Element => {
         className={
           showFullWidthSearch
             ? "gap-4 flex-grow justify-center flex"
-            : "gap-4 flex-grow justify-center hidden"
+            : "gap-4 flex-grow justify-center hidden md:flex"
         }
       >
         {/* If we are going to need to show the full search on a small screen we need the back button
