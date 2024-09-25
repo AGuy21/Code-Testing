@@ -2,6 +2,7 @@ import { ArrowLeft, Bell, Menu, Mic, Search, Upload, User } from "lucide-react";
 import logo from "../assets/logo.png";
 import { Button } from "./Button";
 import { useState } from "react";
+import { useSidebarContext } from "../contexts/SidebarContexts";
 
 /**
  * PageHeader is a component that will show the youtube header,
@@ -9,7 +10,7 @@ import { useState } from "react";
  * 1. Left side with menu and logo
  * 2. Middle with search bar and microphone search
  * 3. Account change, notifications, and other icons
- * 
+ *
  * @returns {JSX.Element} PageHeader Element
  */
 const PageHeader = (): JSX.Element => {
@@ -19,23 +20,8 @@ const PageHeader = (): JSX.Element => {
 
   return (
     <div className="flex gap-10 lg:gap-20 justify-between pd-2 mb-6 mx-4">
-      {/*Left side of  Header  has the menu button and youtube logo*/}
-      <div
-        className={
-          showFullWidthSearch
-            ? "gap-4 items-center flex-shrink-0 hidden"
-            : "gap-4 items-center flex-shrink-0 flex"
-        }
-      >
-        <Button variant="ghost" size="icon">
-          <Menu /> {/*This is menu icon not component*/}
-        </Button>
-
-        <a href="/">
-          <img src={logo} className="h-6"></img>
-        </a>
-      </div>
-
+      {/*Left side of  Header  has the menu button and youtube logo made into a seperate component due to it being used in another component*/}
+      <PageHeaderFirstSection hidden={showFullWidthSearch} />
       {/* Middle of Header used to search up anything with either typing or voice */}
       <form
         className={
@@ -109,4 +95,31 @@ const PageHeader = (): JSX.Element => {
   );
 };
 
+type PageHeaderFirstSectionProps = {
+  hidden?: boolean;
+};
+
+export function PageHeaderFirstSection({
+  hidden = false,
+}: PageHeaderFirstSectionProps) {
+  const { toggle } = useSidebarContext();
+
+  return (
+    <div
+      className={
+        hidden
+          ? "gap-4 items-center flex-shrink-0 hidden"
+          : "gap-4 items-center flex-shrink-0 flex"
+      }
+    >
+      <Button variant="ghost" size="icon" onClick={toggle}>
+        <Menu /> {/*This is menu icon not component*/}
+      </Button>
+
+      <a href="/">
+        <img src={logo} className="h-6"></img>
+      </a>
+    </div>
+  );
+}
 export default PageHeader;
