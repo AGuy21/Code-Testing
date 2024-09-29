@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 
 const Header = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -19,8 +19,8 @@ const Header = () => {
                 ? hoveredIndex === index
                   ? "translate-y-[-5px] text-csgold font-bold border-b-4 border-csgold"
                   : "scale-90 text-gray-400"
-                : null
-            } content-center text-center font-serif text-xl border-b-2 border-white self-center text-white`}
+                : "text-white  border-white"
+            } content-center text-center font-serif text-xl border-b-2 self-center `}
           >
             {item.title}
           </div>
