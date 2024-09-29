@@ -19,8 +19,8 @@ const Header = () => {
                 ? hoveredIndex === index
                   ? "translate-y-[-5px] text-csgold font-bold border-b-4 border-csgold"
                   : "scale-90 text-gray-400"
-                : "text-white  border-white"
-            } content-center text-center font-serif text-xl border-b-2 self-center `}
+                : "text-white border-white"
+            } content-center text-center font-serif text-sm md:text-lg lg:text-2xl xl:text-3xl header-text border-b-2 self-center`}
           >
             {item.title}
           </div>
