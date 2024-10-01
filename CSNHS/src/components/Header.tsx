@@ -13,8 +13,12 @@ const Header = () => {
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
+          {/*If the item is hovered (hovered index === item index the item will enlarge and change to yellow color,
+           if it isnt hovered AND no other item is hovered they will all be default size and color (white),
+            if it isn't hovered BUT an item is hovered that isnt the current item's style it will shrink and change to a light gray*/}
           <div
             className={`transition-all duration-300 ease-in-out transform ${
+              
               hoveredIndex != null
                 ? hoveredIndex === index
                   ? "translate-y-[-5px] text-csgold font-bold border-b-4 border-csgold"
