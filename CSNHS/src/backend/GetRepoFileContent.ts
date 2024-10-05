@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { RepoItem } from "../types/RepoItem";
+import { RepoFile } from "../types/RepoFile";
 
-export function GetRepoFileCode(itemPath: string) {
-    const [filesCode, setFilesCode] = useState<RepoItem | null>(null); // Use null for initial state
+export function GetRepoFileContent(itemPath: string) {
+    const [FileContent, setFileContent] = useState<RepoFile>(); // Use null for initial state
 
     useEffect(() => {
         const actualPath = itemPath.replace('/code', ''); // This should already be stripped of '/code'
@@ -13,12 +13,12 @@ export function GetRepoFileCode(itemPath: string) {
         axios
             .get(url)
             .then((response) => {
-                setFilesCode(response.data); // Assuming response.data is of type RepoItem
+                setFileContent(response.data); // Assuming response.data is of type RepoItem
             })
             .catch((error) => {
                 console.error("Error fetching data: ", error);
             });
     }, [itemPath]); // Depend only on itemPath
 
-    return filesCode; 
+    return FileContent; 
 }

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { GetRepoFileCode } from "../backend/GetRepoFileCode";
+import { GetRepoFileContent } from "../backend/GetRepoFileContent";
 
 
 const RepositoryFile = () => {
@@ -12,13 +12,13 @@ const RepositoryFile = () => {
   }
 
   // Pass the actual file path to GetRepoFileCode
-  const code = GetRepoFileCode(actualFilePath); 
+  const fileContent = GetRepoFileContent(actualFilePath); 
 
 
   return (
     <div>
       <h1>Viewing File: {actualFilePath}</h1>
-      <pre>{JSON.stringify(code, null, 2)}</pre> {/* Display the code */}
+      <pre>{JSON.stringify(fileContent, null, 2)}</pre> {/* Display the code */}
     </div>
   );
 };
