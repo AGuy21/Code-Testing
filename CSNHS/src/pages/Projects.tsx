@@ -59,7 +59,8 @@ const Projects = () => {
             {/*Showing all folder elements */}
           <div className=" w-full flex flex-col justify-start items-center bg-darkbg border border-darkoutline rounded-b-xl">
             {repoFolders?.map((folder, index) => (
-              <div
+              <a
+                href={"/projects/" + folder.name}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 key={index}
@@ -79,7 +80,7 @@ const Projects = () => {
                     />
                   </a>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
