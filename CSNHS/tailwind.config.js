@@ -18,6 +18,7 @@ export default {
         darkemphasized: '#262c36',
         textfordark: '#ced8ee',
         secondarydarktext: '#9198a1',
+        codeThemeBg: '#002b36',
       }
     },
   },

@@ -3,6 +3,7 @@ import { GetRepoFileContent } from "../backend/GetRepoFileContent";
 import { RepoFile } from "../types/RepoFile";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { solarizedDarkAtom  } from "react-syntax-highlighter/dist/esm/styles/prism"; // Change the style here
+import { ChevronLeft } from "lucide-react";
 
 const ErrorContent: RepoFile = {
   name: "Error",
@@ -34,25 +35,28 @@ const RepositoryFile = () => {
   // Pass the actual file path to GetRepoFileCode
   const fileContent = GetRepoFileContent(actualFilePath) || ErrorContent;
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
-    <div>
+    <div className="flex flex-col w-full  bg-codeThemeBg">
+      <div className="w-full h-[3vh] items-center justify-between border-b-2 flex gap-x-[30%]">
+        <button onClick={() => handleBack()}>
+          <ChevronLeft color="#fff" />
+        </button>
+        
+        <h1 className="font-mono text-textfordark text-xl">
+          {fileContent.name}
+        </h1>
+        <h1 className="font-mono text-textfordark text-xl">
+          {fileContent.size} kb
+        </h1>
+      </div>
       <SyntaxHighlighter language="javascript" style={solarizedDarkAtom  }>
         {atob(fileContent.content)}
       </SyntaxHighlighter>
     </div>
   );
 };
-/**
- * 
-
-const CodeBlock = ({ codeString }) => {
-  return (
-    <div style={{ padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "5px" }}>
-      <SyntaxHighlighter language="javascript" style={solarizedlight}>
-        {codeString}
-      </SyntaxHighlighter>
-    </div>
-  );
-};
- */
 export default RepositoryFile;
