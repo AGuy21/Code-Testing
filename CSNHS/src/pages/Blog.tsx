@@ -4,7 +4,7 @@ import Header from '../components/Header'
 const Blog = () => {
   return (
     <>
-      <Header />
+      <Header SelectedPage='Blog'/>
       <div>
         Blog
       </div>

@@ -3,12 +3,12 @@ import Header from '../components/Header'
 
 const Home = () => {
   return (
-    <>
-      <Header />
-      <div>
+    <div >
+      <Header SelectedPage='Home'/>
+      <div className='flex w-full h-[100vh] bg-darkbg'>
         Home
       </div>
-    </>
+    </div>
   )
 }
 

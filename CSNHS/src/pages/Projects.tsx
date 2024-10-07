@@ -9,7 +9,7 @@ const Projects = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>();
   return (
     <div>
-      <Header />
+      <Header SelectedPage="Projects"/>
 
       <div className="bg-darkbg w-full min-h-screen flex flex-col justify-start align-top p-4 items-center pt-[5%]">
         {/*Github Profile & About the Page*/}
