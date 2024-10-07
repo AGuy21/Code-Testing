@@ -5,7 +5,7 @@ const Blog = () => {
   return (
     <>
       <Header SelectedPage='Blog'/>
-      <div>
+      <div className='flex w-full h-[100vh] bg-darkbg'>
         Blog
       </div>
     </>

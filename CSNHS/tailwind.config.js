@@ -16,6 +16,7 @@ export default {
         darkheader: '#151b23',
         darkoutline: '#282d35',
         darkemphasized: '#262c36',
+        darkemphasizedtext: '#5c6bc0',
         textfordark: '#ced8ee',
         secondarydarktext: '#9198a1',
         codeThemeBg: '#002b36',

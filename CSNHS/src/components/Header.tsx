@@ -51,7 +51,7 @@ const headerItems = [
     route: "/home",
   },
   {
-    title: "About",
+    title: "About Me",
     route: "/about",
   },
   {
