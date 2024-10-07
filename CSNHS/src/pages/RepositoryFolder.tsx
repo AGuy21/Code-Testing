@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { GetRepoFolderContents } from "../backend/GetRepoFolderContents";
 import { RepoItem } from "../types/RepoItem";
-import { FileCode2, FolderClosedIcon, Link } from "lucide-react";
+import { ChevronLeft, FileCode2, FolderClosedIcon, Link } from "lucide-react";
 import { useState, useEffect } from "react";
 import RepositoryFile from "./RepositoryFile";
 
@@ -11,17 +11,17 @@ const RepositoryFolder = () => {
   const { "*": repoPath } = useParams();
 
   if (!repoPath) {
-    throw Error("Repository Path came back as undefined")
+    throw Error("Repository Path came back as undefined");
   }
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isFileView, setIsFileView] = useState<boolean>(false); // State to toggle between folder and file view
 
   // Fetch the folder contents
-  const repoFolderContent = GetRepoFolderContents(repoPath) as RepoItem[];
+  const repoFolderContent = GetRepoFolderContents(repoPath);
 
   // Effect to detect if we're in file view
   useEffect(() => {
-    if (repoPath?.includes('/code')) {
+    if (repoPath?.includes("/code")) {
       setIsFileView(true);
     } else {
       setIsFileView(false);
@@ -35,19 +35,41 @@ const RepositoryFolder = () => {
 
   // Handle click on a file or folder
   const handleFileClick = (item: RepoItem) => {
-    console.log('Clicked item with type: ' + item.type);
+    console.log("Clicked item with type: " + item.type);
     if (item.type === "file") {
       // Navigate to code view for file
-      navigate(`/projects/${item.path}/code`);
+      if (item.name.endsWith('.gif') || item.name.endsWith('.jpg') || item.name.endsWith('.json')) {
+        alert('Sorry this file is not compatible for window-view. If you would like to open it up use the link button.');
+      } else {
+        navigate(`/projects/${item.path}/code`);
+      }
     } else {
       // Navigate to folder
       navigate(`/projects/${item.path}`);
     }
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
-    <div>
-      <div className="w-full flex flex-col justify-start items-center bg-darkbg border border-darkoutline rounded-b-xl">
+    <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-darkbg">
+      <div className="w-full h-[3vh] justify-start items-center border-b-2 flex">
+        <button
+          onClick={() => handleBack()}
+          className="flex gap-[1%] items-center"
+        >
+          <ChevronLeft color="#fff" />
+
+          <h1 className="font-sans text-secondarydarktext text-lg">Back</h1>
+        </button>
+
+        <h1 className="font-sans text-textfordark text-xl ml-[5%]">
+          {repoPath}
+        </h1>
+      </div>
+      <div className="w-full flex flex-col justify-center items-center bg-darkbg border border-darkoutline rounded-b-xl">
         {repoFolderContent?.map((item, index) => (
           <div
             onClick={() => handleFileClick(item)} // Handle file/folder click
@@ -66,13 +88,22 @@ const RepositoryFolder = () => {
                   color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"}
                 />
               )}
-              <h4 className="xl:text-2xl text-lg">{item.name}</h4>
+              <h4 className="font-sans xl:text-2xl text-lg">{item.name}</h4>
             </div>
 
-            <div className="flex w-full justify-end">
-              <a href={item._links.html}>
-                <Link color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"} />
-              </a>
+            <div className="flex w-[40%] overflow-auto h-[100%] justify-end items-end gap-[5%] ">
+              {item.type === "file" && (
+                <div className="font-sans text-secondarydarktext">
+                  <div>{item.size} kb </div>
+                </div>
+              )}
+              <div>
+                <a href={item._links.html}>
+                  <Link
+                    color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"}
+                  />
+                </a>
+              </div>
             </div>
           </div>
         ))}

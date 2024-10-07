@@ -40,16 +40,16 @@ const RepositoryFile = () => {
   };
 
   return (
-    <div className="flex flex-col w-full  bg-codeThemeBg">
+    <div className="flex flex-col w-full h-[100vh] bg-codeThemeBg">
       <div className="w-full h-[3vh] items-center justify-between border-b-2 flex gap-x-[30%]">
         <button onClick={() => handleBack()}>
           <ChevronLeft color="#fff" />
         </button>
         
-        <h1 className="font-mono text-textfordark text-xl">
+        <h1 className="font-sans text-textfordark text-xl">
           {fileContent.name}
         </h1>
-        <h1 className="font-mono text-textfordark text-xl">
+        <h1 className="font-sans text-textfordark text-xl">
           {fileContent.size} kb
         </h1>
       </div>
