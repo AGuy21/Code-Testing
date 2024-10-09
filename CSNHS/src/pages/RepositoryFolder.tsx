@@ -1,7 +1,7 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { GetRepoFolderContents } from "../backend/GetRepoFolderContents";
 import { RepoItem } from "../types/RepoItem";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import RepositoryFile from "./RepositoryFile";
 import RepoFolderContentItem from "../components/RepoFolderContentItem";
@@ -55,21 +55,32 @@ const RepositoryFolder = () => {
     window.history.back(); // Go back to the previous page
   };
 
+
   return (
     <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-darkbg"> {/*Header for folder's content */}
-      <div className="w-full h-[3vh] justify-start items-center border-b-2 flex"> {/*Back button for header */}
+      <div className="w-full h-[3vh] justify-between items-center border-b-2 flex p-x-[2%]"> {/*Back button for header */}
         <button
           onClick={() => handleBack()}
           className="flex gap-[1%] items-center"
         >
           <ChevronLeft color="#fff" />
 
-          <h1 className="font-sans text-secondarydarktext text-lg">Back</h1>
+          <h1 className="font-sans text-secondarydarktext text-xl">Back</h1>
         </button>
 
-        <h1 className="font-sans text-textfordark text-xl ml-[5%]"> {/*Shows folder's path for reference */}
+        <h1 className="font-sans text-textfordark text-xl ml-[5%] overflow-scroll no-scrollbar"> {/*Shows folder's path for reference */}
           {repoPath}
         </h1>
+
+        <Link
+          to={'/projects'}
+          className="flex gap-[2%] items-center"
+        >
+
+
+          <h1 className="font-sans text-secondarydarktext text-xl">Leave</h1>
+          <X color="#fff" />
+        </Link>
       </div>
       <div className="w-full flex flex-col justify-center items-center bg-darkbg border border-darkoutline rounded-b-xl"> {/*Shows all the folder's content with ReopFolderContentItem */}
         {repoFolderContent?.map((item, index) => (

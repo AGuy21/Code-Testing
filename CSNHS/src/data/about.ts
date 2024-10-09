@@ -4,7 +4,7 @@ import python from "../assets/python.png"; // Python icon
 import typescript from "../assets/typescript.png"; // TypeScript icon
 import react from "../assets/physics.png"; // React icon (using physics.png for React)
 import expo from "../assets/Expo.webp"; // Expo icon
-import clerk from "../assets/Clerk.avif"; // Clerk Auth icon
+import clerk from "../assets/clerk.png"; // Clerk Auth icon
 import firebase from "../assets/firebase-svgrepo-com.svg"; // Firebase icon
 
 //!This file will contain all necesssary hardcoded data for the About Me page (/pages/About.tsx)

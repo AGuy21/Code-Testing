@@ -37,7 +37,7 @@ const About = () => {
           <div className="font-sans w-full text-textfordark xl:text-6xl md:text-5xl text-4xl font-bold text-left border-b-2 pb-[2vh] border-darkoutline">
             My Languages:
           </div>
-          <div className="flex items-center w-full h-[10vh]">
+          <div className="flex items-center w-full h-[10vh] pt-[2%] ">
             {AboutMeData.ProgrammingLanguages.map((lang) => (
               <GridItem logo={lang.iconUrl} name={lang.name} />
             ))}
@@ -48,7 +48,7 @@ const About = () => {
           <div className="font-sans w-full text-textfordark xl:text-6xl md:text-5xl text-4xl font-bold text-left border-b-2 pb-[2vh] border-darkoutline">
             My Frameworks:
           </div>
-          <div className="flex items-center w-full h-[10vh]">
+          <div className="flex items-center w-full h-[10vh] pt-[2%] ">
             {AboutMeData.Frameworks.map((frameowrk) => (
               <GridItem logo={frameowrk.iconUrl} name={frameowrk.name} />
             ))}
@@ -56,12 +56,12 @@ const About = () => {
         </div>
 
         {/*Tech Stacks */}
-        <div className="flex gap-[5%]">
-          <div className="flex flex-col  mt-[5%]">
+        <div className="mt-[5%]">
+          <div className="flex flex-col">
             <div className="font-sans w-full text-textfordark xl:text-6xl md:text-5xl text-4xl font-bold text-left border-b-2 pb-[2vh] border-darkoutline">
-              Mobile TechStack:
+              Mobile App Tech-Stack:
             </div>
-            <div className="grid grid-cols-3 grid-rows-2 gap-[2%] h-[30vh] w-full ">
+            <div className="grid grid-cols-3 grid-rows-2  h-[35vh] w-full pt-[2%] ">
               {AboutMeData.TechStack.map((item) => (
                 <GridItem logo={item.iconUrl} name={item.name} />
               ))}

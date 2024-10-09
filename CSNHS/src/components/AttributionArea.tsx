@@ -29,10 +29,6 @@ const AttributionArea = (): JSX.Element => {
         link="https://github.com/gilbarbara/logos?ref=svgrepo.com"
         title="React logos"
       />
-      <AttributionItem
-        link="https://www.flaticon.com/free-icons/database"
-        title="Database icons"
-      />
     </div>
   );
 };
