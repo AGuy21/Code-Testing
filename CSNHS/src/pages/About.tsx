@@ -3,6 +3,8 @@ import Pic2 from "../assets/Pic2.jpeg";
 import { AboutMeData } from "../data/about";
 import GridItem from "../components/GridItem";
 import AttributionArea from "../components/AttributionArea";
+import {  Link } from "react-router-dom";
+import { Link2 } from "lucide-react";
 const About = () => {
   return (
     <>
@@ -30,6 +32,12 @@ const About = () => {
             <div className="font-sans text-textfordark xl:text-3xl md:text-2xl text-xl font-semibold text-left">
               I'm a mobile application developer
             </div>
+            <Link to='/blog' className="flex  w-full gap-[1%] items-center mt-[5%]">
+              <div className="font-sans text-secondarydarktext xl:text-3xl md:text-2xl text-xl font-semibold text-left">
+                Learn more about me?
+              </div>
+              <Link2 color="#FFF"/>
+            </Link>
           </div>
         </div>
         {/*Languages */}
@@ -56,12 +64,12 @@ const About = () => {
         </div>
 
         {/*Tech Stacks */}
-        <div className="mt-[5%]">
-          <div className="flex flex-col">
-            <div className="font-sans w-full text-textfordark xl:text-6xl md:text-5xl text-4xl font-bold text-left border-b-2 pb-[2vh] border-darkoutline">
-              Mobile App Tech-Stack:
+        <div className="flex  items-start mt-[5%]">
+          <div className="flex flex-col ">
+            <div className="font-sans w-full text-textfordark xl:text-6xl md:text-5xl text-4xl font-bold text-left border-b-2 pb-[2vh] border-darkoutline ">
+              My Mobile App Tech-Stack:
             </div>
-            <div className="grid grid-cols-3 grid-rows-2  h-[35vh] w-full pt-[2%] ">
+            <div className="grid grid-cols-3 grid-rows-2 h-[35vh] w-full pt-[2%] ">
               {AboutMeData.TechStack.map((item) => (
                 <GridItem logo={item.iconUrl} name={item.name} />
               ))}
