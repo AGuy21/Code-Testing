@@ -1,5 +1,8 @@
 import { RepoFile } from "../types/RepoFile";
 
+//!This file will contain all necesssary hardcoded data for Repository-related component files (/pages/RepositoryFile.tsx)
+
+//*Used as base content and will be shown if nothing is found, thus to be called 'ErrorContent'
 export const ErrorContent: RepoFile = {
     name: "Error",
     path: "",

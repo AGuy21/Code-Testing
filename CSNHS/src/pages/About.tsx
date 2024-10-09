@@ -4,13 +4,13 @@ import { AboutMeData } from "../data/about";
 import GridItem from "../components/GridItem";
 import AttributionArea from "../components/AttributionArea";
 const About = () => {
-  console.log(typeof AboutMeData);
   return (
     <>
       <Header SelectedPage="About Me" />
+      {/*Page Content */}
       <div className="flex flex-col w-full h-[200vh] bg-darkbg pt-[10%] px-[5%] items-center gap-y-[5vh] ">
-        {/*Header */}
-        <header className="flex flex-col md:flex-row w-full h-auto md:h-[40vh] justify-evenly items-center">
+        {/*Title of content page containing my name & image */}
+        <div className="flex flex-col md:flex-row w-full h-auto md:h-[40vh] justify-evenly items-center">
           <img
             src={Pic2}
             className="w-[40%] md:w-[30%] size-fit rounded-full mb-5 md:mb-0 md:mr-[5%]"
@@ -31,7 +31,7 @@ const About = () => {
               I'm a mobile application developer
             </div>
           </div>
-        </header>
+        </div>
         {/*Languages */}
         <div className="flex flex-col w-full mt-[5%]">
           <div className="font-sans w-full text-textfordark xl:text-6xl md:text-5xl text-4xl font-bold text-left border-b-2 pb-[2vh] border-darkoutline">

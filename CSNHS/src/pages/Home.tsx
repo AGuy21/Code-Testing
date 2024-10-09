@@ -5,8 +5,10 @@ const Home = () => {
   return (
     <>
       <Header SelectedPage="Home" />
+      {/*Page Content */}
       <div className="flex flex-col w-full h-full bg-darkbg p-[5%]">
         <div className="flex flex-col  gap-[2%] w-full">
+          {/*Title of Page */}
           <div className="flex flex-col lg:flex-row gap-2 mb-[2%] justify-start items-center">
             <div className="font-serif text-csblue xl:text-5xl md:text-4xl text-3xl font-bold text-left">
               Computer Science
@@ -18,6 +20,7 @@ const Home = () => {
               Honor Society
             </div>
           </div>
+          {/*First text box at home page containing the description of CSNHS */}
           <div className="flex flex-col gap-y-[4vh]">
             <div className="flex flex-col w-[100%] h-[40vh]  border-2  border-darkoutline p-[2%] gap-y-[2vh]">
               <h1 className="font-sans text-textfordark   xl:text-3xl lg:text-2xl text-xl font-bold mb-[2%]">
@@ -31,7 +34,7 @@ const Home = () => {
                 {homeText.CSNHSDescriptionP2}
               </div>
             </div>
-
+            {/*First text box at home page containing the why to join CSNHS, This is in list format*/}
             <div className="flex flex-col w-[100%] lg:h-[60vh] h-[70vh]  overflow-y-auto border-2 border-darkoutline p-[2%] gap-y-[2vh] my-8">
               <h2 className="font-sans text-textfordark   xl:text-3xl lg:text-2xl text-xl font-bold mb-[2%]">
                 Why You Should Join the Computer Science National Honor Society

@@ -1,15 +1,13 @@
-
-import Header from '../components/Header'
+import Header from "../components/Header";
 
 const Blog = () => {
   return (
     <>
-      <Header SelectedPage='Blog'/>
-      <div className='flex w-full h-[100vh] bg-darkbg'>
-        Blog
-      </div>
+      <Header SelectedPage="Blog" />
+      {/*Page Content */}
+      <div className="flex w-full h-[100vh] bg-darkbg">Blog</div>
     </>
-  )
-}
+  );
+};
 
-export default Blog
+export default Blog;

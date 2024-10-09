@@ -1,4 +1,8 @@
+//!This file will contain all necesssary hardcoded data for the home page (/pages/Home.tsx)
+
+//*We make a sperate component for the home text for ease of readability due to the sheer amount of text in the home page
 export const homeText = {
+  //Description of CSNHS
   CSNHSDescriptionP1: `
         CSNHS is a prestigious organization dedicated to fostering a
         love for computer science and promoting academic prowess in
@@ -7,6 +11,7 @@ export const homeText = {
         who demonstrate exceptional aptitude in computer science &
         leadership and helping them with the field of computer science.
     `,
+  //Description of CSNHS
   CSNHSDescriptionP2: `
         The misson of CSHS is to empower students to develop their
         skills in coding, problem-solving, and technology. They fdo this
@@ -18,6 +23,7 @@ export const homeText = {
         education, and the computer science field.
     `,
   WhyJoinCSNHSList: {
+    //List object for why to join CSNHS
     Recognition: `
         As a
         CSNHS member, your dedication to computer science and your
@@ -38,34 +44,33 @@ export const homeText = {
         guest speaker events that offer hands-on experience with
         industry trends and real-world applications.
     `,
-    
+
     ScholarshipOpportunities: `
         CSNHS members can gain access to exclusive scholarships and
         internships, giving you a competitive edge in securing
         internships with leading tech companies or scholarships for
         higher education.
     `,
-    
+
     Community: `
         Build
         leadership skills through outreach programs, tutoring, and
         volunteering, all while inspiring others to pursue computer
         science and STEM-related fields.
     `,
-    
-    CareerAdvancement:  `
+
+    CareerAdvancement: `
         Membership in CSNHS
         prepares you for in-demand tech careers such as software
         development, data science, cybersecurity, artificial
         intelligence, and more, ensuring you're equipped for the
         future job market.
     `,
-    
+
     EthicalInnovation: `
         Learn to
         use your coding skills ethically and responsibly, contributing
         to technologies that positively impact society.
     `,
-              
-  }
+  },
 };

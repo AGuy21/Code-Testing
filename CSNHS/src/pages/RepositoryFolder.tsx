@@ -50,13 +50,14 @@ const RepositoryFolder = () => {
     }
   };
 
+  // Function to handle the back navigation, uses window history to do this
   const handleBack = () => {
-    window.history.back();
+    window.history.back(); // Go back to the previous page
   };
 
   return (
-    <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-darkbg">
-      <div className="w-full h-[3vh] justify-start items-center border-b-2 flex">
+    <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-darkbg"> {/*Header for folder's content */}
+      <div className="w-full h-[3vh] justify-start items-center border-b-2 flex"> {/*Back button for header */}
         <button
           onClick={() => handleBack()}
           className="flex gap-[1%] items-center"
@@ -66,11 +67,11 @@ const RepositoryFolder = () => {
           <h1 className="font-sans text-secondarydarktext text-lg">Back</h1>
         </button>
 
-        <h1 className="font-sans text-textfordark text-xl ml-[5%]">
+        <h1 className="font-sans text-textfordark text-xl ml-[5%]"> {/*Shows folder's path for reference */}
           {repoPath}
         </h1>
       </div>
-      <div className="w-full flex flex-col justify-center items-center bg-darkbg border border-darkoutline rounded-b-xl">
+      <div className="w-full flex flex-col justify-center items-center bg-darkbg border border-darkoutline rounded-b-xl"> {/*Shows all the folder's content with ReopFolderContentItem */}
         {repoFolderContent?.map((item, index) => (
           <RepoFolderContentItem item={item} index={index} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex} handleFileClick={handleFileClick}/>
         ))}

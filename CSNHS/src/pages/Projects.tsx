@@ -11,8 +11,8 @@ const Projects = () => {
 
   return (
     <div>
-      <Header SelectedPage="Projects"/>
-
+      <Header SelectedPage="Projects" />
+      {/*Page Content */}
       <div className="bg-darkbg w-full min-h-screen flex flex-col justify-start align-top p-4 items-center pt-[5%]">
         {/*Github Profile & About the Page*/}
         <div className="flex w-[95%] mb-[5%] gap-[1%] flex-col">
@@ -50,7 +50,7 @@ const Projects = () => {
             them right here in the site
           </div>
         </div>
-              {/*Shows header for folder elements */}
+        {/*Shows header for folder elements */}
         <div className="w-[95%] flex flex-col justify-start items-center">
           <div className="w-full flex items-center  bg-darkheader xl:rounded-t-3xl rounded-t-xl border border-darkoutline p-[1%] gap-x-[1%]">
             <div className="font-sans xl:text-3xl lg:text-2xl md:text-xl sm:text-lg text-textfordark font-bold text-left pl-[1%]">
@@ -58,10 +58,15 @@ const Projects = () => {
               Projects
             </div>
           </div>
-            {/*Showing all folder elements */}
+          {/*Showing all folder elements */}
           <div className=" w-full flex flex-col justify-start items-center bg-darkbg border border-darkoutline rounded-b-xl">
             {repoFolders?.map((folder, index) => (
-              <RepoFolderItem folder={folder} index={index} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex}/>
+              <RepoFolderItem
+                folder={folder}
+                index={index}
+                hoveredIndex={hoveredIndex}
+                setHoveredIndex={setHoveredIndex}
+              />
             ))}
           </div>
         </div>
