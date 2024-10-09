@@ -1,4 +1,5 @@
 import Header from "../components/Header";
+import { homeText } from "../data/home";
 
 const Home = () => {
   return (
@@ -24,24 +25,13 @@ const Home = () => {
                 Society (CSNHS)
               </h1>
               <div className="font-sans text-textfordark xl:text-xl lg:text-lg text-md">
-                CSNHS is a prestigious organization dedicated to fostering a
-                love for computer science and promoting academic prowess in
-                computer science among high school student. They strive to
-                inspire the next generation of programmers by recognizing those
-                who demonstrate exceptional aptitude in computer science &
-                leadership and helping them with the field of computer science.
+                {homeText.CSNHSDescriptionP1}
               </div>
               <div className="font-sans text-textfordark xl:text-xl lg:text-lg text-md">
-                The misson of CSHS is to empower students to develop their
-                skills in coding, problem-solving, and technology. They do this
-                while encouraging collaboration, good behavior, and the pursuit
-                of higher education in the computer science field. As a member,
-                you'll join a network of peers with similar interests and have
-                the opportunity to engage in exciting projects and activities,
-                all designed to make a positive impact on both your school, your
-                education, and the computer science field.
+                {homeText.CSNHSDescriptionP2}
               </div>
             </div>
+
             <div className="flex flex-col w-[100%] lg:h-[60vh] h-[70vh]  overflow-y-auto border-2 border-darkoutline p-[2%] gap-y-[2vh] my-8">
               <h2 className="font-sans text-textfordark   xl:text-3xl lg:text-2xl text-xl font-bold mb-[2%]">
                 Why You Should Join the Computer Science National Honor Society
@@ -49,50 +39,32 @@ const Home = () => {
               </h2>
               <ul className="list-disc list-inside text-left space-y-4 font-sans text-textfordark xl:text-xl lg:text-lg text-md">
                 <li>
-                  <strong>Recognition of Academic Excellence:</strong> As a
-                  CSNHS member, your dedication to computer science and your
-                  academic achievements are formally recognized. This
-                  prestigious honor sets you apart and enhances your college
-                  applications and resumes.
+                  <strong>Recognition of Academic Excellence:</strong>{" "}
+                  {homeText.WhyJoinCSNHSList.Recognition}
                 </li>
                 <li>
-                  <strong>Networking & Mentorship:</strong> CSNHS connects you
-                  with a network of like-minded students, teachers, and
-                  professionals who share your passion for computer science.
-                  You'll have access to mentorship opportunities, guidance, and
-                  peer collaboration to help you grow both personally and
-                  academically.
+                  <strong>Networking & Mentorship:</strong>{" "}
+                  {homeText.WhyJoinCSNHSList.Networking}
                 </li>
                 <li>
                   <strong>Access to Resources & Events:</strong>{" "}
-                  Participate in workshops, coding challenges, hackathons, and
-                  guest speaker events that offer hands-on experience with
-                  industry trends and real-world applications.
+                  {homeText.WhyJoinCSNHSList.Resources}
                 </li>
                 <li>
                   <strong>Scholarship & Internship Opportunities:</strong>{" "}
-                  CSNHS members can gain access to exclusive scholarships and
-                  internships, giving you a competitive edge in securing
-                  internships with leading tech companies or scholarships for
-                  higher education.
+                  {homeText.WhyJoinCSNHSList.ScholarshipOpportunities}
                 </li>
                 <li>
-                  <strong>Leadership & Community Engagement:</strong> Build
-                  leadership skills through outreach programs, tutoring, and
-                  volunteering, all while inspiring others to pursue computer
-                  science and STEM-related fields.
+                  <strong>Leadership & Community Engagement:</strong>{" "}
+                  {homeText.WhyJoinCSNHSList.Community}
                 </li>
                 <li>
-                  <strong>Career Advancement:</strong> Membership in CSNHS
-                  prepares you for in-demand tech careers such as software
-                  development, data science, cybersecurity, artificial
-                  intelligence, and more, ensuring you're equipped for the
-                  future job market.
+                  <strong>Career Advancement:</strong>{" "}
+                  {homeText.WhyJoinCSNHSList.CareerAdvancement}
                 </li>
                 <li>
-                  <strong>Ethical & Responsible Innovation:</strong> Learn to
-                  use your coding skills ethically and responsibly, contributing
-                  to technologies that positively impact society.
+                  <strong>Ethical & Responsible Innovation:</strong>{" "}
+                  {homeText.WhyJoinCSNHSList.EthicalInnovation}
                 </li>
               </ul>
             </div>

@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { GetRepoFolderContents } from "../backend/GetRepoFolderContents";
 import { RepoItem } from "../types/RepoItem";
-import { ChevronLeft, FileCode2, FolderClosedIcon, Link } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { useState, useEffect } from "react";
 import RepositoryFile from "./RepositoryFile";
+import RepoFolderContentItem from "../components/RepoFolderContentItem";
 
 const RepositoryFolder = () => {
   //!IF IT IS A FILE IT WILL CAUSE AN INITAL 404 FETCHING ERROR THIS IS OK!! IT WILL BE FIXED BY RETURNING THE REPOSITORY FILE COMPONENT IT NEEDS TO BE THIS WAY OR ELSE APP BREAKS
@@ -38,7 +39,7 @@ const RepositoryFolder = () => {
     console.log("Clicked item with type: " + item.type);
     if (item.type === "file") {
       // Navigate to code view for file
-      if (item.name.endsWith('.gif') || item.name.endsWith('.jpg') || item.name.endsWith('.json')) {
+      if (item.name.endsWith('.gif') || item.name.endsWith('.jpg') || item.name.endsWith('.json') || item.name.endsWith('.jpeg')) {
         alert('Sorry this file is not compatible for window-view. If you would like to open it up use the link button.');
       } else {
         navigate(`/projects/${item.path}/code`);
@@ -71,41 +72,7 @@ const RepositoryFolder = () => {
       </div>
       <div className="w-full flex flex-col justify-center items-center bg-darkbg border border-darkoutline rounded-b-xl">
         {repoFolderContent?.map((item, index) => (
-          <div
-            onClick={() => handleFileClick(item)} // Handle file/folder click
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            key={index}
-            className="flex duration-300 font-sans text-xl px-[1%] py-[1%] text-textfordark border-t-2 border-darkoutline hover:text-indigo-400 hover:bg-darkemphasized hover:font-bold w-full p-[.5%] cursor-pointer"
-          >
-            <div className="flex w-full justify-start gap-[3%] items-center">
-              {item.type === "dir" ? (
-                <FolderClosedIcon
-                  color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"}
-                />
-              ) : (
-                <FileCode2
-                  color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"}
-                />
-              )}
-              <h4 className="font-sans xl:text-2xl text-lg">{item.name}</h4>
-            </div>
-
-            <div className="flex w-[40%] overflow-auto h-[100%] justify-end items-end gap-[5%] ">
-              {item.type === "file" && (
-                <div className="font-sans text-secondarydarktext">
-                  <div>{item.size} kb </div>
-                </div>
-              )}
-              <div>
-                <a href={item._links.html}>
-                  <Link
-                    color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"}
-                  />
-                </a>
-              </div>
-            </div>
-          </div>
+          <RepoFolderContentItem item={item} index={index} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex} handleFileClick={handleFileClick}/>
         ))}
       </div>
     </div>

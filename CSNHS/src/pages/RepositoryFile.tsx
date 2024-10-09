@@ -1,29 +1,11 @@
 import { useParams } from "react-router-dom";
 import { GetRepoFileContent } from "../backend/GetRepoFileContent";
-import { RepoFile } from "../types/RepoFile";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { solarizedDarkAtom  } from "react-syntax-highlighter/dist/esm/styles/prism"; // Change the style here
 import { ChevronLeft } from "lucide-react";
+import { ErrorContent } from "../data/repository";
 
-const ErrorContent: RepoFile = {
-  name: "Error",
-  path: "",
-  sha: "",
-  size: 999,
-  url: "",
-  html_url: "",
-  git_url: "",
-  download_url: null,
-  type: "file",
-  content:
-    "RXJyb3IgZmluZGluZyB0aGlzIGZpbGUncyBpbmZvcm1hdGlvbi4gUGxlYXNlIHJlbG9hZCBvciByZXBvciBwcm9ibGVtLiBUaGVyZSBtYXkgYWxzbyBiZSBhIGNoYW5jZSB0aGlzIGZpbGUgaGFzIG5vIGNvZGUu",
-  encoding: "base64",
-  _links: {
-    self: "",
-    git: "",
-    html: "",
-  },
-};
+
 const RepositoryFile = () => {
   const { "*": repoItemPath } = useParams();
   const actualFilePath = repoItemPath?.replace("/code", ""); // Correctly remove '/code'

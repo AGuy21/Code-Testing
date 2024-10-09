@@ -1,12 +1,14 @@
 import FetchRepositoryMainFolders from "../backend/FetchGithubRepoData";
 import Header from "../components/Header";
 import profile from "../assets/profile.png";
-import { FolderClosedIcon, Link } from "lucide-react";
+import { Link } from "lucide-react";
 import { useState } from "react";
+import RepoFolderItem from "../components/RepoFolderItem";
 
 const Projects = () => {
   const repoFolders = FetchRepositoryMainFolders();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>();
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   return (
     <div>
       <Header SelectedPage="Projects"/>
@@ -59,28 +61,7 @@ const Projects = () => {
             {/*Showing all folder elements */}
           <div className=" w-full flex flex-col justify-start items-center bg-darkbg border border-darkoutline rounded-b-xl">
             {repoFolders?.map((folder, index) => (
-              <a
-                href={"/projects/" + folder.name}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                key={index}
-                className="flex  duration-300 font-sans text-xl   px-[1%] py-[1%] text-textfordark border-t-2 border-darkoutline hover:text-indigo-400 hover:bg-darkemphasized hover:font-bold w-full p-[.5%]"
-              >
-                <div className="flex w-full justify-start gap-[3%] items-center">
-                  <FolderClosedIcon
-                    color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"}
-                  />
-                  <h4 className="xl:text-2xl  text-lg">{folder.name}</h4>
-                </div>
-
-                <div className="flex w-full justify-end">
-                  <a href={folder._links.html}>
-                    <Link
-                      color={hoveredIndex === index ? "#5c6bc0" : "#ced8ee"}
-                    />
-                  </a>
-                </div>
-              </a>
+              <RepoFolderItem folder={folder} index={index} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex}/>
             ))}
           </div>
         </div>

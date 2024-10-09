@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { headerItems } from "../data/header";
 
 interface HomeProps {
   SelectedPage: string;
@@ -45,23 +46,6 @@ const Header = ({ SelectedPage }: HomeProps) => {
   );
 };
 
-const headerItems = [
-  {
-    title: "Home",
-    route: "/home",
-  },
-  {
-    title: "About Me",
-    route: "/about",
-  },
-  {
-    title: "Projects",
-    route: "/projects",
-  },
-  {
-    title: "Blog",
-    route: "/blog",
-  },
-];
+
 
 export default Header;
