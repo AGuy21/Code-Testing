@@ -3,14 +3,14 @@ import Pic2 from "../assets/Pic2.jpeg";
 import { AboutMeData } from "../data/about";
 import GridItem from "../components/GridItem";
 import AttributionArea from "../components/AttributionArea";
-import {  Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Link2 } from "lucide-react";
 const About = () => {
   return (
     <>
       <Header SelectedPage="About Me" />
       {/*Page Content */}
-      <div className="flex flex-col w-full h-[200vh] bg-darkbg pt-[10%] px-[5%] items-center gap-y-[5vh] ">
+      <div className="flex flex-col w-full h-fit pb-[5%] bg-darkbg pt-[10%] px-[5%] items-center gap-y-[5vh] ">
         {/*Title of content page containing my name & image */}
         <div className="flex flex-col md:flex-row w-full h-auto md:h-[40vh] justify-evenly items-center">
           <img
@@ -32,11 +32,14 @@ const About = () => {
             <div className="font-sans text-textfordark xl:text-3xl md:text-2xl text-xl font-semibold text-left">
               I'm a mobile application developer
             </div>
-            <Link to='/blog' className="flex  w-full gap-[1%] items-center mt-[5%]">
+            <Link
+              to="/blog"
+              className="flex  w-full gap-[1%] items-center mt-[5%]"
+            >
               <div className="font-sans text-secondarydarktext xl:text-3xl md:text-2xl text-xl font-semibold text-left">
-                Learn more about me?
+                See my blog?
               </div>
-              <Link2 color="#FFF"/>
+              <Link2 color="#FFF" />
             </Link>
           </div>
         </div>
@@ -75,6 +78,19 @@ const About = () => {
               ))}
             </div>
           </div>
+        </div>
+        <div>
+          {AboutMeData.AboutMe.map((item) => (
+            <div className="mt-[5%]">
+              <div className="font-sans  text-darkemphasizedtext xl:text-6xl md:text-5xl text-4xl font-bold text-left mb-[2%]  pb-[1%] border-b-2 border-darkoutline">
+                {item.title}
+              </div>
+
+              <div className="font-sans text-textfordark xl:text-3xl md:text-2xl text-xl font-bold text-left">
+                {item.text}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <footer>

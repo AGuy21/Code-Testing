@@ -64,4 +64,23 @@ export const AboutMeData = {
       iconUrl: typescript,
     },
   ],
+  AboutMe: [
+    {
+      title: "What do i do?",
+      text: `
+            I do mobile application development as my main hobby. I also dive
+            into programming algorithms or scripts with python. And as of right
+            Now I am learning React JS for website creation.
+        `,
+    },
+    {
+      title: "About Me",
+      text: `
+          I have & always will love both computer science and nature. When I was a kid and first saw nature in it’s true beauty I always strived to learn more about how it worked, how it came to be, & how it affects society. 
+          With these ideals at a young age when I finally got introduced into technology when I was 11 I was just as struck with excitement to learn more about it just like nature when I was younger. 
+          Ever since then I have been learning more about computers, its effects on society , and how I make both my life and everyone else’s lives better. So, when I was first introduced into programming, 
+          I loved it since I could create something that I admired and I wanted to do mobile apps since it not only had a super far reach, but also my first ever piece of technology was a small android phone as a kid, so it just felt right.
+      `,
+    },
+  ],
 };
