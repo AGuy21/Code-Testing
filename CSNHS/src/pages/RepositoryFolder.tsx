@@ -39,7 +39,7 @@ const RepositoryFolder = () => {
     console.log("Clicked item with type: " + item.type);
     if (item.type === "file") {
       // Navigate to code view for file
-      if (item.name.endsWith('.gif') || item.name.endsWith('.jpg') || item.name.endsWith('.json') || item.name.endsWith('.jpeg')) {
+      if (item.name.endsWith('.gif') || item.name.endsWith('.jpg') || item.name.endsWith('.json') || item.name.endsWith('.jpeg') || item.name.endsWith('.ico')) { // These file types will crash the website, thus i hardcoded to make sure they dont get opened
         alert('Sorry this file is not compatible for window-view. If you would like to open it up use the link button.');
       } else {
         navigate(`/projects/${item.path}/code`);
