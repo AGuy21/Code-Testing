@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import RepositoryFile from "./RepositoryFile";
 import RepoFolderContentItem from "../components/RepoFolderContentItem";
 import { containsReadMeFile } from "../util/containsReadMeFile";
+import AboutProjectFile from "../components/AboutProjectFile";
 
 const RepositoryFolder = () => {
   //!IF IT IS A FILE IT WILL CAUSE AN INITAL 404 FETCHING ERROR THIS IS OK!! IT WILL BE FIXED BY RETURNING THE REPOSITORY FILE COMPONENT IT NEEDS TO BE THIS WAY OR ELSE APP BREAKS
@@ -21,7 +22,7 @@ const RepositoryFolder = () => {
 
   // Fetch the folder contents
   const repoFolderContent = GetRepoFolderContents(repoPath);
-  
+
   if (!repoFolderContent) { // Makes sure repository folder contains content
     throw Error("Repository Folder Was Fetched As Undefined")
   }
@@ -45,7 +46,7 @@ const RepositoryFolder = () => {
     console.log("Clicked item with type: " + item.type);
     if (item.type === "file") {
       // Navigate to code view for file
-      if (item.name.endsWith('.gif') || item.name.endsWith('.jpg') || item.name.endsWith('.json') || item.name.endsWith('.jpeg') || item.name.endsWith('.ico')) { // These file types will crash the website, thus i hardcoded to make sure they dont get opened
+      if (item.name.endsWith('.gif') || item.name.endsWith('.jpg') || item.name.endsWith('.jpeg') || item.name.endsWith('.ico')) { // These file types will crash the website, thus i hardcoded to make sure they dont get opened
         alert('Sorry this file is not compatible for window-view. If you would like to open it up use the link button.');
       } else {
         navigate(`/projects/${item.path}/code`);
@@ -65,14 +66,10 @@ const RepositoryFolder = () => {
   
 
   return (
-    <div className="flex flex-col w-full h-fit items-center justify-center bg-darkbg pb-[2%]"> {/*Header for folder's content */}
+    <div className="flex flex-col w-full h-fit min-h-[100vh] items-center justify-center bg-darkbg pb-[2%]"> {/*Header for folder's content */}
 
       {containsReadMeFile(repoFolderContent) && (
-        <div className="flex w-full bg-darkbg h-[10vh]">
-          <div className="font-sans text-secondarydarktext text-xl">
-            Has Readme File
-          </div>
-        </div>
+        <AboutProjectFile projectPath={repoPath}/>
       )}
 
       <div className="w-full h-[3vh] justify-between items-center border-b-2 flex p-x-[2%]"> {/*Back button for header */}

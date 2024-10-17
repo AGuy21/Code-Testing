@@ -1,19 +1,18 @@
 import axios from "axios"; // Axios for making HTTP requests
 import { useEffect, useState } from "react"; // React hooks for side effects and state management
 import { RepoFile } from "../types/RepoFile"; // Custom TypeScript type for repository files
+import { ErrorContent } from "../data/backend";
 
 /**
  * - Fetches the content of a specific file from a GitHub repository using the GitHub API.
  * - The file is specified by its path (`itemPath`). The content of the file is returned as a `RepoFile` object.
  *
  * @param {string} itemPath - The path of the file in the repository, which will be used to fetch it's content.
- * @returns {RepoFile | undefined} - Returns the content of the file as a `RepoFile` object, or undefined if not available yet.
+ * @returns {RepoFile} - Returns the content of the file as a `RepoFile` object, or ErrorContent if an error has occured.
  */
-export function GetRepoFileContent(itemPath: string): RepoFile | undefined {
-  // State to store the content of the fetched file, initially undefined
-  const [FileContent, setFileContent] = useState<RepoFile | undefined>(
-    undefined
-  );
+export function GetRepoFileContent(itemPath: string): RepoFile {
+  // State to store the content of the fetched file, initially is ErrorContent since if it doesn't change the content an error has occured
+  const [FileContent, setFileContent] = useState<RepoFile>(ErrorContent);
 
   /**
    * - This hook will  fetch data from the GitHub API when the `itemPath` changes.

@@ -3,23 +3,17 @@ import { GetRepoFileContent } from "../backend/GetRepoFileContent"; // Function 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"; // Import syntax highlighter component used to show code
 import { solarizedDarkAtom } from "react-syntax-highlighter/dist/esm/styles/prism"; // Import the syntax highlighting style used to style code that is shown
 import { ChevronLeft } from "lucide-react"; // Import back button icon from lucide
-import { ErrorContent } from "../data/repository"; // Import error content for fallback data
 
 const RepositoryFile = () => {
-  // Get the repo item path from the URL parameters
-  const { "*": repoItemPath } = useParams();
+  // Get the repositories path from the URL parameters
+  const { "*": repoPath } = useParams();
   
-  // Clean the file path by removing the '/code' prefix so we can fetch data better
-  const actualFilePath = repoItemPath?.replace("/code", ""); 
-
-  //*Throw an error if the file path is invalid or undefined
-  if (!actualFilePath) {
-    throw Error("RepoItemPath param came out as undefined or invalid");
+  if (!repoPath) { // Makes sure repository path exists
+    throw Error
   }
 
-  // Fetch the file content based on the cleaned file path
-  //* Use ErrorContent as a fallback in case of failure
-  const fileContent = GetRepoFileContent(actualFilePath) || ErrorContent;
+  // Fetch the file content based item path
+  const fileContent = GetRepoFileContent(repoPath)
 
   // Function to handle the back navigation, uses window history to do this
   const handleBack = () => {
