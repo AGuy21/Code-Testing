@@ -21,11 +21,11 @@ const RepositoryFolder = () => {
 
   // Fetch the folder contents
   const repoFolderContent = GetRepoFolderContents(repoPath);
-
-  if (!repoFolderContent) {
+  
+  if (!repoFolderContent) { // Makes sure repository folder contains content
     throw Error("Repository Folder Was Fetched As Undefined")
   }
-  
+
   // Effect to detect if we're in file view
   useEffect(() => {
     if (repoPath?.includes("/code")) {
@@ -61,14 +61,17 @@ const RepositoryFolder = () => {
     window.history.back(); // Go back to the previous page
   };
 
+  console.log(containsReadMeFile(repoFolderContent))
   
 
   return (
-    <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-darkbg"> {/*Header for folder's content */}
+    <div className="flex flex-col w-full h-fit items-center justify-center bg-darkbg pb-[2%]"> {/*Header for folder's content */}
 
       {containsReadMeFile(repoFolderContent) && (
-        <div>
-          Has Readme File
+        <div className="flex w-full bg-darkbg h-[10vh]">
+          <div className="font-sans text-secondarydarktext text-xl">
+            Has Readme File
+          </div>
         </div>
       )}
 

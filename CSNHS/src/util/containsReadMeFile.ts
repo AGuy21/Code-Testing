@@ -8,11 +8,11 @@
 import { RepoFolder } from "../types/RepoFolder";
 
 export function containsReadMeFile(RepoFolder: RepoFolder[]) {
-    RepoFolder.forEach((item) => {
-        if (item.name === 'README.md') {
-            return true;
-        }
-    })
-    return false;
+  RepoFolder.forEach((item) => {
+    console.log(item.name + ' === About.md' )
+    if (item.name === "About.md") {
+      return true;
+    }
+  });
+  return false;
 }
-  
