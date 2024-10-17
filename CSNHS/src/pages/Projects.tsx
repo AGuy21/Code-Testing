@@ -62,6 +62,7 @@ const Projects = () => {
           <div className=" w-full flex flex-col justify-start items-center bg-darkbg border border-darkoutline rounded-b-xl">
             {repoFolders?.map((folder, index) => (
               <RepoFolderItem
+                key={index} 
                 folder={folder}
                 index={index}
                 hoveredIndex={hoveredIndex}

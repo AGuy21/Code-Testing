@@ -17,9 +17,7 @@ export function GetRepoFolderContents(
   const url = `https://api.github.com/repos/AGuy21/Code-Testing/contents/${itemPath}`;
 
   // State to store the contents of the repository folder, initialized as undefined
-  const [repoFolerContent, setRepoFolderContent] = useState<
-    RepoItem[] | undefined
-  >(undefined);
+  const [repoFolerContent, setRepoFolderContent] = useState<RepoItem[]>([]);
 
   /**
    * This runs to fetch the folder contents from the GitHub API when the component mounts. (not when url changes since it doensn't change during function)

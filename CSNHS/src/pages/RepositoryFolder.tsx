@@ -5,6 +5,7 @@ import { ChevronLeft, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import RepositoryFile from "./RepositoryFile";
 import RepoFolderContentItem from "../components/RepoFolderContentItem";
+import { containsReadMeFile } from "../util/containsReadMeFile";
 
 const RepositoryFolder = () => {
   //!IF IT IS A FILE IT WILL CAUSE AN INITAL 404 FETCHING ERROR THIS IS OK!! IT WILL BE FIXED BY RETURNING THE REPOSITORY FILE COMPONENT IT NEEDS TO BE THIS WAY OR ELSE APP BREAKS
@@ -14,6 +15,7 @@ const RepositoryFolder = () => {
   if (!repoPath) {
     throw Error("Repository Path came back as undefined");
   }
+
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isFileView, setIsFileView] = useState<boolean>(false); // State to toggle between folder and file view
 
@@ -55,9 +57,15 @@ const RepositoryFolder = () => {
     window.history.back(); // Go back to the previous page
   };
 
+  
 
   return (
     <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-darkbg"> {/*Header for folder's content */}
+      {containsReadMeFile(repoFolderContent) && (
+        <div>
+          Had Readme File
+        </div>
+      )}
       <div className="w-full h-[3vh] justify-between items-center border-b-2 flex p-x-[2%]"> {/*Back button for header */}
         <button
           onClick={() => handleBack()}
@@ -84,7 +92,7 @@ const RepositoryFolder = () => {
       </div>
       <div className="w-full flex flex-col justify-center items-center bg-darkbg border border-darkoutline rounded-b-xl"> {/*Shows all the folder's content with ReopFolderContentItem */}
         {repoFolderContent?.map((item, index) => (
-          <RepoFolderContentItem item={item} index={index} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex} handleFileClick={handleFileClick}/>
+          <RepoFolderContentItem key={index} item={item} index={index} hoveredIndex={hoveredIndex} setHoveredIndex={setHoveredIndex} handleFileClick={handleFileClick}/>
         ))}
       </div>
     </div>
