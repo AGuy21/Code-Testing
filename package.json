@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@react-native-firebase/app": "^21.6.0",
+    "@react-native-firebase/auth": "^21.6.0",
+    "expo-build": "^0.0.0",
+    "properties": "^1.2.1"
+  }
+}
