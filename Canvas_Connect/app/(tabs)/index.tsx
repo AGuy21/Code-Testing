@@ -1,10 +1,17 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { SignOutButton } from '@/components/SignOutButton'
+import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
+import { Link } from 'expo-router'
+import { Text, View } from 'react-native'
 
-export default function index() {
+export default function Page() {
+  const { user } = useUser()
+
   return (
     <View>
-      <Text>index</Text>
+      <Text>
+        yo
+      </Text>
+      <SignOutButton />
     </View>
   )
 }
