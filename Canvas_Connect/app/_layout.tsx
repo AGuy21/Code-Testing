@@ -4,13 +4,21 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Nunito-Black': require('../assets/fonts/Nunito-Black.ttf'),
+    'Nunito-BlackItalic': require('../assets/fonts/Nunito-BlackItalic.ttf'),
+    'Nunito-ExtraBold': require('../assets/fonts/Nunito-ExtraBold.ttf'),
+    'Nunito-Bold': require('../assets/fonts/Nunito-Bold.ttf'),
+    'Nunito-BoldItalic': require('../assets/fonts/Nunito-BoldItalic.ttf'),
+    'Nunito': require('../assets/fonts/Nunito-Regular.ttf'),
+    'NunitoItalic': require('../assets/fonts/Nunito-Italic.ttf'),
+    'Nunito-Medium': require('../assets/fonts/Nunito-Medium.ttf'),
+    'Nunito-MediumItalic': require('../assets/fonts/Nunito-MediumItalic.ttf'),
+    'Nunito-Light': require('../assets/fonts/Nunito-Light.ttf'),
   });
 
   useEffect(() => {
