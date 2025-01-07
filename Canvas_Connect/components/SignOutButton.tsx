@@ -9,8 +9,6 @@ export const SignOutButton = () => {
       await signOut()
       router.replace('/(home)')
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.error(JSON.stringify(err, null, 2))
     }
   }
