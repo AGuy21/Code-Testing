@@ -9,9 +9,8 @@ import {
 } from "react-native-responsive-screen";
 import Button from "@/components/Button";
 
-export default function Page() {
-  const { user } = useUser();
 
+export default function Page() {
   return (
     <View style={styles.container}>
       <SignedIn>
@@ -22,12 +21,6 @@ export default function Page() {
         source={require("../../assets/images/Background3.png")}
         style={styles.title}
       />
-        {/* <Text style={styles.topTitle}>
-          CANVAS
-        </Text>
-        <Text style={styles.bottomTitle}>
-          CONNECT
-        </Text> */}
         <View style={styles.buttonContainer}>
           <Button
             disabled={false}
@@ -61,6 +54,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: Colors.background,
+    height: hp(200),
+    width: wp(100)
   },
   buttonContainer: {
     paddingTop: hp(5),
@@ -71,7 +66,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   title: {
-    paddingTop: hp(10),
     justifyContent: "center",
     width: wp(95),
     height: hp(50),

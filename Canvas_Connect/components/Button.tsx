@@ -25,7 +25,7 @@ const Button: React.FC<ButtonProps> = ({
   minWidth,
   minHeight,
   fontSize,
-  bgColor = Colors.primary,
+  bgColor = Colors.tertiary,
   bgDisabledColor = Colors.primaryLight,
   textColor = Colors.text,
 }) => {
