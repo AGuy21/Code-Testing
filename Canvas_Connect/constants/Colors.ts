@@ -6,7 +6,7 @@ export default {
     primaryDark: '#9FA8C0',
     secondary: '#98FB98',
     tertiary: '#f1b04c',
-    background: '#FAF9F6',
-    text: "#FFFFFF",
+    background: '#162330',
+    text: "#fcfeff",
     text2: "#808080"
 }

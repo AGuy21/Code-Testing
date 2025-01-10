@@ -1,12 +1,6 @@
 import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import { Link, router } from "expo-router";
-import {
-  Text,
-  View,
-  StyleSheet,
-  ImageBackground,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import { Redirect } from "expo-router";
 import Colors from "@/constants/Colors";
 import {
@@ -24,11 +18,16 @@ export default function Page() {
         <Redirect href={"/(tabs)"} />
       </SignedIn>
       <SignedOut>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>
-            Canvas Connect
-          </Text>
-        </View>
+      <Image
+        source={require("../../assets/images/Background3.png")}
+        style={styles.title}
+      />
+        {/* <Text style={styles.topTitle}>
+          CANVAS
+        </Text>
+        <Text style={styles.bottomTitle}>
+          CONNECT
+        </Text> */}
         <View style={styles.buttonContainer}>
           <Button
             disabled={false}
@@ -64,23 +63,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   buttonContainer: {
-    paddingBottom: hp(5),
-    flex: .5,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: hp(5),
-  },
-  titleContainer: {
     paddingTop: hp(5),
-    flex: .5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingBottom: hp(5),
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: wp(3),
+    flexDirection: "row",
   },
   title: {
-    color: Colors.primary,
-    fontFamily: "Nunito-BlackItalic",
-    fontWeight: "bold",
-    textAlign: "center",
-    fontSize: wp(8),
+    paddingTop: hp(10),
+    justifyContent: "center",
+    width: wp(95),
+    height: hp(50),
   },
 });
