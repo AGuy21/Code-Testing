@@ -8,5 +8,6 @@ export default {
     tertiary: '#f1b04c',
     background: '#162330',
     text: "#fcfeff",
-    text2: "#808080"
+    text2: "#808080",
+    error: "#FF6347"
 }

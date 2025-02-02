@@ -1,4 +1,4 @@
-import { useSignIn } from "@clerk/clerk-expo";
+import { isClerkAPIResponseError, useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { Text, TextInput, View, StyleSheet } from "react-native";
 import React from "react";
@@ -9,6 +9,7 @@ import {
 } from "react-native-responsive-screen";
 import Button from "@/components/Button";
 import AuthHeader from "@/components/AuthHeader";
+import { ClerkAPIError } from "@clerk/types";
 
 export default function Page() {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -16,6 +17,44 @@ export default function Page() {
 
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
+
+  const [errors, setErrors] = React.useState<ClerkAPIError[]>();
+  const [emailError, setEmailError] = React.useState(false);
+  const [otherError, setOtherError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const [otherErrorMessage, setOtherErrorMessage] = React.useState("");
+
+  React.useEffect(() => {
+    errors?.forEach((error) => {
+      if (error.meta?.paramName === "password") {
+        setPasswordError(true);
+        setPasswordErrorMessage(error.message);
+        console.log("Sign in password error! " + error.message);
+        if (errors?.length === 1) {
+          setEmailError(false);
+          setOtherError(false);
+        }
+      } else if (error.meta?.paramName === "email_address") {
+        setEmailError(true);
+        setEmailErrorMessage(error.message);
+        console.log("Sign in email error! " + error.message);
+        if (errors?.length === 1) {
+          setPasswordError(false);
+          setOtherError(false);
+        }
+      } else {
+        setOtherError(true);
+        setOtherErrorMessage(error.message);
+        console.log("Sign in other error! " + error.message);
+        if (errors?.length === 1) {
+          setPasswordError(false);
+          setEmailError(false);
+        }
+      }
+    });
+  }, [errors]);
 
   // Handle the submission of the sign-in form
   const onSignInPress = React.useCallback(async () => {
@@ -39,9 +78,10 @@ export default function Page() {
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.error(JSON.stringify(err, null, 2));
+      if (isClerkAPIResponseError(err)) {
+        setErrors(err.errors);
+      }
     }
   }, [isLoaded, emailAddress, password]);
 
@@ -50,25 +90,46 @@ export default function Page() {
       <AuthHeader title={"Sign In"} />
       <View style={styles.container}>
         <TextInput
+          style={[styles.input, { marginBottom: emailError ? hp(0) : hp(4) }]}
           autoCapitalize="none"
           value={emailAddress}
           placeholder="Enter email"
-          onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
-          style={styles.input}
+          onChangeText={(email) => setEmailAddress(email)}
           placeholderTextColor={Colors.text2}
         />
+        {emailError && (
+          <View style={styles.errorMessageView}>
+            <Text style={styles.errorMessageText}>{emailErrorMessage}</Text>
+          </View>
+        )}
         <TextInput
+          style={[
+            styles.input,
+            { marginBottom: passwordError ? hp(0) : hp(4) },
+          ]}
           value={password}
           placeholder="Enter password"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
-          style={styles.input}
           placeholderTextColor={Colors.text2}
         />
+        {passwordError && (
+          <View style={styles.errorMessageView}>
+            <Text style={styles.errorMessageText}>{passwordErrorMessage}</Text>
+          </View>
+        )}
         <Button onPress={onSignInPress} disabled={false} minWidth={wp(70)}>
           Sign in
         </Button>
-        <View style={styles.questionContainer}>
+        {otherError && (
+          <View style={styles.errorMessageView}>
+            <Text style={styles.otherErrorMessageText}>{otherErrorMessage}</Text>
+          </View>
+        )}
+        <View style={[
+            styles.questionContainer,
+            { marginTop: otherError ? hp(0) : hp(2) },
+          ]}>
           <Text style={styles.text}>Don't have an account?</Text>
           <Link href="/sign-up">
             <Text style={styles.linkText}>Sign up</Text>
@@ -86,7 +147,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.background,
     paddingVertical: hp(10),
-    gap: hp(2),
   },
   text: {
     fontFamily: "Nunito",
@@ -106,6 +166,23 @@ const styles = StyleSheet.create({
     borderRadius: wp(100),
     borderColor: Colors.primary,
     padding: wp(2),
+    color: Colors.text,
   },
-  questionContainer: {},
+  errorMessageView: {
+    width: wp(75),
+    justifyContent: "flex-start",
+    marginBottom: hp(2),
+  },
+  errorMessageText: {
+    textAlign: "left",
+    color: Colors.error,
+  },
+  otherErrorMessageText: {
+    textAlign: "center",
+    color: Colors.error,
+  },
+  questionContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
