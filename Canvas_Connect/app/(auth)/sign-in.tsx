@@ -132,7 +132,7 @@ export default function Page() {
           ]}>
           <Text style={styles.text}>Don't have an account?</Text>
           <Link href="/sign-up">
-            <Text style={styles.linkText}>Sign up</Text>
+            <Text style={styles.linkText}>Sign Up</Text>
           </Link>
         </View>
       </View>
