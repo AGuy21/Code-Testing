@@ -1,11 +1,7 @@
 import * as React from "react";
 import { Text, TextInput, View, StyleSheet, Alert } from "react-native";
 import { isClerkAPIResponseError, useSignUp } from "@clerk/clerk-expo";
-<<<<<<< HEAD
 import { Link, useRouter } from "expo-router";
-=======
-import { useRouter } from "expo-router";
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
 import Colors from "@/constants/Colors";
 import {
   heightPercentageToDP as hp,
@@ -27,7 +23,6 @@ export default function SignUpScreen() {
   const [errors, setErrors] = React.useState<ClerkAPIError[]>();
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
-<<<<<<< HEAD
   const [otherError, setOtherError] = React.useState(false);
   const [verifyEmailError, setVerifyEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
@@ -35,14 +30,6 @@ export default function SignUpScreen() {
   const [otherErrorMessage, setOtherErrorMessage] = React.useState("");
   const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] = React.useState("");
 
-=======
-  const [verifyEmailError, setVerifyEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
-  const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] = React.useState("");
-
-
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
   React.useEffect(() => {
     errors?.forEach((error) => {
       if (error.meta?.paramName === "password") {
@@ -50,19 +37,14 @@ export default function SignUpScreen() {
         setPasswordErrorMessage(error.message);
         console.log("Sign up password error! " + error.message);
         if (errors?.length === 1) {
-<<<<<<< HEAD
           setEmailError(false);
           setOtherError(false);
-=======
-          setEmailError(false)
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
         }
       } else if (error.meta?.paramName === "email_address") {
         setEmailError(true);
         setEmailErrorMessage(error.message);
         console.log("Sign up email error! " + error.message);
         if (errors?.length === 1) {
-<<<<<<< HEAD
           setPasswordError(false);
           setOtherError(false);
         }
@@ -76,13 +58,6 @@ export default function SignUpScreen() {
         }
       }
     });
-=======
-          setPasswordError(false)
-        }
-      }
-    });
-    
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
   }, [errors]);
   // Handle submission of sign-up form
   const onSignUpPress = async () => {
@@ -150,14 +125,10 @@ export default function SignUpScreen() {
         <View style={styles.container}>
           <Text style={styles.text}>Verify your email</Text>
           <TextInput
-<<<<<<< HEAD
             style={[
               styles.input,
               { marginBottom: verifyEmailError ? hp(0) : hp(2) },
             ]}
-=======
-            style={[styles.input, {  marginBottom: verifyEmailError ? hp(0) : hp(2)}]}
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
             value={code}
             placeholder="Enter your verification code"
             onChangeText={(code) => setCode(code)}
@@ -165,13 +136,9 @@ export default function SignUpScreen() {
           />
           {verifyEmailError && (
             <View style={styles.errorMessageView}>
-<<<<<<< HEAD
               <Text style={styles.errorMessageText}>
                 {verifyEmailErrorMessage}
               </Text>
-=======
-              <Text style={styles.errorMessageText}>{verifyEmailErrorMessage}</Text>
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
             </View>
           )}
           <Button onPress={onVerifyPress} disabled={false} minWidth={wp(70)}>
@@ -189,11 +156,7 @@ export default function SignUpScreen() {
       <View style={styles.container}>
         <>
           <TextInput
-<<<<<<< HEAD
             style={[styles.input, { marginBottom: emailError ? hp(0) : hp(4) }]}
-=======
-            style={[styles.input, {  marginBottom: emailError ? hp(0) : hp(4)}]}
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
             autoCapitalize="none"
             value={emailAddress}
             placeholder="Enter email"
@@ -206,14 +169,10 @@ export default function SignUpScreen() {
             </View>
           )}
           <TextInput
-<<<<<<< HEAD
             style={[
               styles.input,
               { marginBottom: passwordError ? hp(0) : hp(4) },
             ]}
-=======
-            style={[styles.input, {  marginBottom: passwordError ? hp(0) : hp(4)}]}
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
             value={password}
             placeholder="Enter password"
             secureTextEntry={true}
@@ -222,13 +181,9 @@ export default function SignUpScreen() {
           />
           {passwordError && (
             <View style={styles.errorMessageView}>
-<<<<<<< HEAD
               <Text style={styles.errorMessageText}>
                 {passwordErrorMessage}
               </Text>
-=======
-              <Text style={styles.errorMessageText}>{passwordErrorMessage}</Text>
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
             </View>
           )}
           <Button onPress={onSignUpPress} disabled={false} minWidth={wp(70)}>
@@ -282,21 +237,12 @@ const styles = StyleSheet.create({
   },
   errorMessageView: {
     width: wp(75),
-<<<<<<< HEAD
     justifyContent: "flex-start",
     alignItems: "flex-start",
     marginBottom: hp(2),
   },
   errorMessageText: {
     textAlign: "left",
-=======
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    marginBottom: hp(2),
-  },
-  errorMessageText: {
-    textAlign: 'left',
->>>>>>> 0b5f47e9 (Added Error Handling For Sign In & Sign Up Pages)
     color: Colors.error,
   },
   questionContainer: {},
