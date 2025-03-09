@@ -81,6 +81,7 @@ export default function Page() {
       console.error(JSON.stringify(err, null, 2));
       if (isClerkAPIResponseError(err)) {
         setErrors(err.errors);
+        console.log(err)
       }
     }
   }, [isLoaded, emailAddress, password]);
