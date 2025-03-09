@@ -81,6 +81,7 @@ export default function Page() {
       console.error(JSON.stringify(err, null, 2));
       if (isClerkAPIResponseError(err)) {
         setErrors(err.errors);
+        console.log(err)
       }
     }
   }, [isLoaded, emailAddress, password]);
@@ -132,7 +133,7 @@ export default function Page() {
           ]}>
           <Text style={styles.text}>Don't have an account?</Text>
           <Link href="/sign-up">
-            <Text style={styles.linkText}>Sign up</Text>
+            <Text style={styles.linkText}>Sign Up</Text>
           </Link>
         </View>
       </View>
