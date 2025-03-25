@@ -1,9 +1,12 @@
+import { SignOutButton } from "@/components/SignOutButton";
 import Colors from "@/constants/Colors";
 import { StyleSheet, Text, View } from "react-native";
-export default function Home() {
+
+export default function Profile() {
   return (
     <View style={styles.container}>
       <Text>yo</Text>
+      <SignOutButton />
     </View>
   );
 }
