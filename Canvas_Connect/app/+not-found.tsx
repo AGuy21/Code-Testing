@@ -1,13 +1,10 @@
-import React from 'react';
-import { StyleSheet, Text } from 'react-native';
-
+import React from "react";
+import { StyleSheet, Text } from "react-native";
 
 export default function NotFoundScreen() {
   return (
     <>
-     <Text>
-        Not Found
-     </Text>
+      <Text>Not Found</Text>
     </>
   );
 }
@@ -15,8 +12,8 @@ export default function NotFoundScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   link: {

@@ -9,7 +9,6 @@ import {
 } from "react-native-responsive-screen";
 import Button from "@/components/Button";
 
-
 export default function Page() {
   return (
     <View style={styles.container}>
@@ -17,10 +16,10 @@ export default function Page() {
         <Redirect href={"/(tabs)"} />
       </SignedIn>
       <SignedOut>
-      <Image
-        source={require("../../assets/images/Background3.png")}
-        style={styles.title}
-      />
+        <Image
+          source={require("../../assets/images/Background3.png")}
+          style={styles.title}
+        />
         <View style={styles.buttonContainer}>
           <Button
             disabled={false}
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.background,
     height: hp(200),
-    width: wp(100)
+    width: wp(100),
   },
   buttonContainer: {
     paddingTop: hp(5),

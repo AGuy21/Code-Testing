@@ -13,7 +13,7 @@ const firebaseConfig = {
   storageBucket: "canvas-connect-4a7bf.firebasestorage.app",
   messagingSenderId: "385196222349",
   appId: "1:385196222349:web:73e02c3f26eb10b96dbfc4",
-  measurementId: "G-Q415WKKWET"
+  measurementId: "G-Q415WKKWET",
 };
 
 // Initialize Firebase

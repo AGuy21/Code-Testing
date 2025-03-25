@@ -81,7 +81,7 @@ export default function Page() {
       console.error(JSON.stringify(err, null, 2));
       if (isClerkAPIResponseError(err)) {
         setErrors(err.errors);
-        console.log(err)
+        console.log(err);
       }
     }
   }, [isLoaded, emailAddress, password]);
@@ -124,13 +124,17 @@ export default function Page() {
         </Button>
         {otherError && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.otherErrorMessageText}>{otherErrorMessage}</Text>
+            <Text style={styles.otherErrorMessageText}>
+              {otherErrorMessage}
+            </Text>
           </View>
         )}
-        <View style={[
+        <View
+          style={[
             styles.questionContainer,
             { marginTop: otherError ? hp(0) : hp(2) },
-          ]}>
+          ]}
+        >
           <Text style={styles.text}>Don't have an account?</Text>
           <Link href="/sign-up">
             <Text style={styles.linkText}>Sign Up</Text>
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
     color: Colors.error,
   },
   questionContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -28,7 +28,8 @@ export default function SignUpScreen() {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [otherErrorMessage, setOtherErrorMessage] = React.useState("");
-  const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] = React.useState("");
+  const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] =
+    React.useState("");
 
   React.useEffect(() => {
     errors?.forEach((error) => {
@@ -219,7 +220,6 @@ const styles = StyleSheet.create({
     color: Colors.text,
     textAlign: "center",
     fontSize: wp(4),
-    marginBottom: hp(2),
   },
   linkText: {
     fontFamily: "Nunito",

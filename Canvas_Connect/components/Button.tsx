@@ -42,8 +42,8 @@ const Button: React.FC<ButtonProps> = ({
       elevation: 5,
       minWidth: minWidth,
       minHeight: minHeight,
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: "center",
+      justifyContent: "center",
     },
     buttonText: {
       color: textColor,
@@ -65,8 +65,8 @@ const Button: React.FC<ButtonProps> = ({
       elevation: 5,
       minWidth: minWidth,
       minHeight: minHeight,
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
   return (
