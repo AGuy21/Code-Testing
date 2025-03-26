@@ -29,6 +29,7 @@ export default function SignUpScreen() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [otherErrorMessage, setOtherErrorMessage] = React.useState("");
   const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] =
+  
     React.useState("");
 
   React.useEffect(() => {

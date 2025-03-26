@@ -47,7 +47,7 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
-        <StatusBar backgroundColor={Colors.background} hidden={true} />
+        <StatusBar backgroundColor={Colors.background} hidden={false} />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(home)" options={{ headerShown: false }} />

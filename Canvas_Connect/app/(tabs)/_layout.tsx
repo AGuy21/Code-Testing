@@ -1,11 +1,14 @@
 import Colors from "@/constants/Colors";
-import { Tabs } from "expo-router";
-import React from "react";
+import { router, Tabs } from "expo-router";
+import React, { useEffect } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Fontisto from '@expo/vector-icons/Fontisto';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Fontisto from "@expo/vector-icons/Fontisto";
+
 export default function TabLayout() {
+
+
   return (
     <Tabs
       screenOptions={{
@@ -48,7 +51,11 @@ export default function TabLayout() {
         options={{
           title: "Chats",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons size={size} name="message-image" color={color} />
+            <MaterialCommunityIcons
+              size={size}
+              name="message-image"
+              color={color}
+            />
           ),
         }}
       />
