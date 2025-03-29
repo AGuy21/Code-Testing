@@ -1,12 +1,48 @@
 import Colors from "@/constants/Colors";
-import { router, Tabs } from "expo-router";
 import React, { useEffect } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useUser } from "@clerk/clerk-expo";
+import { router, Tabs } from "expo-router";
+import { db } from "../../Configs/FirebaseConfig"; 
+
+import { createContext } from 'react';
+
 export default function TabLayout() {
+  const { user } = useUser();
+  useEffect(() => {
+    if (!user) {
+      router.replace("/(auth)/sign-in");
+      alert("User Data Unavailable, please sign in and try again!");
+      return;
+    }
+
+    const fetchUserData = async () => {
+      try {
+        const docRef = doc(db, "users", user.emailAddresses[0].emailAddress);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          console.log("Got User's Data Successfully!");
+          console.log(docSnap.data());
+        } else {
+          console.log("User's Data not documented... creating new doc....");
+          await setDoc(docRef, {
+            username: user.username,
+            email: user.emailAddresses[0].emailAddress,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData(); // ✅ Call the async function
+  }, [user]); // ✅ Add user to dependency array
 
 
   return (

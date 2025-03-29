@@ -1,4 +1,4 @@
-import { SignOutButton } from "@/components/SignOutButton";
+import { SignOutButton } from "@/components/ui/SignOutButton";
 import Colors from "@/constants/Colors";
 import { StyleSheet, Text, View, Image} from "react-native";
 import {

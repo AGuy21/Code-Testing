@@ -7,7 +7,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import Button from "@/components/Button";
+import Button from "@/components/ui/Button";
 
 export default function Page() {
   return (

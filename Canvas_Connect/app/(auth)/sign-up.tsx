@@ -7,8 +7,8 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import Button from "@/components/Button";
-import AuthHeader from "@/components/AuthHeader";
+import Button from "@/components/ui/Button";
+import AuthHeader from "@/components/ui/AuthHeader";
 import { ClerkAPIError } from "@clerk/types";
 
 export default function SignUpScreen() {
