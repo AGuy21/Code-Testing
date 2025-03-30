@@ -1,4 +1,4 @@
-import { SignOutButton } from "@/components/ui/SignOutButton";
+import { useUserDataStore } from "@/components/hooks/store";
 import Colors from "@/constants/Colors";
 import { StyleSheet, Text, View, Image} from "react-native";
 import {
@@ -6,12 +6,18 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 
-export default function Profile() {
+export default function Profile() {  
+  const userData = useUserDataStore((state) => state.data)
+
   return (
     <View style={styles.container}>
       <View style={styles.pictureContainer}>
         <Image style={styles.picture} source={require('../../assets/images/react-logo.png')} onError={require('../../assets/images/Canvas-Connect-BG-Idea.png')}/>
       </View>
+
+      <Text>
+        {userData?.email}
+      </Text>
       {/* <SignOutButton /> */}
     </View>
   );
