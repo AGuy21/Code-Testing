@@ -10,12 +10,13 @@ import { useUser } from "@clerk/clerk-expo";
 import { db } from "../../Configs/FirebaseConfig";
 import { userDataType } from "@/constants/types/userDataType";
 import { useUserDataStore } from "@/components/hooks/store";
+import { generateFromEmail, generateUsername } from "unique-username-generator";
 
 export default function TabLayout() {
   const { user } = useUser();
-  
-  const setLoading = useUserDataStore((state) => state.setLoading)
-  const setUserData = useUserDataStore((state) => state.setData)
+
+  const setLoading = useUserDataStore((state) => state.setLoading);
+  const setUserData = useUserDataStore((state) => state.setData);
 
   useEffect(() => {
     if (!user) {
@@ -37,16 +38,22 @@ export default function TabLayout() {
         } else {
           console.log("User's Data not documented... creating new doc....");
           await setDoc(docRef, {
-            username: user.username,
+            username:
+              user.username === null
+                ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
+                : user.username,
             email: user.emailAddresses[0].emailAddress,
           });
           setUserData({
-            username: user.username,
+            username:
+              user.username === null
+                ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
+                : user.username,
             email: user.emailAddresses[0].emailAddress,
           });
         }
       } catch (error) {
-        router.replace('/(auth)/sign-in');
+        router.replace("/(auth)/sign-in");
         console.error("Error fetching user data:", error);
       } finally {
         setLoading(false);
@@ -56,64 +63,64 @@ export default function TabLayout() {
   }, [user]);
 
   return (
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarActiveBackgroundColor: Colors.background,
-          tabBarInactiveBackgroundColor: Colors.background,
-          tabBarInactiveTintColor: Colors.primaryDark,
-          tabBarActiveTintColor: Colors.secondary,
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveBackgroundColor: Colors.background,
+        tabBarInactiveBackgroundColor: Colors.background,
+        tabBarInactiveTintColor: Colors.primaryDark,
+        tabBarActiveTintColor: Colors.secondary,
+      }}
+    >
+      <Tabs.Screen
+        name="artists"
+        options={{
+          title: "Artists",
+          tabBarIcon: ({ color, size }) => (
+            <Fontisto size={size} name="persons" color={color} />
+          ),
         }}
-      >
-        <Tabs.Screen
-          name="artists"
-          options={{
-            title: "Artists",
-            tabBarIcon: ({ color, size }) => (
-              <Fontisto size={size} name="persons" color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="art"
-          options={{
-            title: "Art",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome6 size={size} name="palette" color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 size={size} name="home" color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="chats"
-          options={{
-            title: "Chats",
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                size={size}
-                name="message-image"
-                color={color}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: "Profile",
-            tabBarIcon: ({ color, size }) => (
-              <FontAwesome6 size={size} name="person-rays" color={color} />
-            ),
-          }}
-        />
-      </Tabs>
+      />
+      <Tabs.Screen
+        name="art"
+        options={{
+          title: "Art",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome6 size={size} name="palette" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome5 size={size} name="home" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chats"
+        options={{
+          title: "Chats",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              size={size}
+              name="message-image"
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome6 size={size} name="person-rays" color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

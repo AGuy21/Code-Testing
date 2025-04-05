@@ -16,6 +16,9 @@ export default function Profile() {
       </View>
 
       <Text>
+        {userData?.username}
+      </Text>
+      <Text>
         {userData?.email}
       </Text>
       {/* <SignOutButton /> */}
