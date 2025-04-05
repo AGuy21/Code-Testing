@@ -17,6 +17,7 @@ export default function SignUpScreen() {
 
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [otherPassword, setOtherPassword] = React.useState("");
   const [pendingVerification, setPendingVerification] = React.useState(false);
   const [code, setCode] = React.useState("");
 
@@ -25,11 +26,11 @@ export default function SignUpScreen() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [otherError, setOtherError] = React.useState(false);
   const [verifyEmailError, setVerifyEmailError] = React.useState(false);
+  const [samePasswordError, setSamePasswordError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [otherErrorMessage, setOtherErrorMessage] = React.useState("");
   const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] =
-  
     React.useState("");
 
   React.useEffect(() => {
@@ -65,6 +66,11 @@ export default function SignUpScreen() {
   const onSignUpPress = async () => {
     if (!isLoaded) return;
 
+    if (password != otherPassword) {
+      setSamePasswordError(true);
+      return;
+    }
+    
     // Start sign-up process using email and password provided
     try {
       await signUp.create({
@@ -188,13 +194,34 @@ export default function SignUpScreen() {
               </Text>
             </View>
           )}
+          <TextInput
+            style={[
+              styles.input,
+              { marginBottom: samePasswordError ? hp(0) : hp(4) },
+            ]}
+            value={otherPassword}
+            placeholder="Verify password"
+            secureTextEntry={true}
+            onChangeText={(otherPassword) => setOtherPassword(otherPassword)}
+            placeholderTextColor={Colors.text2}
+          />
+          {samePasswordError && (
+            <View style={styles.errorMessageView}>
+              <Text style={styles.errorMessageText}>Passwords do not match!</Text>
+            </View>
+          )}
           <Button onPress={onSignUpPress} disabled={false} minWidth={wp(70)}>
             Continue
           </Button>
+          {otherError && (
+            <View style={styles.errorMessageView}>
+              <Text style={styles.otherErrorMessageText}>{otherErrorMessage}</Text>
+            </View>
+          )}
           <View
             style={[
               styles.questionContainer,
-              { marginTop: otherError ? hp(0) : hp(2) },
+              // { marginTop: otherError ? hp() : hp(2) },
             ]}
           >
             <Text style={styles.text}>Don't have an account?</Text>
@@ -246,5 +273,9 @@ const styles = StyleSheet.create({
     textAlign: "left",
     color: Colors.error,
   },
-  questionContainer: {},
+  otherErrorMessageText: {
+    textAlign: "center",
+    color: Colors.error,
+  },
+  questionContainer: {}
 });
