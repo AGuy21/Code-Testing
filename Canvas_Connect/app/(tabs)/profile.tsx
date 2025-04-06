@@ -1,4 +1,5 @@
 import { useUserDataStore } from "@/components/hooks/store";
+import ProfilePicture from "@/components/ui/ProfilePicture";
 import Colors from "@/constants/Colors";
 import { StyleSheet, Text, View, Image} from "react-native";
 import {
@@ -12,13 +13,13 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.pictureContainer}>
-        <Image style={styles.picture} source={require('../../assets/images/react-logo.png')} onError={require('../../assets/images/Canvas-Connect-BG-Idea.png')}/>
+        <ProfilePicture />
       </View>
 
-      <Text>
+      <Text style={styles.text}>
         {userData?.username}
       </Text>
-      <Text>
+      <Text style={styles.text2}>
         {userData?.email}
       </Text>
       {/* <SignOutButton /> */}
@@ -38,12 +39,24 @@ const styles = StyleSheet.create({
     marginTop: hp(5),
     justifyContent: 'center',
     alignItems: 'center',
-  },
+    },
   picture: {
     width: wp(50),
     height: wp(50),
     borderRadius: 999,
     borderWidth: wp(.4),
     borderColor: Colors.secondary,
+  },
+  text: {
+    fontFamily: "Nunito-Bold",
+    color: Colors.secondary,
+    textAlign: "center",
+    fontSize: wp(5),
+  },
+  text2: {
+    fontFamily: "Nunito",
+    color: Colors.text,
+    textAlign: "center",
+    fontSize: wp(3),
   },
 });

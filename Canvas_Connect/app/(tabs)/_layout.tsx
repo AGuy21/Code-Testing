@@ -11,7 +11,12 @@ import { db } from "../../Configs/FirebaseConfig";
 import { userDataType } from "@/constants/types/userDataType";
 import { useUserDataStore } from "@/components/hooks/store";
 import { generateFromEmail, generateUsername } from "unique-username-generator";
+import BaseProfilePicture from "@/constants/BaseProfilePicture";
 
+type TabBarIconType = {
+  color: string,
+  size: number,
+}
 export default function TabLayout() {
   const { user } = useUser();
 
@@ -43,6 +48,7 @@ export default function TabLayout() {
                 ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
                 : user.username,
             email: user.emailAddresses[0].emailAddress,
+            profilePicture: BaseProfilePicture,
           });
           setUserData({
             username:
@@ -50,6 +56,7 @@ export default function TabLayout() {
                 ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
                 : user.username,
             email: user.emailAddresses[0].emailAddress,
+            profilePicture: BaseProfilePicture,
           });
         }
       } catch (error) {
@@ -76,7 +83,7 @@ export default function TabLayout() {
         name="artists"
         options={{
           title: "Artists",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: TabBarIconType) => (
             <Fontisto size={size} name="persons" color={color} />
           ),
         }}
@@ -85,7 +92,7 @@ export default function TabLayout() {
         name="art"
         options={{
           title: "Art",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: TabBarIconType) => (
             <FontAwesome6 size={size} name="palette" color={color} />
           ),
         }}
@@ -94,7 +101,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: TabBarIconType) => (
             <FontAwesome5 size={size} name="home" color={color} />
           ),
         }}
@@ -103,7 +110,7 @@ export default function TabLayout() {
         name="chats"
         options={{
           title: "Chats",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: TabBarIconType) => (
             <MaterialCommunityIcons
               size={size}
               name="message-image"
@@ -116,7 +123,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color, size }: TabBarIconType) => (
             <FontAwesome6 size={size} name="person-rays" color={color} />
           ),
         }}
