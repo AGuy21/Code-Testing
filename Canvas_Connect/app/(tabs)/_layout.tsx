@@ -39,7 +39,6 @@ export default function TabLayout() {
         if (docSnap.exists()) {
           console.log("Got User's Data Successfully!");
           setUserData(docSnap.data() as userDataType);
-          console.log(docSnap.data());
         } else {
           console.log("User's Data not documented... creating new doc....");
           await setDoc(docRef, {

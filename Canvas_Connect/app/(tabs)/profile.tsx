@@ -1,6 +1,8 @@
 import { useUserDataStore } from "@/components/hooks/store";
 import ProfilePicture from "@/components/ui/ProfilePicture";
 import Colors from "@/constants/Colors";
+import { router } from "expo-router";
+import { useEffect } from "react";
 import { StyleSheet, Text, View, Image} from "react-native";
 import {
   heightPercentageToDP as hp,
@@ -9,6 +11,7 @@ import {
 
 export default function Profile() {  
   const userData = useUserDataStore((state) => state.data)
+
 
   return (
     <View style={styles.container}>
