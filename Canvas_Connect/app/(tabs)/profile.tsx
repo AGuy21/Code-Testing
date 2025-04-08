@@ -1,23 +1,28 @@
 import { useUserDataStore } from "@/components/hooks/store";
 import ProfilePicture from "@/components/ui/ProfilePicture";
 import Colors from "@/constants/Colors";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import SettingsModal from "@/components/ui/SettingsModal";
+import { useState } from "react";
 
 export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
 
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <View style={styles.container}>
       <View style={styles.pictureContainer}>
         <ProfilePicture />
       </View>
-
+      <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen}/>
+      <Button title="open modal" onPress={() => setModalOpen(true)} />
       <Text style={styles.text}>{userData?.username}</Text>
       <Text style={styles.text2}>{userData?.email}</Text>
+
       {/* <SignOutButton /> */}
     </View>
   );
