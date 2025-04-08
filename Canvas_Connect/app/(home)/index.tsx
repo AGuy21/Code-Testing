@@ -1,6 +1,6 @@
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
-import { Link, router } from "expo-router";
-import { Text, View, StyleSheet, Image } from "react-native";
+import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import {  router } from "expo-router";
+import {  View, StyleSheet, Image } from "react-native";
 import { Redirect } from "expo-router";
 import Colors from "@/constants/Colors";
 import {

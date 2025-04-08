@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, TextInput, View, StyleSheet, Alert } from "react-native";
+import { Text, TextInput, View, StyleSheet } from "react-native";
 import { isClerkAPIResponseError, useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import Colors from "@/constants/Colors";

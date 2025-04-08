@@ -1,5 +1,3 @@
-import { View, Text } from 'react-native'
-import React from 'react'
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/Configs/FirebaseConfig';
 

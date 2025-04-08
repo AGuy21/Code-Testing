@@ -1,6 +1,7 @@
 import { useClerk } from "@clerk/clerk-react";
 import { router } from "expo-router";
 import { Button } from "react-native";
+
 export const SignOutButton = () => {
   const { signOut } = useClerk();
 

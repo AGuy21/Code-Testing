@@ -26,12 +26,12 @@ export default function RootLayout() {
     "Nunito-ExtraBold": require("../assets/fonts/Nunito-ExtraBold.ttf"),
     "Nunito-Bold": require("../assets/fonts/Nunito-Bold.ttf"),
     "Nunito-BoldItalic": require("../assets/fonts/Nunito-BoldItalic.ttf"),
-    Nunito: require("../assets/fonts/Nunito-Regular.ttf"),
-    NunitoItalic: require("../assets/fonts/Nunito-Italic.ttf"),
+    "Nunito": require("../assets/fonts/Nunito-Regular.ttf"),
+    "NunitoItalic": require("../assets/fonts/Nunito-Italic.ttf"),
     "Nunito-Medium": require("../assets/fonts/Nunito-Medium.ttf"),
     "Nunito-MediumItalic": require("../assets/fonts/Nunito-MediumItalic.ttf"),
     "Nunito-Light": require("../assets/fonts/Nunito-Light.ttf"),
-    BebasNeue: require("../assets/fonts/BebasNeue-Regular.ttf"),
+    "BebasNeue": require("../assets/fonts/BebasNeue-Regular.ttf"),
   });
 
   useEffect(() => {

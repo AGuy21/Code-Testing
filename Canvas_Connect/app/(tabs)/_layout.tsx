@@ -1,5 +1,5 @@
 import Colors from "@/constants/Colors";
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -10,13 +10,13 @@ import { useUser } from "@clerk/clerk-expo";
 import { db } from "../../Configs/FirebaseConfig";
 import { userDataType } from "@/constants/types/userDataType";
 import { useUserDataStore } from "@/components/hooks/store";
-import { generateFromEmail, generateUsername } from "unique-username-generator";
+import { generateFromEmail } from "unique-username-generator";
 import BaseProfilePicture from "@/constants/BaseProfilePicture";
 
 type TabBarIconType = {
-  color: string,
-  size: number,
-}
+  color: string;
+  size: number;
+};
 export default function TabLayout() {
   const { user } = useUser();
 

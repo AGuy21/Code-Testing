@@ -8,7 +8,6 @@ import {
 } from "react-native-responsive-screen";
 import Colors from "@/constants/Colors";
 import { useUserDataStore } from "../hooks/store";
-import BaseProfilePicture from "@/constants/BaseProfilePicture";
 import SaveUserData from "../functions/SaveUserData";
 import { router } from "expo-router";
 
@@ -41,12 +40,17 @@ export default function ProfilePicture() {
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
       if (userData?.email != null) {
-        SaveUserData({userEmail: userData.email, data: _image.assets[0].uri, variable: "profilePicture"});
+        SaveUserData({
+          userEmail: userData.email,
+          data: _image.assets[0].uri,
+          variable: "profilePicture",
+        });
       } else {
-        alert("cant save data due to issue with your email, please sign back in or restart!")
-        router.replace('/(auth)/sign-in')
+        alert(
+          "cant save data due to issue with your email, please sign back in or restart!"
+        );
+        router.replace("/(auth)/sign-in");
       }
-      
     }
   };
 
