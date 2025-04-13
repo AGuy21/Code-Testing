@@ -1,11 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React from "react";
 import Colors from "@/constants/Colors";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { router } from "expo-router";
 
 type SettingsOptionProps = {
   text: string;
@@ -13,13 +12,20 @@ type SettingsOptionProps = {
   setModalOpen: any;
 };
 
-const SettingsOption = ({ text, onPress, setModalOpen}: SettingsOptionProps) => {
-    function openSettingsOption() {
-        setModalOpen(false);
-        onPress();
-    }
+const SettingsOption = ({
+  text,
+  onPress,
+  setModalOpen,
+}: SettingsOptionProps) => {
+  function openSettingsOption() {
+    setModalOpen(false);
+    onPress();
+  }
   return (
-    <TouchableOpacity style={styles.settingContainer} onPress={() => openSettingsOption()}>
+    <TouchableOpacity
+      style={styles.settingContainer}
+      onPress={() => openSettingsOption()}
+    >
       <Text style={styles.settingText}>Advanced Account Options</Text>
     </TouchableOpacity>
   );

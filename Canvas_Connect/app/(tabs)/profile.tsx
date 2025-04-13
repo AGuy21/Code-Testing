@@ -1,14 +1,14 @@
 import { useUserDataStore } from "@/components/hooks/store";
 import ProfilePicture from "@/components/ui/ProfilePicture";
 import Colors from "@/constants/Colors";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import SettingsModal from "@/components/ui/SettingsModal";
-import { useEffect, useState } from "react";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
@@ -18,7 +18,7 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       {/** Opens when modalOpen is equal to true if not stays hidden. */}
-      <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen}/>
+      <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
       {/** Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setModalOpen(true)}>
@@ -47,11 +47,11 @@ const styles = StyleSheet.create({
   header: {
     height: hp(4),
     width: wp(100),
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     paddingHorizontal: wp(5),
-    overflow: 'visible',
+    overflow: "visible",
   },
   pictureContainer: {
     width: wp(60),
