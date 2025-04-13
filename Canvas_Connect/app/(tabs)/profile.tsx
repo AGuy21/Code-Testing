@@ -7,27 +7,28 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import SettingsModal from "@/components/ui/SettingsModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
 
   const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <View style={styles.container}>
+      {/** Opens when modalOpen is equal to true if not stays hidden. */}
       <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen}/>
-
+      {/** Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setModalOpen(true)}>
           <Ionicons name="settings" size={wp(7.5)} color={Colors.tertiary} />
         </TouchableOpacity>
       </View>
+      {/** Body */}
       <View style={styles.pictureContainer}>
         <ProfilePicture />
       </View>
-
-
 
       <Text style={styles.text}>{userData?.username}</Text>
       <Text style={styles.text2}>{userData?.email}</Text>

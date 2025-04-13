@@ -1,4 +1,4 @@
-import { View, Text, Modal, StyleSheet, Button, TouchableOpacity } from "react-native";
+import { View, Text, Modal, StyleSheet, Button, TouchableOpacity, Pressable } from "react-native";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import Colors from "@/constants/Colors";
 import {
@@ -6,6 +6,8 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import SettingsOption from "./SettingsOption";
+import { ExternalPathString, RelativePathString, router } from "expo-router";
 
 type SettingsModalProps = {
   modalOpen: boolean;
@@ -24,6 +26,7 @@ export default function SettingsModal({
   return (
     <Modal visible={modalOpen} animationType="slide"  transparent={true}>
       <View style={styles.container}>
+        {/** Header */}
         <View style={styles.header}>
             <Text style={styles.headerText}>
                 Settings
@@ -32,6 +35,9 @@ export default function SettingsModal({
                 <AntDesign name="close" size={wp(7.5)} color={Colors.tertiary}/>
             </TouchableOpacity>
         </View>
+        {/** Body */}
+        <SettingsOption text="Account Options" onPress={() => router.push('/artists')} setModalOpen={setModalOpen}/>
+        <SettingsOption text="Account Customization" onPress={() => router.push('/art')} setModalOpen={setModalOpen}/>
       </View>
     </Modal>
   );
@@ -49,6 +55,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingRight: wp(5),
     paddingTop: hp(.05),
+    borderBottomWidth: wp(.5),
+    borderColor: Colors.secondary
   },
   headerText: {
     width: wp(45),
@@ -56,7 +64,6 @@ const styles = StyleSheet.create({
     fontFamily: '',
     color: Colors.text,
     fontSize: wp(7.5),
-    borderBottomWidth: wp(.5),
-    borderColor: Colors.text
-  }
+    opacity: .8,
+  },
 });
