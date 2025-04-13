@@ -5,28 +5,24 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { router } from "expo-router";
 
 type SettingsOptionProps = {
   text: string;
-  onPress: () => void;
   setModalOpen: any;
 };
 
-const SettingsOption = ({
-  text,
-  onPress,
-  setModalOpen,
-}: SettingsOptionProps) => {
+const SettingsOption = ({ text, setModalOpen }: SettingsOptionProps) => {
   function openSettingsOption() {
     setModalOpen(false);
-    onPress();
+    router.push({ pathname: "/(screens)/settings", params: { setting: text } });
   }
   return (
     <TouchableOpacity
       style={styles.settingContainer}
       onPress={() => openSettingsOption()}
     >
-      <Text style={styles.settingText}>Advanced Account Options</Text>
+      <Text style={styles.settingText}> {text} </Text>
     </TouchableOpacity>
   );
 };

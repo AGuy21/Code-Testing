@@ -6,7 +6,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import SettingsModal from "@/components/ui/SettingsModal";
+import SettingsModal from "@/components/ui/settings/SettingsModal";
 import { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -14,7 +14,6 @@ export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
 
   const [modalOpen, setModalOpen] = useState(false);
-
   return (
     <View style={styles.container}>
       {/** Opens when modalOpen is equal to true if not stays hidden. */}

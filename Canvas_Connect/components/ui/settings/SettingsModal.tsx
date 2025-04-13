@@ -6,8 +6,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import SettingsOption from "./SettingsOption";
-import { router } from "expo-router";
+import SettingsOption from "../settings/SettingsOption";
 
 type SettingsModalProps = {
   modalOpen: boolean;
@@ -18,6 +17,7 @@ export default function SettingsModal({
   modalOpen,
   setModalOpen,
 }: SettingsModalProps) {
+  
   const changeModalOpen = () => {
     setModalOpen(false);
   };
@@ -35,12 +35,10 @@ export default function SettingsModal({
         {/** Body */}
         <SettingsOption
           text="Account Options"
-          onPress={() => router.push("/artists")}
           setModalOpen={setModalOpen}
         />
         <SettingsOption
           text="Account Customization"
-          onPress={() => router.push("/art")}
           setModalOpen={setModalOpen}
         />
       </View>
