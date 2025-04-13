@@ -1,13 +1,14 @@
 import { useUserDataStore } from "@/components/hooks/store";
 import ProfilePicture from "@/components/ui/ProfilePicture";
 import Colors from "@/constants/Colors";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import SettingsModal from "@/components/ui/SettingsModal";
 import { useState } from "react";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
@@ -15,11 +16,19 @@ export default function Profile() {
   const [modalOpen, setModalOpen] = useState(false);
   return (
     <View style={styles.container}>
+      <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen}/>
+
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => setModalOpen(true)}>
+          <Ionicons name="settings" size={wp(7.5)} color={Colors.tertiary} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.pictureContainer}>
         <ProfilePicture />
       </View>
-      <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen}/>
-      <Button title="open modal" onPress={() => setModalOpen(true)} />
+
+
+
       <Text style={styles.text}>{userData?.username}</Text>
       <Text style={styles.text2}>{userData?.email}</Text>
 
@@ -34,10 +43,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
+  header: {
+    height: hp(4),
+    width: wp(100),
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: wp(5),
+    overflow: 'visible',
+  },
   pictureContainer: {
     width: wp(60),
     height: wp(60),
-    marginTop: hp(5),
     justifyContent: "center",
     alignItems: "center",
   },
