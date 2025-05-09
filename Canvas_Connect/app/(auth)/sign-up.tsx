@@ -70,7 +70,7 @@ export default function SignUpScreen() {
       setSamePasswordError(true);
       return;
     }
-    
+
     // Start sign-up process using email and password provided
     try {
       await signUp.create({
@@ -207,7 +207,9 @@ export default function SignUpScreen() {
           />
           {samePasswordError && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.errorMessageText}>Passwords do not match!</Text>
+              <Text style={styles.errorMessageText}>
+                Passwords do not match!
+              </Text>
             </View>
           )}
           <Button onPress={onSignUpPress} disabled={false} minWidth={wp(70)}>
@@ -215,7 +217,9 @@ export default function SignUpScreen() {
           </Button>
           {otherError && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.otherErrorMessageText}>{otherErrorMessage}</Text>
+              <Text style={styles.otherErrorMessageText}>
+                {otherErrorMessage}
+              </Text>
             </View>
           )}
           <View
@@ -248,6 +252,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     textAlign: "center",
     fontSize: wp(4),
+    marginBottom: hp(1),
   },
   linkText: {
     fontFamily: "Nunito",
@@ -277,5 +282,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colors.error,
   },
-  questionContainer: {}
+  questionContainer: {},
 });

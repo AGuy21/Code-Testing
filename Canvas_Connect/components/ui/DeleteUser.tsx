@@ -1,28 +1,54 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
 import Colors from "@/constants/Colors";
 import {
-    heightPercentageToDP as hp,
-    widthPercentageToDP as wp,
-  } from "react-native-responsive-screen";
-import AntDesign from '@expo/vector-icons/AntDesign';
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import deleteUsersAccount from "../functions/DeleteUsersAccount";
+import { useAuth } from "@clerk/clerk-expo/dist/hooks/useAuth";
+import { router } from "expo-router";
 
 const DeleteUser = () => {
+  const { userId } = useAuth();
 
-  async function deleteAccount() {
-    try {
-      await clerkClient.users.deleteUser(userId)
-      return Response.json({ message: 'User deleted' })
-    } catch (error) {
-      console.log(error)
-      return Response.json({ error: 'Error deleting user' })
+  async function AttemptAccountDeletion() {
+    console.log("Deleteing account...");
+    const attempt = await deleteUsersAccount(userId);
+    console.log(attempt);
+    if (attempt.isCompleted) {
+      console.log("Successfully Deleted User Account");
+      Alert.alert("Account Successfully Deleted");
+      router.replace('/')
+    } else {
+      if (typeof attempt.error == "object") {
+        Alert.alert(
+          "Error Occured: " + JSON.stringify(attempt.error.errors[0].message)
+        );
+        Alert.alert(
+          "Error Occured: " + JSON.stringify(attempt.error.errors[0].message)
+        );
+      } else {
+        Alert.alert("Error Occured: " + JSON.stringify(attempt.error));
+        console.log("Error Occured: " + JSON.stringify(attempt.error));
+      }
     }
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={() => deleteAccount()}>
-      <MaterialIcons name="delete-forever" size={wp(7.5)} color={Colors.error} />
+    <TouchableOpacity style={styles.container} onPress={AttemptAccountDeletion}>
+      <MaterialIcons
+        name="delete-forever"
+        size={wp(7.5)}
+        color={Colors.error}
+      />
       <Text style={styles.text}>Delete Account</Text>
       <AntDesign name="right" size={wp(7.5)} color={Colors.text} />
     </TouchableOpacity>
@@ -39,17 +65,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     width: wp(100),
     backgroundColor: Colors.background,
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    alignItems: "center",
+    justifyContent: "space-between",
     borderBottomColor: Colors.text2,
-    borderBottomWidth: hp(.2),
+    borderBottomWidth: hp(0.2),
     borderTopColor: Colors.text2,
-    borderTopWidth: hp(.2),
+    borderTopWidth: hp(0.2),
   },
   text: {
     fontFamily: "Nunito-Bold",
     color: Colors.text,
     fontSize: hp(1.75),
     marginRight: wp(30),
-  }
+  },
 });

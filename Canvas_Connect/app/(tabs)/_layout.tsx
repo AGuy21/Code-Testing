@@ -12,6 +12,7 @@ import { userDataType } from "@/constants/types/userDataType";
 import { useUserDataStore } from "@/components/hooks/store";
 import { generateFromEmail } from "unique-username-generator";
 import BaseProfilePicture from "@/constants/BaseProfilePicture";
+import { UserResource } from "@clerk/types";
 
 type TabBarIconType = {
   color: string;
@@ -30,44 +31,43 @@ export default function TabLayout() {
       setLoading(false);
       return;
     }
-
-    const fetchUserData = async () => {
-      try {
-        const docRef = doc(db, "users", user.emailAddresses[0].emailAddress);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          console.log("Got User's Data Successfully!");
-          setUserData(docSnap.data() as userDataType);
-        } else {
-          console.log("User's Data not documented... creating new doc....");
-          await setDoc(docRef, {
-            username:
-              user.username === null
-                ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
-                : user.username,
-            email: user.emailAddresses[0].emailAddress,
-            profilePicture: BaseProfilePicture,
-          });
-          setUserData({
-            username:
-              user.username === null
-                ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
-                : user.username,
-            email: user.emailAddresses[0].emailAddress,
-            profilePicture: BaseProfilePicture,
-          });
-        }
-      } catch (error) {
-        router.replace("/(auth)/sign-in");
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserData();
+    fetchUserData(user);
   }, [user]);
 
+  const fetchUserData = async (user: UserResource) => {
+    try {
+      const docRef = doc(db, "users", user.emailAddresses[0].emailAddress);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        console.log("Got User's Data Successfully!");
+        setUserData(docSnap.data() as userDataType);
+      } else {
+        console.log("User's Data not documented... creating new doc....");
+        await setDoc(docRef, {
+          username:
+            user.username === null
+              ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
+              : user.username,
+          email: user.emailAddresses[0].emailAddress,
+          profilePicture: BaseProfilePicture,
+        });
+        setUserData({
+          username:
+            user.username === null
+              ? generateFromEmail(user.emailAddresses[0].emailAddress, 3)
+              : user.username,
+          email: user.emailAddresses[0].emailAddress,
+          profilePicture: BaseProfilePicture,
+        });
+      }
+    } catch (error) {
+      router.replace("/(auth)/sign-in");
+      console.error("Error fetching user data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Tabs
       screenOptions={{
