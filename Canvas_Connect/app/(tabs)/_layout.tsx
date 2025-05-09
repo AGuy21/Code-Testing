@@ -26,7 +26,7 @@ export default function TabLayout() {
 
   useEffect(() => {
     if (!user) {
-      router.replace("/(auth)/sign-in");
+      router.replace("/(home)")
       alert("User Data Unavailable, please sign in and try again!");
       setLoading(false);
       return;

@@ -13,7 +13,7 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import deleteUsersAccount from "../functions/DeleteUsersAccount";
-import { useAuth } from "@clerk/clerk-expo/dist/hooks/useAuth";
+import { useAuth } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 
 const DeleteUser = () => {

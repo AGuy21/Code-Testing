@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import AuthHeader from "@/components/ui/AuthHeader";
 import { ClerkAPIError } from "@clerk/types";
 
+
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
@@ -33,6 +34,7 @@ export default function SignUpScreen() {
   const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] =
     React.useState("");
 
+    
   React.useEffect(() => {
     errors?.forEach((error) => {
       if (error.meta?.paramName === "password") {
@@ -108,7 +110,7 @@ export default function SignUpScreen() {
       // and redirect the user
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
-        router.replace("/");
+        router.replace("/(tabs)");
       } else {
         // If the status is not complete, check why. User may need to
         // complete further steps.

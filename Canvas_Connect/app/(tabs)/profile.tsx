@@ -9,13 +9,14 @@ import {
 import SettingsModal from "@/components/ui/settings/SettingsModal";
 import { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
 
   const [modalOpen, setModalOpen] = useState(false);
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/** Opens when modalOpen is equal to true if not stays hidden. */}
       <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
       {/** Header */}
@@ -33,7 +34,7 @@ export default function Profile() {
       <Text style={styles.text2}>{userData?.email}</Text>
 
       {/* <SignOutButton /> */}
-    </View>
+    </SafeAreaView>
   );
 }
 
