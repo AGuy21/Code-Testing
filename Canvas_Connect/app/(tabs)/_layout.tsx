@@ -6,7 +6,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { router, Tabs } from "expo-router";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useUser } from "@clerk/clerk-expo";
+import { useUser } from "@clerk/clerk-expo"
 import { db } from "../../Configs/FirebaseConfig";
 import { userDataType } from "@/constants/types/userDataType";
 import { useUserDataStore } from "@/components/hooks/store";
@@ -18,6 +18,7 @@ type TabBarIconType = {
   color: string;
   size: number;
 };
+
 export default function TabLayout() {
   const { user } = useUser();
 
@@ -26,7 +27,7 @@ export default function TabLayout() {
 
   useEffect(() => {
     if (!user) {
-      router.replace("/(home)")
+      router.replace("/(home)");
       alert("User Data Unavailable, please sign in and try again!");
       setLoading(false);
       return;

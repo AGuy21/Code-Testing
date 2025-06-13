@@ -11,7 +11,6 @@ import Button from "@/components/ui/Button";
 import AuthHeader from "@/components/ui/AuthHeader";
 import { ClerkAPIError } from "@clerk/types";
 
-
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
@@ -34,7 +33,6 @@ export default function SignUpScreen() {
   const [verifyEmailErrorMessage, setVerifyEmailErrorMessage] =
     React.useState("");
 
-    
   React.useEffect(() => {
     errors?.forEach((error) => {
       if (error.meta?.paramName === "password") {

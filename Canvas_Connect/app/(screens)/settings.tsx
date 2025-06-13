@@ -4,9 +4,9 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import Colors from "@/constants/Colors";
 import DeleteUser from "@/components/ui/DeleteUser";
 import {
-    heightPercentageToDP as hp,
-    widthPercentageToDP as wp,
-  } from "react-native-responsive-screen";
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
 
 const settings = () => {
   const { setting } = useLocalSearchParams();
@@ -19,7 +19,7 @@ const settings = () => {
       title: title,
       headerStyle: {
         backgroundColor: Colors.background,
-        borderBottonWidth: hp(.2),
+        borderBottonWidth: hp(0.2),
         borderBottomColor: Colors.secondary,
       },
       headerTintColor: Colors.text,
@@ -31,12 +31,7 @@ const settings = () => {
 
   return (
     <View style={styles.container}>
-      {setting === 'Account Options' ? (
-        <DeleteUser />
-      ) : (
-        <>
-        </>
-      )}
+      {setting === "Account Options" ? <DeleteUser /> : <></>}
     </View>
   );
 };
@@ -44,9 +39,9 @@ const settings = () => {
 export default settings;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.background,
-        paddingTop: hp(2.5),
-    }
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    paddingTop: hp(2.5),
+  },
 });
