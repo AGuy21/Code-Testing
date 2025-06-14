@@ -25,7 +25,7 @@ const DeleteUser = () => {
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel",
         },
-        { text: "OK", onPress: () => AttemptAccountDeletion },
+        { text: "OK", onPress: () => AttemptAccountDeletion() },
       ]
     );
   }
