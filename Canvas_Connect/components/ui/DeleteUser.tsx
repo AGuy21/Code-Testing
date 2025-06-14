@@ -1,9 +1,4 @@
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
 import Colors from "@/constants/Colors";
@@ -19,6 +14,22 @@ import { router } from "expo-router";
 const DeleteUser = () => {
   const { userId } = useAuth();
 
+  function confirmDeletion() {
+    console.log("Asking for user confirmation before deleting account..");
+    Alert.alert(
+      "Deletion Confirmation",
+      "Are you sure you want to delete your account PERMANENTLY?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => AttemptAccountDeletion },
+      ]
+    );
+  }
+
   async function AttemptAccountDeletion() {
     console.log("Deleteing account...");
     const attempt = await deleteUsersAccount(userId);
@@ -26,7 +37,7 @@ const DeleteUser = () => {
     if (attempt.isCompleted) {
       console.log("Successfully Deleted User Account");
       Alert.alert("Account Successfully Deleted");
-      router.replace('/')
+      router.replace("/");
     } else {
       if (typeof attempt.error == "object") {
         Alert.alert(
@@ -43,7 +54,7 @@ const DeleteUser = () => {
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={AttemptAccountDeletion}>
+    <TouchableOpacity style={styles.container} onPress={confirmDeletion}>
       <MaterialIcons
         name="delete-forever"
         size={wp(7.5)}
