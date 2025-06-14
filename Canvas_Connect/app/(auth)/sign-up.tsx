@@ -1,3 +1,4 @@
+// TODO: ADD TOGGLE TO SHOW/HIDE PASSOWRD
 import * as React from "react";
 import { Text, TextInput, View, StyleSheet } from "react-native";
 import { isClerkAPIResponseError, useSignUp } from "@clerk/clerk-expo";

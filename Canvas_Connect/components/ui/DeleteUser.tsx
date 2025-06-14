@@ -1,15 +1,14 @@
-import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import React from "react";
+import { Alert, StyleSheet, BackHandler, TouchableOpacity, Text } from "react-native";
 import Colors from "@/constants/Colors";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import deleteUsersAccount from "../functions/DeleteUsersAccount";
 import { useAuth } from "@clerk/clerk-expo";
-import { router } from "expo-router";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import {MaterialIcons} from "@expo/vector-icons"
+import React from "react";
 
 const DeleteUser = () => {
   const { userId } = useAuth();
@@ -36,8 +35,16 @@ const DeleteUser = () => {
     console.log(attempt);
     if (attempt.isCompleted) {
       console.log("Successfully Deleted User Account");
-      Alert.alert("Account Successfully Deleted");
-      router.replace("/");
+      Alert.alert(
+        "Account Successfully Deleted",
+        "You will now be closed out of the app",
+        [
+          {
+            text: "Ok",
+            onPress: () => BackHandler.exitApp(),
+          }
+        ]
+      );
     } else {
       if (typeof attempt.error == "object") {
         Alert.alert(
