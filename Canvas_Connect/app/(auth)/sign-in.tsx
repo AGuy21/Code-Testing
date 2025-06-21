@@ -1,7 +1,6 @@
-// TODO: ADD TOGGLE TO SHOW/HIDE PASSOWRD
 import { isClerkAPIResponseError, useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
-import { Text, TextInput, View, StyleSheet } from "react-native";
+import { Text, TextInput, View, StyleSheet, Pressable } from "react-native";
 import React from "react";
 import Colors from "@/constants/Colors";
 import {
@@ -11,6 +10,7 @@ import {
 import Button from "@/components/ui/Button";
 import AuthHeader from "@/components/ui/AuthHeader";
 import { ClerkAPIError } from "@clerk/types";
+import Entypo from "@expo/vector-icons/Entypo";
 
 export default function Page() {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -26,6 +26,8 @@ export default function Page() {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [otherErrorMessage, setOtherErrorMessage] = React.useState("");
+
+  const [passwordHidden, setPasswordHidden] = React.useState(true);
 
   React.useEffect(() => {
     errors?.forEach((error) => {
@@ -104,25 +106,49 @@ export default function Page() {
             <Text style={styles.errorMessageText}>{emailErrorMessage}</Text>
           </View>
         )}
-        <TextInput
+
+        <View
           style={[
             styles.input,
             { marginBottom: passwordError ? hp(0) : hp(4) },
           ]}
-          value={password}
-          placeholder="Enter password"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-          placeholderTextColor={Colors.text2}
-        />
+        >
+          <TextInput
+            style={{ color: Colors.text, flex: 90 }}
+            value={password}
+            placeholder="Enter password"
+            secureTextEntry={passwordHidden}
+            onChangeText={(password) => setPassword(password)}
+            placeholderTextColor={Colors.text2}
+          />
+
+          <>
+            {passwordHidden ? (
+              <Pressable onPress={() => setPasswordHidden(!passwordHidden)}>
+                <Entypo name="eye" size={wp(5)} color={Colors.secondary} />
+              </Pressable>
+            ) : (
+              <Pressable onPress={() => setPasswordHidden(!passwordHidden)}>
+                <Entypo
+                  name="eye-with-line"
+                  size={wp(5)}
+                  color={Colors.secondary}
+                />
+              </Pressable>
+            )}
+          </>
+        </View>
+
         {passwordError && (
           <View style={styles.errorMessageView}>
             <Text style={styles.errorMessageText}>{passwordErrorMessage}</Text>
           </View>
         )}
+
         <Button onPress={onSignInPress} disabled={false} minWidth={wp(70)}>
           Sign in
         </Button>
+
         {otherError && (
           <View style={styles.errorMessageView}>
             <Text style={styles.otherErrorMessageText}>
@@ -130,6 +156,7 @@ export default function Page() {
             </Text>
           </View>
         )}
+
         <View
           style={[
             styles.questionContainer,
@@ -171,8 +198,11 @@ const styles = StyleSheet.create({
     borderWidth: wp(0.5),
     borderRadius: wp(100),
     borderColor: Colors.primary,
-    padding: wp(2),
     color: Colors.text,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingRight: wp(2),
   },
   errorMessageView: {
     width: wp(75),
