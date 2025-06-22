@@ -62,7 +62,7 @@ const DeleteUser = () => {
   }
 
   return (
-    <SettingsButton onPress={confirmDeletion} icon={"delete-forever"} />
+    <SettingsButton onPress={confirmDeletion} icon={"delete-forever"} text="Delete Account"/>
   );
 };
 

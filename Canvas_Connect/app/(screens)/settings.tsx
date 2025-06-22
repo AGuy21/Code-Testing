@@ -7,6 +7,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import SignOut from "@/components/ui/settings/options/SignOut";
 
 const settings = () => {
   const { setting } = useLocalSearchParams();
@@ -33,8 +34,8 @@ const settings = () => {
     <View style={styles.container}>
       {setting === "Account Options" ? (
         <>
-          <DeleteUser />{" "}
-          
+          <DeleteUser />
+          <SignOut />
         </>
       ) : (
         <></>

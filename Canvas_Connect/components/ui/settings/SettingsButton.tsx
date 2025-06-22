@@ -1,30 +1,29 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
-import {AntDesign, MaterialIcons} from "@expo/vector-icons"
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import Colors from '@/constants/Colors';
+import Colors from "@/constants/Colors";
 
 type SettingsButtonProps = {
-    icon: any;
-    onPress: () => void;
-}
+  icon: any;
+  text: string;
+  onPress: () => void;
+};
 
-const SettingsButton = ({icon, onPress}: SettingsButtonProps) => {
+const SettingsButton = ({ icon, text, onPress }: SettingsButtonProps) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <MaterialIcons
-        name = {icon}
-        size={wp(7.5)}
-        color={Colors.error}
-      />
-      <Text style={styles.text}>Delete Account</Text>
+      <View style={styles.leftSide}>
+        <MaterialIcons name={icon} size={wp(7.5)} color={Colors.error} />
+        <Text style={styles.text}>{text}</Text>
+      </View>
       <AntDesign name="right" size={wp(7.5)} color={Colors.text} />
     </TouchableOpacity>
-  )
-}
+  );
+};
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
@@ -46,7 +45,11 @@ const styles = StyleSheet.create({
     fontSize: hp(1.75),
     marginRight: wp(30),
   },
+  leftSide: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: wp(2.5),
+  }
 });
 
-
-export default SettingsButton
+export default SettingsButton;
