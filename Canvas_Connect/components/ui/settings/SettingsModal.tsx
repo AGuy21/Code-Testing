@@ -17,7 +17,6 @@ export default function SettingsModal({
   modalOpen,
   setModalOpen,
 }: SettingsModalProps) {
-  
   const changeModalOpen = () => {
     setModalOpen(false);
   };
@@ -33,10 +32,7 @@ export default function SettingsModal({
           </TouchableOpacity>
         </View>
         {/** Body */}
-        <SettingsOption
-          text="Account Options"
-          setModalOpen={setModalOpen}
-        />
+        <SettingsOption text="Account Options" setModalOpen={setModalOpen} />
         <SettingsOption
           text="Account Customization"
           setModalOpen={setModalOpen}

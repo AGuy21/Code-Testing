@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import Colors from "@/constants/Colors";
-import DeleteUser from "@/components/ui/DeleteUser";
+import DeleteUser from "@/components/ui/settings/options/DeleteUser";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -31,7 +31,14 @@ const settings = () => {
 
   return (
     <View style={styles.container}>
-      {setting === "Account Options" ? <DeleteUser /> : <></>}
+      {setting === "Account Options" ? (
+        <>
+          <DeleteUser />{" "}
+          
+        </>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };

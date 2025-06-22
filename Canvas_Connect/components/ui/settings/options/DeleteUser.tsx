@@ -4,11 +4,12 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import deleteUsersAccount from "../functions/DeleteUsersAccount";
+import deleteUsersAccount from "../../../functions/DeleteUsersAccount";
 import { useAuth } from "@clerk/clerk-expo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import {MaterialIcons} from "@expo/vector-icons"
 import React from "react";
+import SettingsButton from "../SettingsButton";
 
 const DeleteUser = () => {
   const { userId } = useAuth();
@@ -61,15 +62,7 @@ const DeleteUser = () => {
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={confirmDeletion}>
-      <MaterialIcons
-        name="delete-forever"
-        size={wp(7.5)}
-        color={Colors.error}
-      />
-      <Text style={styles.text}>Delete Account</Text>
-      <AntDesign name="right" size={wp(7.5)} color={Colors.text} />
-    </TouchableOpacity>
+    <SettingsButton onPress={confirmDeletion} icon={"delete-forever"} />
   );
 };
 
