@@ -17,6 +17,7 @@ export default function SettingsModal({
   modalOpen,
   setModalOpen,
 }: SettingsModalProps) {
+
   const changeModalOpen = () => {
     setModalOpen(false);
   };
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
   headerText: {
     width: wp(45),
     paddingLeft: wp(5),
-    fontFamily: "",
+    fontFamily: "Nunito-Bold",
     color: Colors.text,
     fontSize: wp(7.5),
     opacity: 0.8,

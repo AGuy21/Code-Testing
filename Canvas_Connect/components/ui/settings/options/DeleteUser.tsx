@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, BackHandler, TouchableOpacity, Text } from "react-native";
+import { Alert, StyleSheet, BackHandler } from "react-native";
 import Colors from "@/constants/Colors";
 import {
   heightPercentageToDP as hp,
@@ -6,8 +6,6 @@ import {
 } from "react-native-responsive-screen";
 import deleteUsersAccount from "../../../functions/DeleteUsersAccount";
 import { useAuth } from "@clerk/clerk-expo";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import {MaterialIcons} from "@expo/vector-icons"
 import React from "react";
 import SettingsButton from "../SettingsButton";
 

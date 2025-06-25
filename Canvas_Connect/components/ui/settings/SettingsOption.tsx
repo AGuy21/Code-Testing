@@ -17,6 +17,7 @@ const SettingsOption = ({ text, setModalOpen }: SettingsOptionProps) => {
     setModalOpen(false);
     router.push({ pathname: "/(screens)/settings", params: { setting: text } });
   }
+  
   return (
     <TouchableOpacity
       style={styles.settingContainer}

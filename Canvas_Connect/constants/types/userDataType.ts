@@ -1,5 +1,5 @@
 export type userDataType = {
   email: string;
-  username: string | null;
+  username: string;
   profilePicture: string;
 };
