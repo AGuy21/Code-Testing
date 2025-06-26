@@ -10,14 +10,15 @@ import Colors from "@/constants/Colors";
 type SettingsButtonProps = {
   icon: any;
   text: string;
+  color: string;
   onPress: () => void;
 };
 
-const SettingsButton = ({ icon, text, onPress }: SettingsButtonProps) => {
+const SettingsButton = ({ icon, text, color, onPress }: SettingsButtonProps) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.leftSide}>
-        <MaterialIcons name={icon} size={wp(7.5)} color={Colors.error} />
+        <MaterialIcons name={icon} size={wp(7.5)} color={color} />
         <Text style={styles.text}>{text}</Text>
       </View>
       <AntDesign name="right" size={wp(7.5)} color={Colors.text} />
@@ -27,7 +28,7 @@ const SettingsButton = ({ icon, text, onPress }: SettingsButtonProps) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    flex: 0.075,
+    flex: 0.1,
     gap: wp(2.5),
     paddingHorizontal: wp(5),
     width: wp(100),

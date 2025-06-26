@@ -6,7 +6,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { router, Tabs } from "expo-router";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useUser } from "@clerk/clerk-expo"
+import { useUser } from "@clerk/clerk-expo";
 import { db } from "../../Configs/FirebaseConfig";
 import { userDataType } from "@/constants/types/userDataType";
 import { useUserDataStore } from "@/components/hooks/store";

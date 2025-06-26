@@ -14,16 +14,17 @@ import { db } from "@/Configs/FirebaseConfig";
 
 const ChangeUsername = () => {
   const userData = useUserDataStore((state) => state.data);
-  const setUserData = useUserDataStore((state) => state.setData)
+  const setUserData = useUserDataStore((state) => state.setData);
 
   const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [newUsername, setNewUsername] = useState(userData.username);
 
   async function SaveUsername() {
-    //TODO: THIS IS A SECURITY ERROR, FIX IMMEDIATLY BEFORE PRODUCTION!!!!!
-    const docRef = doc(db, "users", userData.email);
+    //! THIS CONTAINS A SECURITY ERROR, FIX IMMEDIATLY BEFORE PRODUCTION!!!!!
+    //! GRABBING FROM USER STATE LEAVES VULNERABILITY TO REMOTE ACCESS OTHER USER'S DATA IF YOU CAN CHANGE STATE ON DEVICE!
+    const docRef = doc(db, "users", userData.email); 
 
-    setUserData({ ...userData, username: newUsername});
+    setUserData({ ...userData, username: newUsername });
 
     await setDoc(docRef, {
       username: newUsername,
@@ -32,7 +33,11 @@ const ChangeUsername = () => {
     });
 
     setIsPromptOpen(false);
+  }
 
+  function CancelUsernameChange() {
+    setIsPromptOpen(false);
+    setNewUsername(userData.username)
   }
 
   return (
@@ -49,17 +54,17 @@ const ChangeUsername = () => {
               <Entypo name="check" size={wp(6)} color={Colors.secondary} />
             </Pressable>
 
-            <Pressable onPress={() => setIsPromptOpen(false)}>
+            <Pressable onPress={CancelUsernameChange}>
               <Entypo name="cross" size={wp(7)} color={Colors.error} />
             </Pressable>
           </View>
-
         </View>
       ) : (
         <SettingsButton
           onPress={() => setIsPromptOpen(true)}
           icon={"drive-file-rename-outline"}
           text="Change Username"
+          color={Colors.primaryLight}
         />
       )}
     </>

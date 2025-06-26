@@ -17,7 +17,6 @@ export default function SettingsModal({
   modalOpen,
   setModalOpen,
 }: SettingsModalProps) {
-
   const changeModalOpen = () => {
     setModalOpen(false);
   };

@@ -41,7 +41,7 @@ const DeleteUser = () => {
           {
             text: "Ok",
             onPress: () => BackHandler.exitApp(),
-          }
+          },
         ]
       );
     } else {
@@ -60,7 +60,12 @@ const DeleteUser = () => {
   }
 
   return (
-    <SettingsButton onPress={confirmDeletion} icon={"delete-forever"} text="Delete Account"/>
+    <SettingsButton
+      onPress={confirmDeletion}
+      icon={"delete-forever"}
+      text="Delete Account"
+      color={Colors.error}
+    />
   );
 };
 

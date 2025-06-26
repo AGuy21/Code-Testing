@@ -35,9 +35,14 @@ const settings = () => {
     <View style={styles.container}>
       {setting === "Account Options" ? (
         <>
-          <ChangeUsername />
-          <SignOut />
-          <DeleteUser />
+          <View style={styles.topContainer}>
+            <ChangeUsername />
+          </View>
+
+          <View style={styles.bottomContainer}>
+            <SignOut />
+            <DeleteUser />
+          </View>
         </>
       ) : (
         <></>
@@ -54,4 +59,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     paddingTop: hp(2.5),
   },
+  topContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  bottomContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: hp(2.5),
+  }
 });
