@@ -1,58 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Image, View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Image, View, TouchableOpacity, StyleSheet } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import * as ImagePicker from "expo-image-picker";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import Colors from "@/constants/Colors";
-import { useUserDataStore } from "../hooks/store";
-import SaveUserData from "../functions/SaveUserData";
-import { router } from "expo-router";
+import useChangeProfilePicture from "../hooks/useChangeProfilePicture";
+
 
 export default function ProfilePicture() {
-  const userData = useUserDataStore((state) => state.data);
-  const [image, setImage] = useState(userData?.profilePicture);
-
-  useEffect(() => {
-    checkForCameraRollPermission();
-  }, []);
-
-  const checkForCameraRollPermission = async () => {
-    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert(
-        "Please grant camera roll permissions inside your system's settings"
-      );
-    } else {
-      console.log("Media Permissions are granted");
-    }
-  };
-
-  const addImage = async () => {
-    let _image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!_image.canceled) {
-      setImage(_image.assets[0].uri);
-      if (userData?.email != null) {
-        SaveUserData({
-          userEmail: userData.email,
-          data: _image.assets[0].uri,
-          variable: "profilePicture",
-        });
-      } else {
-        alert(
-          "cant save data due to issue with your email, please sign back in or restart!"
-        );
-        router.replace("/(auth)/sign-in");
-      }
-    }
-  };
+  const { image, addImage } = useChangeProfilePicture();
 
   return (
     <View style={styles.container}>
