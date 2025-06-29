@@ -9,10 +9,13 @@ import {
 import { useUserDataStore } from "@/components/hooks/store";
 import Entypo from "@expo/vector-icons/Entypo";
 
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/Configs/FirebaseConfig";
+import SaveUserData from "@/components/functions/SaveUserData";
+import { useUser } from "@clerk/clerk-expo";
+import { router } from "expo-router";
 
 const ChangeUsername = () => {
+  const { user } = useUser();
+
   const userData = useUserDataStore((state) => state.data);
   const setUserData = useUserDataStore((state) => state.setData);
 
@@ -20,24 +23,26 @@ const ChangeUsername = () => {
   const [newUsername, setNewUsername] = useState(userData.username);
 
   async function SaveUsername() {
-    //! THIS CONTAINS A SECURITY ERROR, FIX IMMEDIATLY BEFORE PRODUCTION!!!!!
-    //! GRABBING FROM USER STATE LEAVES VULNERABILITY TO REMOTE ACCESS OTHER USER'S DATA IF YOU CAN CHANGE STATE ON DEVICE!
-    const docRef = doc(db, "users", userData.email); 
-
     setUserData({ ...userData, username: newUsername });
-
-    await setDoc(docRef, {
-      username: newUsername,
-      email: userData.email,
-      profilePicture: userData.profilePicture,
-    });
+    if (user) {
+      SaveUserData({
+        userEmail: userData.email,
+        newData: newUsername,
+        variable: "username",
+      });
+    } else {
+      alert(
+        "cant save data due to issue with your email, please sign back in or restart!"
+      );
+      router.replace("/(auth)/sign-in");
+    }
 
     setIsPromptOpen(false);
   }
 
   function CancelUsernameChange() {
     setIsPromptOpen(false);
-    setNewUsername(userData.username)
+    setNewUsername(userData.username);
   }
 
   return (

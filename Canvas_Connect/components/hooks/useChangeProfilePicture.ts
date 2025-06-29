@@ -3,9 +3,14 @@ import SaveUserData from "../functions/SaveUserData";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useUserDataStore } from "./store";
+import { useUser } from "@clerk/clerk-expo";
 
-export default function useChangeProfilePicture () {
+export default function useChangeProfilePicture() {
+  const { user } = useUser();
+
   const userData = useUserDataStore((state) => state.data);
+  const setUserData = useUserDataStore((state) => state.setData);
+
   const [image, setImage] = useState(userData?.profilePicture);
 
   useEffect(() => {
@@ -32,10 +37,13 @@ export default function useChangeProfilePicture () {
     });
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
-      if (userData?.email != null) {
+      if (userData?.email != null && user) {
+        // Local State
+        setUserData({ ...userData, profilePicture: _image.assets[0].uri });
+        // Database
         SaveUserData({
-          userEmail: userData.email,
-          data: _image.assets[0].uri,
+          userEmail: user.emailAddresses[0].emailAddress,
+          newData: _image.assets[0].uri,
           variable: "profilePicture",
         });
       } else {
@@ -47,6 +55,5 @@ export default function useChangeProfilePicture () {
     }
   };
 
-  return { addImage, image}
-};
-
+  return { addImage, image, setImage };
+}

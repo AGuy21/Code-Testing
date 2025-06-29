@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Image, View, TouchableOpacity, StyleSheet } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import {
@@ -7,10 +7,16 @@ import {
 } from "react-native-responsive-screen";
 import Colors from "@/constants/Colors";
 import useChangeProfilePicture from "../hooks/useChangeProfilePicture";
-
+import { useUserDataStore } from "../hooks/store";
 
 export default function ProfilePicture() {
-  const { image, addImage } = useChangeProfilePicture();
+  const userData = useUserDataStore((state) => state.data)
+  const { image, setImage, addImage } = useChangeProfilePicture();
+  
+  // refreshes to keep local state up to date if changed elsewhere
+  useEffect(() => {
+      setImage(userData.profilePicture)
+  }, [userData]);
 
   return (
     <View style={styles.container}>

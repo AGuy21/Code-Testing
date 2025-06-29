@@ -7,7 +7,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import SettingsModal from "@/components/ui/settings/SettingsModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,6 +15,10 @@ export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
 
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    
+  }, [modalOpen]);
   return (
     <SafeAreaView style={styles.container}>
       {/** Opens when modalOpen is equal to true if not stays hidden. */}

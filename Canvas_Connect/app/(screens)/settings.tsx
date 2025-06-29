@@ -9,6 +9,7 @@ import {
 } from "react-native-responsive-screen";
 import SignOut from "@/components/ui/settings/options/SignOut";
 import ChangeUsername from "@/components/ui/settings/options/ChangeUsername";
+import ChangeProfilePicture from "@/components/ui/settings/options/ChangeProfilePicture";
 
 const settings = () => {
   const { setting } = useLocalSearchParams();
@@ -37,6 +38,7 @@ const settings = () => {
         <>
           <View style={styles.topContainer}>
             <ChangeUsername />
+            <ChangeProfilePicture />
           </View>
 
           <View style={styles.bottomContainer}>
@@ -61,11 +63,11 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   bottomContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     paddingBottom: hp(2.5),
-  }
+  },
 });
