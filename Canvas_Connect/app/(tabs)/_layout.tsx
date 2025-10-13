@@ -52,6 +52,7 @@ export default function TabLayout() {
               : user.username,
           email: user.emailAddresses[0].emailAddress,
           profilePicture: BaseProfilePicture,
+          posts: [],
         });
         setUserData({
           username:
@@ -60,6 +61,7 @@ export default function TabLayout() {
               : user.username,
           email: user.emailAddresses[0].emailAddress,
           profilePicture: BaseProfilePicture,
+          posts: [],
         });
       }
     } catch (error) {

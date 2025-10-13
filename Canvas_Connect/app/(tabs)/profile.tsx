@@ -37,6 +37,7 @@ export default function Profile() {
       <Text style={styles.text}>{userData?.username}</Text>
       <Text style={styles.text2}>{userData?.email}</Text>
 
+
       {/* <SignOutButton /> */}
     </SafeAreaView>
   );

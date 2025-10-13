@@ -9,14 +9,18 @@ import Colors from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { exampleData } from "@/constants/data/PostsExampleData";
+import { useUserDataStore } from "../hooks/store";
+import GetUsersPosts from "../functions/GetUsersPosts";
 
 const PreviousPosts = () => {
+  const userData = useUserDataStore((state) => state.data);
 
+  const userPosts = GetUsersPosts()
   return (
     <FlatList
       style={styles.previousPostsLists}
       horizontal={true}
-      data={exampleData}
+      data={userPosts}
       keyExtractor={(_, index) => index.toString()}
       renderItem={({ item }) => (
         <View style={styles.previousPost}>
@@ -26,7 +30,7 @@ const PreviousPosts = () => {
             style={styles.imageGradient}
           />
 
-          <Image source={{ uri: item.picture }} style={styles.postPicture} />
+          <Image source={{uri: userData.profilePicture}} style={styles.postPicture} />
 
           <View style={styles.postStats}>
             <View
@@ -36,7 +40,7 @@ const PreviousPosts = () => {
               }}
             >
               <FontAwesome name="comments" size={wp(6)} color={Colors.background} />
-              <Text style={styles.postStatText}>{item.likes}</Text>
+              <Text style={styles.postStatText}>{24}</Text>
             </View>
             <View
               style={{
@@ -45,7 +49,7 @@ const PreviousPosts = () => {
               }}
             >
               <AntDesign name="heart" size={wp(6)} color={Colors.background} />
-              <Text style={styles.postStatText}>{item.comments}</Text>
+              <Text style={styles.postStatText}>{item.likes}</Text>
             </View>
           </View>
         </View>
@@ -103,7 +107,6 @@ const styles = StyleSheet.create({
   postPicture: {
     objectFit: "fill",
     flex: 0.85,
-    backgroundColor: Colors.error,
     borderBottomLeftRadius: wp(3.5),
     borderBottomRightRadius: wp(3.5),
   },
