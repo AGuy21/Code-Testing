@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Home() {
   return (
     <div className="py-12 text-white">
@@ -11,7 +13,7 @@ export default function Home() {
 
           <div className="mt-6 flex justify-center gap-4">
             <a href="#/about" className="px-5 py-2 rounded-md bg-[#d4af37] text-[#0f3d2e] font-semibold hover:opacity-95">Learn more</a>
-            <a href="#/events" className="px-5 py-2 rounded-md border border-white/20 text-white hover:bg-white/5">Events</a>
+            <Link to="/events" className="px-5 py-2 rounded-md border border-white/20 text-white hover:bg-white/5">Events</Link>
           </div>
         </section>
 
