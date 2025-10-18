@@ -3,6 +3,7 @@ import Home from './pages/Home.tsx';
 import About from './pages/About.tsx';
 import Events from './pages/Events.tsx';
 import Header from './components/Header'
+import Connect from './pages/Connect.tsx';
 function App() {
   const location = useLocation()
   const path = location.pathname
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/events" element={<Events />} />
+          <Route path='/connect' element={<Connect />} />
         </Routes>
       </main>
     </div>

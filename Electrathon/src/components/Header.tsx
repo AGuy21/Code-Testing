@@ -17,7 +17,7 @@ export default function Header({ SelectedPage }: HomeProps) {
             <img src={logo} alt="Electrothon logo" className="w-full h-full object-cover" />
           </div>
           <div>
-            <div className="text-lg font-semibold text-[#d4af37]">Electrothon</div>
+            <div className="text-lg font-semibold text-[#d4af37]">Electrathon</div>
             <div className="text-xs text-white/70">Nease High School</div>
           </div>
         </div>

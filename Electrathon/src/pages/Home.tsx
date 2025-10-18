@@ -3,9 +3,9 @@ export default function Home() {
     <div className="py-12 text-white">
       <div className="max-w-4xl mx-auto p-8">
         <section className="text-center">
-          <h2 className="text-5xl font-bold text-[#d4af37]">Nease Electrothon Club</h2>
+          <h2 className="text-5xl font-bold text-[#d4af37]">Nease Electrathon Club</h2>
           <p className="mt-4 text-lg text-white/90">
-            We build, learn, and compete in electronics and robotics. Join students who love electronics,
+            We build, learn, and compete in electronics and robotics. Join students who are passionate about electronics,
             programming, and hands-on problem solving.
           </p>
 
@@ -16,9 +16,9 @@ export default function Home() {
         </section>
 
         <section className="mt-12 bg-white/5 rounded-lg p-6">
-          <h3 className="text-2xl font-semibold text-[#d4af37]">What is Electrothon?</h3>
+          <h3 className="text-2xl font-semibold text-[#d4af37]">What is Electrathon?</h3>
           <p className="mt-3 text-white/90">
-            Electrothon is our school's electronics and robotics club. We design circuits, build robots, and
+            Electrathon is our school's electronics and robotics club. We design circuits, build robots, and
             participate in competitions and workshops that teach practical skills in hardware and software.
           </p>
 
