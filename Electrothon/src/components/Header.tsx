@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useState } from 'react'
 import { headerItems } from '../constants/data/headerItems'
+import logo from '../assets/images/Electrothon.png'
 
 interface HomeProps {
   SelectedPage?: string
@@ -12,7 +13,9 @@ export default function Header({ SelectedPage }: HomeProps) {
     <header className="w-full bg-black/10 backdrop-blur-sm border-b border-white/10">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#d4af37] flex items-center justify-center font-bold text-[#0f3d2e]">E</div>
+          <div className="w-12 h-12 rounded-full overflow-hidden bg-white/5 flex items-center justify-center ring-1 ring-white/10">
+            <img src={logo} alt="Electrothon logo" className="w-full h-full object-cover" />
+          </div>
           <div>
             <div className="text-lg font-semibold text-[#d4af37]">Electrothon</div>
             <div className="text-xs text-white/70">Nease High School</div>
