@@ -14,6 +14,7 @@ export const useUserDataStore = create<userDataStore>((set) => ({
     email: "Loading...",
     profilePicture: BaseProfilePicture,
     username: "Loading...",
+    posts: [],
   },
   isLoading: true,
   setData: (newData) => set({ data: newData }),

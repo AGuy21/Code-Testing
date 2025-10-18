@@ -11,9 +11,10 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
     "@**/*.ts",
-    "@**/*.tsx", "Configs/FirebaseConfig.js",
+    "@**/*.tsx",
+    "Configs/FirebaseConfig.js",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
   ]
 }

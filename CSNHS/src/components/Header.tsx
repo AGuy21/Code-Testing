@@ -22,7 +22,7 @@ const Header = ({ SelectedPage }: HomeProps): JSX.Element => {
       {/* Mapping through headerItems to create navigation links */}
       {headerItems.map((item, index) => (
         <a
-          key={item.title} //*Unique key for each item based on title (since there should never be 2 of the same page in the header)
+          key={item.title} //*Unique key for each item based on title (asince there should never be 2 of the same page in the header)
           href={item.route} // Route for navigation
           className={`w-[15%] h-[8vh] content-center`} // Basic styling for the anchor tag
           onMouseEnter={() => setHoveredIndex(index)} // Set hovered index on mouse enter

@@ -8,46 +8,19 @@ import {
 import Colors from "@/constants/Colors";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { exampleData } from "@/constants/data/PostsExampleData";
+import { useUserDataStore } from "../hooks/store";
+import GetUsersPosts from "../functions/GetUsersPosts";
 
 const PreviousPosts = () => {
-  const exampleData = [
-    {
-      title: "Hello",
-      description:
-        "i made this too test the rendering of the component, this data is titled Hello.",
-      picture:
-        "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FCanvas_Connect-311391b7-2ccc-4871-90f8-f2752143f633/ImagePicker/18407126-e943-4298-886b-cf8ef7c93415.jpeg",
-      likes: 735,
-      comments: 65,
-      postID: 1,
-    },
-    {
-      title: "Hello2",
-      description:
-        "i made this too test the rendering of the component, this data is titled Hello2.",
-      picture:
-        "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FCanvas_Connect-311391b7-2ccc-4871-90f8-f2752143f633/ImagePicker/18407126-e943-4298-886b-cf8ef7c93415.jpeg",
-      likes: 24,
-      comments: 6,
-      postID: 2,
-    },
-    {
-      title: "Hello3",
-      description:
-        "i made this too test the rendering of the component, this data is titled Hello3.",
-      picture:
-        "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252FCanvas_Connect-311391b7-2ccc-4871-90f8-f2752143f633/ImagePicker/18407126-e943-4298-886b-cf8ef7c93415.jpeg",
-      likes: 858977,
-      comments: 84770,
-      postID: 3,
-    },
-  ];
+  const userData = useUserDataStore((state) => state.data);
 
+  const userPosts = GetUsersPosts()
   return (
     <FlatList
       style={styles.previousPostsLists}
       horizontal={true}
-      data={exampleData}
+      data={userPosts}
       keyExtractor={(_, index) => index.toString()}
       renderItem={({ item }) => (
         <View style={styles.previousPost}>
@@ -57,7 +30,7 @@ const PreviousPosts = () => {
             style={styles.imageGradient}
           />
 
-          <Image source={{ uri: item.picture }} style={styles.postPicture} />
+          <Image source={{uri: userData.profilePicture}} style={styles.postPicture} />
 
           <View style={styles.postStats}>
             <View
@@ -67,7 +40,7 @@ const PreviousPosts = () => {
               }}
             >
               <FontAwesome name="comments" size={wp(6)} color={Colors.background} />
-              <Text style={styles.postStatText}>{item.likes}</Text>
+              <Text style={styles.postStatText}>{24}</Text>
             </View>
             <View
               style={{
@@ -76,7 +49,7 @@ const PreviousPosts = () => {
               }}
             >
               <AntDesign name="heart" size={wp(6)} color={Colors.background} />
-              <Text style={styles.postStatText}>{item.comments}</Text>
+              <Text style={styles.postStatText}>{item.likes}</Text>
             </View>
           </View>
         </View>
@@ -134,7 +107,6 @@ const styles = StyleSheet.create({
   postPicture: {
     objectFit: "fill",
     flex: 0.85,
-    backgroundColor: Colors.error,
     borderBottomLeftRadius: wp(3.5),
     borderBottomRightRadius: wp(3.5),
   },
