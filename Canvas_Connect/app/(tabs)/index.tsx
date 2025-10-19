@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
-
   newPostButton: {
     marginRight: wp(5),
     backgroundColor: Colors.secondary,
