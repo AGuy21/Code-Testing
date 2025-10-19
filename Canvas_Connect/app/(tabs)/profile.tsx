@@ -10,6 +10,8 @@ import SettingsModal from "@/components/ui/settings/SettingsModal";
 import { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Feather from '@expo/vector-icons/Feather';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
@@ -26,9 +28,11 @@ export default function Profile() {
       {/** Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setModalOpen(true)}>
-          <Ionicons name="settings" size={wp(7.5)} color={Colors.tertiary} />
+
+          <MaterialIcons name="settings" size={wp(7.5)} color={Colors.tertiary} />
         </TouchableOpacity>
       </View>
+      
       {/** Body */}
       <View style={styles.pictureContainer}>
         <ProfilePicture />
