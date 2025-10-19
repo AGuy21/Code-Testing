@@ -15,6 +15,7 @@ export default function GetUsersPosts() {
         const docRef = doc(db, "posts", postId.toString());
         const docSnap = await getDoc(docRef);
         const postData = docSnap.data();
+        
         if (postData !== undefined) {
           posts.push(postData as postType);
         }
