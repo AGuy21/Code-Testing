@@ -8,9 +8,7 @@ import {
 } from "react-native-responsive-screen";
 import SettingsModal from "@/components/ui/settings/SettingsModal";
 import { useEffect, useState } from "react";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Feather from '@expo/vector-icons/Feather';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function Profile() {
