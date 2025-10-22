@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+:root {
+	--site-max-width: 64rem; 
+	--gold: #d4af37;
+	--bg: #0f3d2e;
+}
+
+html {
+	font-size: 16px;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Container utility used to center the container responsivelt */
+.container-centered {
+	max-width: var(--site-max-width);
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+h1, h2, h3 {
+	line-height: 1.15;
+}
+
+@media (max-width: 640px) {
+	.p-responsive {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+}
+
+.mobile-menu-backdrop {
+	backdrop-filter: blur(6px);
+}

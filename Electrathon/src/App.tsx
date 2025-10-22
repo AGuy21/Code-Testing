@@ -13,7 +13,7 @@ function App() {
     <div className="min-h-screen bg-[#0f3d2e] text-white">
       <Header SelectedPage={selectedPage} />
 
-      <main className="max-w-4xl mx-auto p-8">
+      <main className="container-centered p-6 md:p-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
