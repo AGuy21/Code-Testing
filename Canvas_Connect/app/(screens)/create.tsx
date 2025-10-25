@@ -17,6 +17,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AuthorizePost from "@/components/functions/AuthorizePost";
 import { useUserDataStore } from "@/components/hooks/store";
 import * as ImagePicker from "expo-image-picker";
+import { checkForCameraRollPermission } from "@/components/functions/CheckCameraRollPermissions";
 
 const create = () => {
   //!Navigation and header setup w/ necessary user data
@@ -41,16 +42,6 @@ const create = () => {
     checkForCameraRollPermission();
   }, []);
 
-  const checkForCameraRollPermission = async () => {
-    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert(
-        "Please grant camera roll permissions inside your system's settings"
-      );
-    } else {
-      console.log("Media Permissions are granted");
-    }
-  };
 
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({

@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { useUserDataStore } from "./store";
 import { useUser } from "@clerk/clerk-expo";
+import { checkForCameraRollPermission } from "../functions/CheckCameraRollPermissions";
 
 export default function useChangeProfilePicture() {
   const { user } = useUser();
@@ -16,17 +17,6 @@ export default function useChangeProfilePicture() {
   useEffect(() => {
     checkForCameraRollPermission();
   }, []);
-
-  const checkForCameraRollPermission = async () => {
-    const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert(
-        "Please grant camera roll permissions inside your system's settings"
-      );
-    } else {
-      console.log("Media Permissions are granted");
-    }
-  };
 
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
