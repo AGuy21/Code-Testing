@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 :root {
-	--site-max-width: 64rem; 
+	--site-max-width: 80rem; /* Increased from 64rem for better large screen support */
 	--gold: #d4af37;
 	--bg: #0f3d2e;
+	--racing-red: #dc2626;
+	--racing-white: #ffffff;
 }
 
 html {
@@ -15,13 +17,27 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-/* Container utility used to center the container responsivelt */
 .container-centered {
 	max-width: var(--site-max-width);
 	margin-left: auto;
 	margin-right: auto;
 	padding-left: 1rem;
 	padding-right: 1rem;
+}
+
+.racing-container {
+	max-width: 1400px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+@media (min-width: 1536px) {
+	.racing-container {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
 }
 
 h1, h2, h3 {
@@ -37,4 +53,123 @@ h1, h2, h3 {
 
 .mobile-menu-backdrop {
 	backdrop-filter: blur(6px);
+}
+
+/* Racing stripe border effect */
+.racing-border {
+	border-left: 4px solid var(--gold);
+	border-right: 4px solid var(--gold);
+	position: relative;
+}
+
+.racing-border::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: linear-gradient(90deg, 
+		var(--gold) 0%, 
+		var(--gold) 25%, 
+		transparent 25%, 
+		transparent 50%,
+		var(--gold) 50%,
+		var(--gold) 75%,
+		transparent 75%,
+		transparent 100%
+	);
+	background-size: 40px 4px;
+}
+
+.racing-border::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: linear-gradient(90deg, 
+		var(--gold) 0%, 
+		var(--gold) 25%, 
+		transparent 25%, 
+		transparent 50%,
+		var(--gold) 50%,
+		var(--gold) 75%,
+		transparent 75%,
+		transparent 100%
+	);
+	background-size: 40px 4px;
+}
+
+/* Checkered flag border effect */
+.checkered-border {
+	position: relative;
+	border: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.checkered-border::before {
+	content: '';
+	position: absolute;
+	top: -2px;
+	left: -2px;
+	right: -2px;
+	bottom: -2px;
+	background-image: 
+		linear-gradient(45deg, rgba(212, 175, 55, 0.4) 25%, transparent 25%),
+		linear-gradient(-45deg, rgba(212, 175, 55, 0.4) 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, rgba(212, 175, 55, 0.4) 75%),
+		linear-gradient(-45deg, transparent 75%, rgba(212, 175, 55, 0.4) 75%);
+	background-size: 20px 20px;
+	background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+	opacity: 0.15;
+	pointer-events: none;
+	border-radius: inherit;
+}
+
+/* Racing stripe accent */
+.racing-stripe {
+	position: relative;
+}
+
+.racing-stripe::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 4px;
+	background: linear-gradient(to bottom, 
+		var(--gold) 0%,
+		var(--racing-red) 50%,
+		var(--gold) 100%
+	);
+}
+
+/* Speed lines effect for cards */
+.speed-lines {
+	position: relative;
+	overflow: hidden;
+}
+
+.speed-lines::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	right: -100%;
+	width: 200%;
+	height: 2px;
+	background: linear-gradient(90deg, 
+		transparent 0%,
+		rgba(212, 175, 55, 0.5) 50%,
+		transparent 100%
+	);
+	transform: translateY(-50%) skewX(-45deg);
+	opacity: 0;
+	transition: opacity 0.3s, right 0.3s;
+}
+
+.speed-lines:hover::after {
+	opacity: 1;
+	right: 100%;
 }

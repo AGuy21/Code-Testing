@@ -12,10 +12,13 @@ export default function Header({ SelectedPage }: HomeProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="w-full bg-black/10 backdrop-blur-sm border-b border-white/10">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <header className="w-full bg-black/10 backdrop-blur-sm border-b-4 border-[#d4af37]/30 relative">
+      {/* Racing stripe accent on top */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent"></div>
+      
+      <div className="racing-container max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-white/5 flex items-center justify-center ring-1 ring-white/10">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-white/5 flex items-center justify-center ring-2 ring-[#d4af37]/50 hover:ring-[#d4af37] transition-all duration-300">
             <img
               src={logo}
               alt="Electrothon logo"
@@ -48,17 +51,17 @@ export default function Header({ SelectedPage }: HomeProps) {
                   if (hoveredIndex !== null) {
                     if (hoveredIndex === index) {
                       base +=
-                        " -translate-y-1 scale-105 text-[#0f3d2e] bg-[#d4af37] font-semibold border-b-4 border-[#d4af37]";
+                        " -translate-y-1 scale-105 text-[#0f3d2e] bg-[#d4af37] font-semibold border-b-4 border-[#d4af37] shadow-lg shadow-[#d4af37]/40";
                     } else {
                       base += " scale-95 text-white/40";
                     }
                   } else {
                     if (isActive || SelectedPage === item.title) {
                       base +=
-                        " text-[#0f3d2e] bg-[#d4af37] font-semibold border-b-4 border-[#d4af37]";
+                        " text-[#0f3d2e] bg-[#d4af37] font-semibold border-b-4 border-[#d4af37] shadow-md shadow-[#d4af37]/30";
                     } else {
                       base +=
-                        " text-white/90 hover:-translate-y-1 hover:scale-105 hover:text-white hover:bg-white/5";
+                        " text-white/90 hover:-translate-y-1 hover:scale-105 hover:text-white hover:bg-white/5 hover:border-b-2 hover:border-[#d4af37]/50";
                     }
                   }
                   return base;

@@ -19,13 +19,16 @@ export default function TrophyCard({ trophy }: TrophyCardProps) {
   };
 
   return (
-    <div className="p-5 bg-white/5 rounded-lg border border-white/10 hover:border-[#d4af37]/40 hover:bg-white/[0.08] hover:shadow-lg hover:shadow-[#d4af37]/10 transition-all duration-300 hover:-translate-y-1">
-      <div className="flex items-start justify-between mb-3">
+    <div className="p-5 bg-white/5 rounded-lg border-2 border-white/10 border-l-4 border-l-[#d4af37] hover:border-[#d4af37]/60 hover:bg-white/[0.08] hover:shadow-xl hover:shadow-[#d4af37]/20 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden">
+      {/* Subtle racing stripe gradient in background */}
+      <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-[#d4af37]/5 to-transparent pointer-events-none"></div>
+      
+      <div className="flex items-start justify-between mb-3 relative z-10">
         <h4 className="font-semibold text-[#d4af37] text-base flex-1">{trophy.title}</h4>
         {getCategoryBadge()}
       </div>
-      <p className="text-xs text-white/50 mb-3">{trophy.year}</p>
-      <p className="text-sm text-white/80 leading-relaxed">{trophy.description}</p>
+      <p className="text-xs text-white/50 mb-3 relative z-10">{trophy.year}</p>
+      <p className="text-sm text-white/80 leading-relaxed relative z-10">{trophy.description}</p>
     </div>
   );
 }
