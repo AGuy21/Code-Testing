@@ -5,8 +5,10 @@ import {
   TextInput,
   Pressable,
   Image,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation, useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import {
@@ -18,6 +20,10 @@ import AuthorizePost from "@/components/functions/AuthorizePost";
 import { useUserDataStore } from "@/components/hooks/store";
 import * as ImagePicker from "expo-image-picker";
 import { checkForCameraRollPermission } from "@/components/functions/CheckCameraRollPermissions";
+import { usePostErrorHandler } from "@/components/hooks/usePostErrorHandler";
+import { getNextPostId } from "@/components/functions/GetNextPostId";
+import { savePost } from "@/components/functions/SavePost";
+import { updateUserPosts } from "@/components/functions/UpdateUserPosts";
 
 const create = () => {
   //!Navigation and header setup w/ necessary user data
@@ -37,92 +43,101 @@ const create = () => {
       },
     });
   }, [navigation]);
-  //!Image states
+
   useEffect(() => {
     checkForCameraRollPermission();
   }, []);
 
+  //!Post states
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [picture, setPicture] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  //!Error handling
+  const { errors, setErrorFromMessage, clearErrors } = usePostErrorHandler();
 
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [3, 3],
       quality: 1,
     });
     if (!_image.canceled) {
       setPicture(_image.assets[0].uri);
     }
   };
-  //!Post overall states
-  const [title, setTitle] = React.useState("");
-  const [titleErrorMessage, setTitleErrorMessage] = React.useState("");
 
-  const [description, setDescription] = React.useState("");
-  const [descriptionErrorMessage, setDescriptionErrorMessage] =
-    React.useState("");
-
-  const [picture, setPicture] = React.useState("");
-  const [pictureErrorMessage, setPictureErrorMessage] = React.useState("");
-
-  const [otherErrorMessage, setOtherErrorMessage] = React.useState("");
-  /**
-   * Handles the submission of the post by authorizing it and catching any validation errors.
-   */
-  function submitPost() {
+  const submitPost = async () => {
     if (!userData?.email) {
-      return; //TODO: handle user data not found error
+      Alert.alert("Error", "User data not found. Please sign in again.");
+      return;
     }
+
+    clearErrors();
+    setIsSubmitting(true);
+
     try {
+      // Validate post data
       AuthorizePost({ title, picture, description });
+
+      // Get next post ID
+      const postId = await getNextPostId();
+
+      // Save post to posts collection
+      await savePost({
+        postId,
+        postData: {
+          title: title.trim(),
+          description: description.trim(),
+          image: picture,
+          creatorEmail: userData.email,
+          likes: 0,
+        },
+      });
+
+      // Update user's posts array
+      await updateUserPosts({
+        userEmail: userData.email,
+        postId,
+      });
+
+      Alert.alert("Success", "Post created successfully!", [
+        {
+          text: "OK",
+          onPress: () => router.back(),
+        },
+      ]);
     } catch (error: any) {
-      if (
-        !error.message.includes("Title") &&
-        !error.message.includes("Picture") &&
-        !error.message.includes("Description")
-      ) {
-        setOtherErrorMessage(error.message);
-      }
-      if (error.message.includes("Title")) {
-        setTitleErrorMessage(error.message);
-      } else {
-        setTitleErrorMessage("");
-      }
-
-      if (error.message.includes("Picture")) {
-        setPictureErrorMessage(error.message);
-      } else {
-        setPictureErrorMessage("");
-      }
-
-      if (error.message.includes("Description")) {
-        setDescriptionErrorMessage(error.message);
-      } else {
-        setDescriptionErrorMessage("");
-      }
+      setErrorFromMessage(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TextInput
           style={[
             styles.titleInput,
-            { marginBottom: titleErrorMessage ? hp(0) : hp(4) },
+            { marginBottom: errors.title ? hp(0) : hp(4) },
           ]}
           value={title}
           placeholder="Enter title"
-          onChangeText={(title) => setTitle(title)}
+          onChangeText={setTitle}
           placeholderTextColor={Colors.text2}
+          editable={!isSubmitting}
         />
-        {titleErrorMessage && (
+        {errors.title && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>{titleErrorMessage}</Text>
+            <Text style={styles.errorMessageText}>{errors.title}</Text>
           </View>
         )}
       </View>
 
-      <View style={[styles.main, { gap: pictureErrorMessage ? hp(0) : hp(2.5) }]}>
+      <View style={[styles.main, { gap: errors.picture ? hp(0) : hp(2.5) }]}>
         {picture ? (
           <Image
             style={styles.pictureInput}
@@ -132,10 +147,10 @@ const create = () => {
         ) : (
           <Pressable
             onPress={addImage}
+            disabled={isSubmitting}
             style={[
               styles.pictureInput,
               {
-
                 alignItems: "center",
                 justifyContent: "center",
                 gap: hp(2),
@@ -147,9 +162,9 @@ const create = () => {
           </Pressable>
         )}
 
-        {pictureErrorMessage && (
+        {errors.picture && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>{pictureErrorMessage}</Text>
+            <Text style={styles.errorMessageText}>{errors.picture}</Text>
           </View>
         )}
 
@@ -159,30 +174,35 @@ const create = () => {
           placeholder="Enter description"
           placeholderTextColor={Colors.text2}
           value={description}
-          onChangeText={(description) => setDescription(description)}
+          onChangeText={setDescription}
+          editable={!isSubmitting}
         />
-        {descriptionErrorMessage && (
+        {errors.description && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>
-              {descriptionErrorMessage}
-            </Text>
+            <Text style={styles.errorMessageText}>{errors.description}</Text>
           </View>
         )}
       </View>
 
       <View style={styles.footer}>
         <View>
-          {otherErrorMessage && (
+          {errors.other && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.otherErrorMessageText}>
-                {otherErrorMessage}
-              </Text>
+              <Text style={styles.otherErrorMessageText}>{errors.other}</Text>
             </View>
           )}
         </View>
 
-        <Pressable style={styles.createButton} onPress={submitPost}>
-          <MaterialIcons name="add" size={wp(10)} color={Colors.text2} />
+        <Pressable
+          style={[styles.createButton, isSubmitting && { opacity: 0.5 }]}
+          onPress={submitPost}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator size="small" color={Colors.text2} />
+          ) : (
+            <MaterialIcons name="add" size={wp(10)} color={Colors.text2} />
+          )}
         </Pressable>
       </View>
     </View>

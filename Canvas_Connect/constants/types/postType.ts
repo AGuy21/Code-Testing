@@ -1,5 +1,7 @@
 export type postType = {
     title: string;
-    picture: string;
+    description: string;
+    image: string;
+    creatorEmail: string;
     likes: number;
 };

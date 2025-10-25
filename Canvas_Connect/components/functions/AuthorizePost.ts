@@ -4,8 +4,8 @@ interface AuthorizePostProps {
     picture: string;
     description: string
 }
+
 export default function AuthorizePost({title, picture, description}: AuthorizePostProps) {
-    console.log(title.length)
     //test cases
     if (!title || title.trim() === "") {
         throw new Error("Title cannot be empty.");
@@ -19,10 +19,9 @@ export default function AuthorizePost({title, picture, description}: AuthorizePo
         throw new Error("Description cannot be empty.");
     }
 
-
     if (description.length > 200) {
-        throw new Error("Description cannot exceed 500 characters.");
+        throw new Error("Description cannot exceed 200 characters.");
     }
 
-    throw new Error("Post authorized successfully.");
+    return true;
 }
