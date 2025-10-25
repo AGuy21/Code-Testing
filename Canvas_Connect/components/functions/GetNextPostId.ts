@@ -1,20 +1,24 @@
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/Configs/FirebaseConfig";
 
 export const getNextPostId = async (): Promise<number> => {
   try {
     const postsRef = collection(db, "posts");
-    const q = query(postsRef, orderBy("__name__", "desc"), limit(1));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(postsRef);
 
     if (querySnapshot.empty) {
-      return 1; // First post is 1
+      return 1; // First post
     }
 
-    const lastDoc = querySnapshot.docs[0];
-    const lastId = parseInt(lastDoc.id);
-    return lastId + 1;
+    let maxId = 0;
+    querySnapshot.forEach((doc) => {
+      const id = parseInt(doc.id);
+      if (!isNaN(id) && id > maxId) {
+        maxId = id;
+      }
+    });
 
+    return maxId + 1;
   } catch (error) {
     console.error("Error getting next post ID:", error);
     throw new Error("Failed to generate post ID");
