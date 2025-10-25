@@ -1,11 +1,5 @@
+import { ErrorMessages } from "@/constants/types/ErrorMessages";
 import { useState } from "react";
-
-export interface ErrorMessages {
-  title: string;
-  picture: string;
-  description: string;
-  other: string;
-}
 
 export const usePostErrorHandler = () => {
   const [errors, setErrors] = useState<ErrorMessages>({
