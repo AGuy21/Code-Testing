@@ -51,7 +51,7 @@ const PreviousPosts = () => {
           />
 
           <Image
-            source={{ uri: userData.profilePicture }}
+            source={{ uri: item.image }}
             style={styles.postPicture}
           />
 
