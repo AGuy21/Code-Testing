@@ -41,27 +41,27 @@ export default function Home() {
           <h2 className="text-3xl lg:text-4xl font-bold text-[#d4af37] mb-6">About Electrathon</h2>
           <p className="text-lg lg:text-xl text-white/90 leading-relaxed mb-8">
             Electrathon is a competitive electric vehicle racing program where students design, build, 
-            and race ultra-efficient electric cars. Our club combines engineering, problem-solving, 
-            and teamwork to create vehicles that compete at regional and national events.
+            and race electric cars. Our club combines engineering, problem-solving, 
+            and teamwork to create vehicles that compete at regional and possibly national events.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             <div className="p-6 bg-white/5 rounded-lg border border-white/10 border-l-4 border-l-[#d4af37] hover:border-[#d4af37]/50 hover:bg-white/10 hover:shadow-lg hover:shadow-[#d4af37]/20 transition-all duration-300 hover:-translate-y-1">
               <h3 className="font-semibold text-[#d4af37] text-lg mb-3">Engineering & Design</h3>
               <p className="text-sm text-white/80 leading-relaxed">
-                Learn CAD, electronics, and mechanical engineering through real-world vehicle development.
+                Learn CAD, electronics, and mechanical engineering through real-world, hands-on vehicle development.
               </p>
             </div>
             <div className="p-6 bg-white/5 rounded-lg border border-white/10 border-l-4 border-l-[#d4af37] hover:border-[#d4af37]/50 hover:bg-white/10 hover:shadow-lg hover:shadow-[#d4af37]/20 transition-all duration-300 hover:-translate-y-1">
               <h3 className="font-semibold text-[#d4af37] text-lg mb-3">Competitive Racing</h3>
               <p className="text-sm text-white/80 leading-relaxed">
-                Compete at iconic venues like Daytona International Speedway against teams nationwide.
+                Compete at iconic venues against teams in the region and opposing schools.
               </p>
             </div>
             <div className="p-6 bg-white/5 rounded-lg border border-white/10 border-l-4 border-l-[#d4af37] hover:border-[#d4af37]/50 hover:bg-white/10 hover:shadow-lg hover:shadow-[#d4af37]/20 transition-all duration-300 hover:-translate-y-1">
               <h3 className="font-semibold text-[#d4af37] text-lg mb-3">Hands-On Learning</h3>
               <p className="text-sm text-white/80 leading-relaxed">
-                Develop practical skills in fabrication, electrical systems, and project management.
+                Develop practical skills in design, electrical systems, mechanical work, and project management.
               </p>
             </div>
           </div>
@@ -99,10 +99,10 @@ export default function Home() {
           <ImageShowcase
             image1Url="/path/to/daytona-race.jpg"
             image1Alt="Electrathon race at Daytona"
-            image1Caption="Racing at Daytona International Speedway"
+            image1Caption="Racing at Daytona"
             image2Url="/path/to/engineering-work.jpg"
             image2Alt="Students working on the vehicle"
-            image2Caption="Engineering and fabrication work"
+            image2Caption="Engineering and design work"
           />
         </section>
 
