@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Colors } from '../constants/colors';
+import { Colors } from '../../constants/colors';
 
 interface Star {
   x: number;

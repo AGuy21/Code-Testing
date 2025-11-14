@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Colors } from '../constants/colors';
+import { Colors } from '../../constants/colors';
 
 interface ShootingStar {
   id: number;
@@ -27,7 +27,7 @@ export default function ShootingStars() {
       });
     };
 
-    const interval = setInterval(addStar, 100);
+    const interval = setInterval(addStar, 2000);
     return () => clearInterval(interval);
   }, []);
 

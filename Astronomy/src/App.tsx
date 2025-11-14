@@ -3,8 +3,8 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Header from './components/Header';
 import Connect from './pages/Connect';
-import StarField from './components/StarField';
-import ShootingStars from './components/ShootingStars';
+import StarField from './components/animations/StarField';
+import ShootingStars from './components/animations/ShootingStars';
 import { Colors } from './constants/colors';
 
 function App() {

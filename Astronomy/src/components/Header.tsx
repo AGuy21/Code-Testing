@@ -2,8 +2,8 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import { headerItems } from "../constants/data/headerItems";
 import { Colors } from "../constants/colors";
-import NavButton from "./NavButton";
-import ParticleExplosion from "./ParticleExplosion";
+import NavButton from "./HeaderButton";
+import ParticleExplosion from "./animations/ParticleExplosion";
 
 interface HeaderProps {
   SelectedPage?: string;
