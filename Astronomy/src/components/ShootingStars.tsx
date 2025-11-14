@@ -27,7 +27,7 @@ export default function ShootingStars() {
       });
     };
 
-    const interval = setInterval(addStar, 4000);
+    const interval = setInterval(addStar, 100);
     return () => clearInterval(interval);
   }, []);
 
