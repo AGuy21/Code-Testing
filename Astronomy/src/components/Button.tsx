@@ -19,20 +19,23 @@ export default function Button({
   variant = 'primary', 
   className = '' 
 }: ButtonProps) {
-  const baseStyles = 'px-8 py-3 rounded-lg font-semibold transition-all duration-300 text-center inline-block hover:-translate-y-0.5';
+  const baseStyles = 'px-8 py-3 rounded-lg font-semibold transition-all duration-300 text-center inline-block hover:-translate-y-1';
   
   const variantStyles = {
-    primary: 'shadow-lg hover:shadow-xl hover:brightness-110',
-    outline: 'border-2 text-white hover:bg-white/10',
+    primary: '',
+    outline: 'border-2 text-white hover:bg-white/5',
   };
 
   const style = variant === 'primary' 
     ? { 
         backgroundColor: Colors.primary, 
         color: Colors.background,
-        boxShadow: `0 10px 15px -3px ${Colors.primary}4d, 0 4px 6px -4px ${Colors.primary}4d`
+        boxShadow: `0 4px 14px ${Colors.primary}40`,
       }
-    : { borderColor: `${Colors.primary}66` };
+    : { 
+        borderColor: Colors.primary,
+        boxShadow: `0 0 10px ${Colors.primary}20`
+      };
 
   const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${className}`;
 

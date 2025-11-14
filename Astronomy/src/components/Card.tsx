@@ -8,26 +8,24 @@ interface CardProps {
 }
 
 export default function Card({ children, className = '', variant = 'default' }: CardProps) {
-  const baseStyles = 'rounded-lg p-6 transition-all duration-300';
+  const baseStyles = 'rounded-lg p-6 transition-all duration-300 backdrop-blur-sm';
   
   const variants = {
-    default: 'bg-white/5 backdrop-blur-sm hover:bg-white/10',
-    bordered: 'bg-white/5 backdrop-blur-sm border-2 hover:border-opacity-80',
-    gradient: 'bg-gradient-to-br from-white/10 to-transparent border-2 hover:border-opacity-80',
+    default: 'bg-white/5 hover:bg-white/10 border border-white/10',
+    bordered: 'bg-white/5 hover:bg-white/10 border-2',
+    gradient: 'bg-gradient-to-br from-indigo-500/10 to-purple-500/5 border-2',
   };
 
   const borderStyle = variant === 'bordered' || variant === 'gradient' 
-    ? { borderColor: `${Colors.primary}33` }
-    : {};
-
-  const hoverBorderStyle = variant === 'bordered' || variant === 'gradient'
-    ? { ['--hover-border-color' as string]: `${Colors.primary}66` }
+    ? { 
+        borderColor: `${Colors.primary}40`,
+      }
     : {};
 
   return (
     <div 
       className={`${baseStyles} ${variants[variant]} ${className}`}
-      style={{ ...borderStyle, ...hoverBorderStyle }}
+      style={{ ...borderStyle }}
     >
       {children}
     </div>
