@@ -4,7 +4,7 @@ import Container from '../components/Container';
 export default function Connect() {
   return (
     <Container size="md" className="py-12 space-y-8">
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-300 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
+      <h1 className="pb-4 text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-300 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-tight">
         Connect Page
       </h1>
 
