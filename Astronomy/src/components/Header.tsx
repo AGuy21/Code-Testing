@@ -18,7 +18,7 @@ export default function Header({ SelectedPage }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-6 2xl:px-8 py-8">
         <div className="flex flex-col items-center gap-8">
           <p className="text-sm tracking-[0.3em] uppercase text-indigo-300/70 font-light">
-            Nease High School
+            Nease Astronomy: Aiming for the stars, reaching the cosmos.
           </p>
 
           <nav className="hidden sm:flex gap-6 items-center justify-center">
@@ -101,13 +101,6 @@ export default function Header({ SelectedPage }: HeaderProps) {
           </div>
         </div>
       )}
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.05); }
-        }
-      `}</style>
     </header>
   );
 }
