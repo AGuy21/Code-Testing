@@ -35,7 +35,7 @@ export default function Header({ SelectedPage }: HeaderProps) {
                   >
                     {item.title}
                   </NavButton>
-                  {!(SelectedPage === item.title) && isHovered ? <ParticleExplosion /> : null}
+                  {!(SelectedPage === item.title.toLowerCase()) && isHovered ? <ParticleExplosion /> : null}
                 </div>
               );
             })}
