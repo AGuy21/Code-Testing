@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Header from "./components/Header";
 import Connect from "./pages/Connect";
+import Footer from "./components/Footer";
 import StarField from "./components/animations/StarField";
 import ShootingStars from "./components/animations/ShootingStars";
 import { Colors } from "./constants/colors";
@@ -30,6 +31,7 @@ function App() {
             <Route path="/connect" element={<Connect />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </div>
   );
