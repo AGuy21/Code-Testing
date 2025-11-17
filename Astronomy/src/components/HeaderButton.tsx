@@ -34,15 +34,15 @@ export default function NavButton({ to, isPageActive, onHover, children }: NavBu
             {active && (
               <>
                 <div
-                  className="absolute inset-0 rounded-full p-[2px] bg-gradient-to-r from-indigo-300 via-purple-400 to-pink-400 -z-10"
+                  className="absolute inset-0 rounded-full p-0.5 bg-linear-to-r from-indigo-300 via-purple-400 to-pink-400 -z-10"
                   style={{
                     boxShadow: `0 0 20px rgba(139, 92, 246, 0.5)`,
                   }}
                 >
-                  <div className="absolute inset-[2px] rounded-full" style={{ backgroundColor: Colors.background }} />
+                  <div className="absolute inset-0.5 rounded-full" style={{ backgroundColor: Colors.background }} />
                 </div>
                 <div
-                  className="absolute inset-0 rounded-full blur-sm -z-20 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 opacity-60"
+                  className="absolute inset-0 rounded-full blur-sm -z-20 bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 opacity-60"
                   style={{
                     animation: 'pulse 2s ease-in-out infinite',
                   }}
@@ -52,7 +52,7 @@ export default function NavButton({ to, isPageActive, onHover, children }: NavBu
             
             {!active && (
               <div
-                className="absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 origin-center group-hover:scale-x-100 scale-x-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400"
+                className="absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 origin-center group-hover:scale-x-100 scale-x-0 bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400"
                 style={{ boxShadow: `0 0 8px ${Colors.primary}` }}
               />
             )}

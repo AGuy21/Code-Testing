@@ -14,7 +14,7 @@ export default function Header({ SelectedPage }: HeaderProps) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
-    <header className="w-full bg-gradient-to-b from-black/50 via-indigo-950/20 to-transparent backdrop-blur-lg border-b border-indigo-400/20 shadow-lg">
+    <header className="w-full bg-linear-to-b from-black/50 via-indigo-950/20 to-transparent backdrop-blur-lg border-b border-indigo-400/20 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 2xl:px-8 py-8">
         <div className="flex flex-col items-center gap-8">
           <p className="text-sm tracking-[0.3em] uppercase text-indigo-300/70 font-light">
