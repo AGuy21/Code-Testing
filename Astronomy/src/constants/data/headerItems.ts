@@ -13,5 +13,5 @@ export const headerItems: HeaderItem[] = [
   {
     title: "Connect",
     route: "/connect",
-  }
+  },
 ];

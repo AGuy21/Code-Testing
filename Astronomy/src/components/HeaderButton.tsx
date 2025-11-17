@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Colors } from '../constants/colors';
+import type { ReactNode } from "react";
+import { NavLink } from "react-router-dom";
+import { Colors } from "../constants/colors";
 
 interface NavButtonProps {
   to: string;
@@ -9,7 +9,12 @@ interface NavButtonProps {
   children: ReactNode;
 }
 
-export default function NavButton({ to, isPageActive, onHover, children }: NavButtonProps) {
+export default function NavButton({
+  to,
+  isPageActive,
+  onHover,
+  children,
+}: NavButtonProps) {
   return (
     <NavLink
       to={to}
@@ -23,14 +28,14 @@ export default function NavButton({ to, isPageActive, onHover, children }: NavBu
           <div className="relative">
             <span
               className={`relative z-10 block px-8 py-3 text-base font-semibold tracking-[0.15em] transition-all duration-300 ${
-                active 
-                  ? 'scale-110 text-white' 
-                  : 'text-indigo-200/90 group-hover:text-white group-hover:scale-105'
+                active
+                  ? "scale-110 text-white"
+                  : "text-indigo-200/90 group-hover:text-white group-hover:scale-105"
               }`}
             >
               {children}
             </span>
-            
+
             {active && (
               <>
                 <div
@@ -39,17 +44,20 @@ export default function NavButton({ to, isPageActive, onHover, children }: NavBu
                     boxShadow: `0 0 20px rgba(139, 92, 246, 0.5)`,
                   }}
                 >
-                  <div className="absolute inset-0.5 rounded-full" style={{ backgroundColor: Colors.background }} />
+                  <div
+                    className="absolute inset-0.5 rounded-full"
+                    style={{ backgroundColor: Colors.background }}
+                  />
                 </div>
                 <div
                   className="absolute inset-0 rounded-full blur-sm -z-20 bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 opacity-60"
                   style={{
-                    animation: 'pulse 2s ease-in-out infinite',
+                    animation: "pulse 2s ease-in-out infinite",
                   }}
                 />
               </>
             )}
-            
+
             {!active && (
               <div
                 className="absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 origin-center group-hover:scale-x-100 scale-x-0 bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400"

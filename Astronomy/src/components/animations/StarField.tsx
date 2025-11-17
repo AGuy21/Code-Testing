@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Colors } from '../../constants/colors';
+import { useEffect, useRef } from "react";
+import { Colors } from "../../constants/colors";
 
 interface Star {
   x: number;
@@ -16,7 +16,7 @@ export default function StarField() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     const resizeCanvas = () => {
@@ -42,16 +42,18 @@ export default function StarField() {
       starsRef.current.forEach((star) => {
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fillStyle = `${Colors.star}${Math.floor(star.opacity * 255).toString(16).padStart(2, '0')}`;
+        ctx.fillStyle = `${Colors.star}${Math.floor(star.opacity * 255)
+          .toString(16)
+          .padStart(2, "0")}`;
         ctx.fill();
       });
     };
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
 

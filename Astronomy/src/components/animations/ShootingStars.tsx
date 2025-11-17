@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Colors } from '../../constants/colors';
+import { useEffect, useState } from "react";
+import { Colors } from "../../constants/colors";
 
 interface ShootingStar {
   id: number;
@@ -20,8 +20,9 @@ export default function ShootingStars() {
     });
 
     const addStar = () => {
-      setStars(prev => {
-        const newId = prev.length > 0 ? Math.max(...prev.map(s => s.id)) + 1 : 0;
+      setStars((prev) => {
+        const newId =
+          prev.length > 0 ? Math.max(...prev.map((s) => s.id)) + 1 : 0;
         const newStars = [...prev.slice(-2), createStar(newId)];
         return newStars;
       });
@@ -32,7 +33,10 @@ export default function ShootingStars() {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 1 }}>
+    <div
+      className="fixed inset-0 pointer-events-none overflow-hidden"
+      style={{ zIndex: 1 }}
+    >
       {stars.map((star) => (
         <div
           key={star.id}

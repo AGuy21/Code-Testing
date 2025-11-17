@@ -25,17 +25,21 @@ export default function Header({ SelectedPage }: HeaderProps) {
             {headerItems.map((item) => {
               const to = item.route === "/home" ? "/" : item.route;
               const isHovered = hoveredItem === item.title;
-              
+
               return (
                 <div key={item.title} className="relative">
                   <NavButton
                     to={to}
                     isPageActive={SelectedPage === item.title}
-                    onHover={(hovered) => setHoveredItem(hovered ? item.title : null)}
+                    onHover={(hovered) =>
+                      setHoveredItem(hovered ? item.title : null)
+                    }
                   >
                     {item.title}
                   </NavButton>
-                  {!(SelectedPage === item.title.toLowerCase()) && isHovered ? <ParticleExplosion /> : null}
+                  {!(SelectedPage === item.title.toLowerCase()) && isHovered ? (
+                    <ParticleExplosion />
+                  ) : null}
                 </div>
               );
             })}
@@ -46,8 +50,18 @@ export default function Header({ SelectedPage }: HeaderProps) {
             className="sm:hidden p-3 rounded-lg hover:bg-indigo-400/10 transition-all border border-indigo-400/30"
             style={{ boxShadow: `0 0 10px ${Colors.primary}20` }}
           >
-            <svg className="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+            <svg
+              className="w-6 h-6 text-indigo-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+              />
             </svg>
           </button>
         </div>
@@ -65,9 +79,19 @@ export default function Header({ SelectedPage }: HeaderProps) {
                 {({ isActive }) => (
                   <span
                     className={`block px-6 py-3 rounded-lg text-base font-medium tracking-[0.15em] transition-all text-center ${
-                      isActive ? '' : 'text-indigo-200/90 hover:bg-indigo-400/10 border border-indigo-400/20'
+                      isActive
+                        ? ""
+                        : "text-indigo-200/90 hover:bg-indigo-400/10 border border-indigo-400/20"
                     }`}
-                    style={isActive ? { backgroundColor: Colors.primary, color: Colors.background, boxShadow: `0 0 20px ${Colors.primary}60` } : {}}
+                    style={
+                      isActive
+                        ? {
+                            backgroundColor: Colors.primary,
+                            color: Colors.background,
+                            boxShadow: `0 0 20px ${Colors.primary}60`,
+                          }
+                        : {}
+                    }
                   >
                     {item.title}
                   </span>

@@ -1,5 +1,5 @@
-import Card from '../components/Card';
-import Container from '../components/Container';
+import Card from "../components/Card";
+import Container from "../components/Container";
 
 export default function Connect() {
   return (
@@ -12,13 +12,13 @@ export default function Connect() {
         <p className="text-xl text-indigo-100/90 mb-6 tracking-[0.06em]">
           Join us!
         </p>
-        <p className="text-indigo-200/70 tracking-[0.04em]">
-          We cool
-        </p>
+        <p className="text-indigo-200/70 tracking-[0.04em]">We cool</p>
       </Card>
 
       <Card>
-        <h3 className="text-xl font-bold mb-4 text-center bg-linear-to-r from-indigo-300 via-purple-300 to-blue-300 bg-clip-text text-transparent tracking-[0.08em]">Additional Information</h3>
+        <h3 className="text-xl font-bold mb-4 text-center bg-linear-to-r from-indigo-300 via-purple-300 to-blue-300 bg-clip-text text-transparent tracking-[0.08em]">
+          Additional Information
+        </h3>
         <p className="text-indigo-200/70 text-center tracking-[0.04em]">
           We need sponsers fr
         </p>
