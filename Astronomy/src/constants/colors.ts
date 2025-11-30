@@ -5,4 +5,6 @@ export const Colors = {
   accent: "#60a5fa",
   star: "#e0e7ff",
   glow: "#c7d2fe",
+  purpleShadow: "rgba(139, 92, 246, 0.5)",
+  whiteOverlay: "rgba(255, 255, 255, 0.02)",
 } as const;

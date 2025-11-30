@@ -41,7 +41,7 @@ export default function NavButton({
                 <div
                   className="absolute inset-0 rounded-full p-0.5 bg-linear-to-r from-indigo-300 via-purple-400 to-pink-400 -z-10"
                   style={{
-                    boxShadow: `0 0 20px rgba(139, 92, 246, 0.5)`,
+                    boxShadow: `0 0 20px ${Colors.purpleShadow}`,
                   }}
                 >
                   <div

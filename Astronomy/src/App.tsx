@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import StarField from "./components/animations/StarField";
 import ShootingStars from "./components/animations/ShootingStars";
 import { Colors } from "./constants/colors";
+import Sponsors from "./pages/Sponsors";
 
 function App() {
   const location = useLocation();
@@ -29,6 +30,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/connect" element={<Connect />} />
+            <Route path="/sponsors" element={<Sponsors />} />
           </Routes>
         </main>
         <Footer />

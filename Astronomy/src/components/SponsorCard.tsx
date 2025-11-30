@@ -12,7 +12,7 @@ export default function SponsorCard({ name, logoUrl, website }: SponsorCardProps
       className="flex items-center justify-center p-6 rounded-lg border transition-all hover:scale-105 cursor-pointer min-h-[100px]"
       style={{ 
         borderColor: `${Colors.primary}30`,
-        backgroundColor: 'rgba(255, 255, 255, 0.02)'
+        backgroundColor: Colors.whiteOverlay,
       }}
     >
       {logoUrl ? (

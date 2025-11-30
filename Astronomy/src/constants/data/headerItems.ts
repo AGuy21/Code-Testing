@@ -14,4 +14,8 @@ export const headerItems: HeaderItem[] = [
     title: "Connect",
     route: "/connect",
   },
+  {
+    title: "Sponsors",
+    route: "/sponsors",
+  }
 ];
