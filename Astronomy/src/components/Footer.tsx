@@ -47,7 +47,7 @@ export default function Footer() {
           </h3>
           <div className="flex flex-wrap justify-center gap-6 mb-8 max-w-4xl mx-auto">
             <div className="w-full sm:w-[calc(50%-12px)] md:w-[calc(25%-18px)]">
-              <SponsorCard name="Want to be #1?" website="http://localhost:5173/connect"/>
+              <SponsorCard name="Want to be #1?" website="http://localhost:5173/connect" logoUrl=''/>
             </div>
           </div>
           <p className="text-center text-indigo-300/60 text-xs">

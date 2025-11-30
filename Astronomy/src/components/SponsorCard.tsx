@@ -1,9 +1,9 @@
 import { Colors } from "../constants/colors";
 
 interface SponsorCardProps {
-  name?: string;
-  logoUrl?: string;
-  website?: string;
+  name: string;
+  logoUrl: string;
+  website: string;
 }
 
 export default function SponsorCard({ name, logoUrl, website }: SponsorCardProps) {
