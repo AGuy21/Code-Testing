@@ -7,4 +7,7 @@ export const Colors = {
   glow: "#c7d2fe",
   purpleShadow: "rgba(139, 92, 246, 0.5)",
   whiteOverlay: "rgba(255, 255, 255, 0.02)",
+  terrestrial: "#8B5E3C",
+  stellar: "#60A5FA",
+  galactic: "#D4AF37",
 } as const;

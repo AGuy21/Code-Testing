@@ -6,9 +6,9 @@ export interface SponsorItem {
     tier: "Terrestrial" | "Stellar" | "Galactic";
 }
 
-/**
+/** MAIN THING ID [Sponsor Name]-[Date of Sponsorship]
  * date
-"[Date of Sponsorship]"
+"[Date of Sponsorship]" DDMMYYYY
 (string)
 
 

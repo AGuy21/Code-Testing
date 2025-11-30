@@ -13,9 +13,13 @@ function GetSponsorData() {
     async function fetchSponsorData() {
         const sponsorsCol = collection(db, 'Sponsors');
         const sponsorSnapshot = await getDocs(sponsorsCol);
-        sponsorSnapshot.forEach((doc) => {
-            setSponsorData([...sponsorData, doc.data() as SponsorItem]);
+        
+        const newSponsorData = sponsorSnapshot.docs.map(doc => {
+            console.log(doc.id, " => ", doc.data());
+            return doc.data() as SponsorItem;
         });
+
+        setSponsorData(newSponsorData);
     }
 
     return sponsorData;

@@ -7,3 +7,23 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
+/* Sponsor card float animation */
+@keyframes float {
+	0% { transform: translateY(0) }
+	50% { transform: translateY(-6px) }
+	100% { transform: translateY(0) }
+}
+.animate-float {
+	animation: float 6s ease-in-out infinite;
+}
+
+/* horizontal auto scroll (looped by animation) */
+@keyframes scroll-x {
+	0% { transform: translateX(0); }
+	100% { transform: translateX(-50%); }
+}
+.animate-scroll-x {
+	animation: scroll-x 30s linear infinite;
+}
+
