@@ -1,5 +1,5 @@
+import SponsorCardCarousel from "./animations/SponsorCardCarousel";
 import Container from "./Container";
-import SponsorCard from "./SponsorCard";
 
 export default function Footer() {
 
@@ -45,11 +45,7 @@ export default function Footer() {
           <h3 className="text-center text-xl font-bold mb-6 bg-linear-to-r from-indigo-300 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             Our Sponsors
           </h3>
-          <div className="flex flex-wrap justify-center gap-6 mb-8 max-w-4xl mx-auto">
-            <div className="w-full sm:w-[calc(50%-12px)] md:w-[calc(25%-18px)]">
-              <SponsorCard name="Want to be #1?" website="http://localhost:5173/connect" logoUrl=''/>
-            </div>
-          </div>
+          <SponsorCardCarousel />
           <p className="text-center text-indigo-300/60 text-xs">
             Interested in becoming a sponsor? <a href="/connect" className="underline hover:text-indigo-300 transition-colors">Contact us</a>
           </p>
