@@ -7,7 +7,7 @@ export function formatToMMDDYYYY(dateString?: string | null): string {
     const mm = digits.slice(0, 2);
     const dd = digits.slice(2, 4);
     const yyyy = digits.slice(4);
-    return `${mm}${dd}${yyyy}`; // return as MMDDYYYY without separators
+    return `${mm}/${dd}/${yyyy}`; // return as MM/DD/YYYY
   }
   // try parse if possible
   const parsed = new Date(dateString);
@@ -15,7 +15,7 @@ export function formatToMMDDYYYY(dateString?: string | null): string {
     const mm = String(parsed.getMonth() + 1).padStart(2, "0");
     const dd = String(parsed.getDate()).padStart(2, "0");
     const yyyy = String(parsed.getFullYear());
-    return `${mm}${dd}${yyyy}`;
+    return `${mm}/${dd}/${yyyy}`;
   }
   // fallback: return original
   return dateString;

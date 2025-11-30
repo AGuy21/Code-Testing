@@ -9,5 +9,6 @@ export const Colors = {
   whiteOverlay: "rgba(255, 255, 255, 0.02)",
   terrestrial: "#8B5E3C",
   stellar: "#60A5FA",
-  galactic: "#D4AF37",
+  galactic: "#fb7185",
+  celestial: "#fb7185",
 } as const;

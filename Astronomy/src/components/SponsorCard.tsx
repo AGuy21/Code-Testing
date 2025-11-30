@@ -1,51 +1,40 @@
 import { Colors } from "../constants/colors";
+import { useRef } from "react";
 import type { SponsorItem } from "../constants/types/SponsorItem";
 import { formatToMMDDYYYY } from "../utils/formatDate";
+import useOverflow from "../hooks/useOverflow";
+import { tierStyles } from "../constants/tierStyles";
+import Marquee from "./Marquee";
 
 interface SponsorCardProps {
   name?: string;
   logoUrl?: string;
   website?: string;
-  tier?: SponsorItem['tier'];
+  tier?: SponsorItem["tier"];
   date?: string;
 }
 
-export default function SponsorCard({ name, logoUrl, website, tier, date }: SponsorCardProps) {
+export default function SponsorCard({
+  name,
+  logoUrl,
+  website,
+  tier,
+  date,
+}: SponsorCardProps) {
   const MMDDYYYY = formatToMMDDYYYY(date || "");
-
-  // Tier styling
-  const tierStyles = {
-    Terrestrial: {
-      border: Colors.terrestrial,
-      ribbonBg: "linear-gradient(90deg,#8B5E3C,#C78C46)",
-      text: "#fff",
-    },
-    Stellar: {
-      border: Colors.stellar,
-      ribbonBg: "linear-gradient(90deg,#60A5FA,#60A5FA)",
-      text: "#fff",
-    },
-    Galactic: {
-      border: Colors.galactic,
-      ribbonBg: "linear-gradient(90deg,#D4AF37,#F5E08C)",
-      text: "#000",
-    },
-    default: {
-      border: Colors.primary,
-      ribbonBg: "transparent",
-      text: "#fff",
-    },
-  } as const;
-
-  const sStyle = tier ? (tierStyles[tier] || tierStyles.default) : tierStyles.default;
+  const sStyle = tier ? tierStyles[tier] : tierStyles["default"];
+  // detect name overflow for marquee
+  const nameRef = useRef<HTMLDivElement | null>(null);
+  const nameOverflow = useOverflow(nameRef as React.RefObject<HTMLElement>);
 
   const content = (
     <div
-      className="flex flex-col items-center justify-center p-6 rounded-xl border transition-transform transform hover:scale-105 cursor-pointer min-h-[120px] relative overflow-hidden animate-float"
+      className="flex flex-col items-center justify-start p-6 rounded-xl border transition-transform transform hover:scale-105 cursor-pointer min-h-[140px] relative overflow-hidden animate-float"
       style={{
         borderColor: `${sStyle.border}60`,
+        borderWidth: (sStyle.borderWidth ?? 1) + "px",
         background: `linear-gradient(180deg, rgba(255,255,255,0.02), transparent)`,
-        boxShadow: `0 6px 20px ${sStyle.border}40`,
+        boxShadow: sStyle.shadow || `0 6px 30px ${sStyle.border}40`,
       }}
     >
       {/* Tier ribbon top-left */}
@@ -59,29 +48,49 @@ export default function SponsorCard({ name, logoUrl, website, tier, date }: Spon
           }}
         >
           <span className="text-sm">
-            {tier === 'Terrestrial' ? '🌍' : tier === 'Stellar' ? '✨' : '🚀'}
+            {tier === "Terrestrial" ? "🌍" : tier === "Stellar" ? "✨" : "🚀"}
           </span>
-          <span className="uppercase tracking-[0.08em] text-[10px]">{tier}</span>
+          <span className="uppercase tracking-[0.08em] text-[10px]">
+            {tier ?? tier}
+          </span>
         </span>
       )}
 
-      {logoUrl ? (
-        <img
-          src={logoUrl }
-          alt={name || "Sponsor"}
-          className="max-w-full max-h-16 object-contain z-10"
-          loading="lazy"
-        />
-      ) : (
-        <div className="text-indigo-300/50 text-sm text-center z-10">{name || "Sponsor Logo"}</div>
-      )}
+      <div className="w-full h-24 flex items-center justify-center z-10">
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt={name || "Sponsor"}
+            className="max-w-[140px] h-16 object-contain z-10 block"
+            loading="lazy"
+            style={{ maxHeight: 64 }}
+          />
+        ) : (
+          <div className="text-indigo-300/50 text-sm text-center z-10">
+            {name || "Sponsor Logo"}
+          </div>
+        )}
+      </div>
 
       {name && (
-        <div className="mt-3 text-sm font-semibold z-10 text-indigo-100">{name}</div>
+        <div
+          className="mt-4 text-sm font-semibold z-10 text-center w-full"
+          style={{ color: sStyle.text }}
+        >
+          <div ref={nameRef} className="w-full overflow-hidden">
+            {nameOverflow ? (
+              <Marquee text={name} />
+            ) : (
+              <div className="truncate">{name}</div>
+            )}
+          </div>
+        </div>
       )}
 
       {MMDDYYYY && (
-        <div className="mt-2 text-xs text-indigo-300/70 z-10">{MMDDYYYY}</div>
+        <div className="mt-2 text-xs z-10" style={{ color: Colors.star }}>
+          {MMDDYYYY}
+        </div>
       )}
 
       {/* decorative gradient */}
@@ -98,7 +107,12 @@ export default function SponsorCard({ name, logoUrl, website, tier, date }: Spon
 
   if (website) {
     return (
-      <a href={website} target="_blank" rel="noopener noreferrer" aria-label={`Sponsor: ${name || "site"}`}>
+      <a
+        href={website}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Sponsor: ${name || "site"}`}
+      >
         {content}
       </a>
     );
