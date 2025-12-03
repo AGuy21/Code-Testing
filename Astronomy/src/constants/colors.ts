@@ -10,5 +10,4 @@ export const Colors = {
   terrestrial: "#8B5E3C",
   stellar: "#60A5FA",
   galactic: "#fb7185",
-  celestial: "#fb7185",
 } as const;

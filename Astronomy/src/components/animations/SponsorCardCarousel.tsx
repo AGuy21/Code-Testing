@@ -8,6 +8,7 @@ function SponsorCardCarousel() {
   const speedSec = Math.max(18, 40 - count * 2);
 
   return (
+    <>
     <div>
       {sponsorData.length === 0 ? (<></>) : isMarquee ? (
         <div className="w-full mx-auto overflow-hidden relative">
@@ -88,6 +89,32 @@ function SponsorCardCarousel() {
         </div>
       )}
     </div>
+    <style>{`
+      @keyframes scroll-x {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .animate-scroll-x {
+        animation: scroll-x 30s linear infinite;
+      }
+      .carousel-fade {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 72px;
+        pointer-events: none;
+        z-index: 50;
+      }
+      .carousel-fade.left {
+        left: 0;
+        background: linear-gradient(90deg, var(--color-background), transparent);
+      }
+      .carousel-fade.right {
+        right: 0;
+        background: linear-gradient(270deg, var(--color-background), transparent);
+      }
+    `}</style>
+    </>
   );
 }
 
