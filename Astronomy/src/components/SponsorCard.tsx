@@ -1,10 +1,7 @@
 import { Colors } from "../constants/colors";
-import { useRef } from "react";
 import type { SponsorItem } from "../constants/types/SponsorItem";
 import { formatToMMDDYYYY } from "../utils/formatDate";
-import useOverflow from "../hooks/useOverflow";
 import { tierStyles } from "../constants/tierStyles";
-import Marquee from "./Marquee";
 
 interface SponsorCardProps {
   name?: string;
@@ -23,9 +20,6 @@ export default function SponsorCard({
 }: SponsorCardProps) {
   const MMDDYYYY = formatToMMDDYYYY(date || "");
   const sStyle = tier ? tierStyles[tier] : tierStyles["default"];
-  // detect name overflow for marquee
-  const nameRef = useRef<HTMLDivElement | null>(null);
-  const nameOverflow = useOverflow(nameRef as React.RefObject<HTMLElement>);
 
   const content = (
     <div
@@ -74,15 +68,12 @@ export default function SponsorCard({
 
       {name && (
         <div
-          className="mt-4 text-sm font-semibold z-10 text-center w-full"
+          className="mt-4 text-sm font-semibold z-10 text-center w-full overflow-hidden"
           style={{ color: sStyle.text }}
         >
-          <div ref={nameRef} className="w-full overflow-hidden">
-            {nameOverflow ? (
-              <Marquee text={name} />
-            ) : (
-              <div className="truncate">{name}</div>
-            )}
+          <div className="inline-block whitespace-nowrap scroll-text">
+            <span className="mx-2">{name}</span>
+            <span className="mx-2">{name}</span>
           </div>
         </div>
       )}
@@ -127,8 +118,15 @@ export default function SponsorCard({
           50% { transform: translateY(-6px) }
           100% { transform: translateY(0) }
         }
+        @keyframes scroll {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
         .animate-float {
           animation: float 6s ease-in-out infinite;
+        }
+        .scroll-text {
+          animation: scroll 8s linear infinite;
         }
       `}</style>
     </>

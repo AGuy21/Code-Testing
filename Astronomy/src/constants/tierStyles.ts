@@ -15,7 +15,7 @@ export const tierStyles: Record<"Terrestrial" | "Stellar" | "Galactic" | "defaul
       shadow: `0 8px 20px ${Colors.stellar}40`,
     },
     Galactic: {
-      border: Colors.celestial,
+      border: Colors.galactic,
       ribbonBg: `linear-gradient(90deg, ${Colors.galactic}, ${Colors.primary})`,
       text: "#fff",
       scale: 1.06,
