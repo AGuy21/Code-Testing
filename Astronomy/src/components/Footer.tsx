@@ -4,7 +4,7 @@ import Container from "./Container";
 export default function Footer() {
 
   return (
-    <footer className="mt-20 border-t border-indigo-400/20 bg-linear-to-b from-transparent to-black/30 backdrop-blur-sm">
+    <footer className="mt-20 border-t border-indigo-400/20 backdrop-blur-sm" style={{ backgroundColor: "rgba(10, 14, 39, 0.8)" }}>
       <Container size="xl" className="py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>

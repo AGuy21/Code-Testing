@@ -1,4 +1,5 @@
 import { Colors } from "../constants/colors";
+import { useRef, useEffect, useState } from "react";
 import type { SponsorItem } from "../constants/types/SponsorItem";
 import { formatToMMDDYYYY } from "../utils/formatDate";
 import { tierStyles } from "../constants/tierStyles";
@@ -20,6 +21,14 @@ export default function SponsorCard({
 }: SponsorCardProps) {
   const MMDDYYYY = formatToMMDDYYYY(date || "");
   const sStyle = tier ? tierStyles[tier] : tierStyles["default"];
+  const nameRef = useRef<HTMLDivElement>(null);
+  const [overflow, setOverflow] = useState(false);
+
+  useEffect(() => {
+    if (nameRef.current) {
+      setOverflow(nameRef.current.scrollWidth > nameRef.current.clientWidth);
+    }
+  }, [name]);
 
   const content = (
     <div
@@ -71,9 +80,9 @@ export default function SponsorCard({
           className="mt-4 text-sm font-semibold z-10 text-center w-full overflow-hidden"
           style={{ color: sStyle.text }}
         >
-          <div className="inline-block whitespace-nowrap scroll-text">
+          <div ref={nameRef} className="inline-block whitespace-nowrap scroll-text" style={{ animation: overflow ? undefined : "none" }}>
             <span className="mx-2">{name}</span>
-            <span className="mx-2">{name}</span>
+            {overflow && <span className="mx-2">{name}</span>}
           </div>
         </div>
       )}

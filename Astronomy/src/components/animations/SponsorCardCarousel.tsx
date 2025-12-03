@@ -11,20 +11,17 @@ function SponsorCardCarousel() {
     <>
     <div>
       {sponsorData.length === 0 ? (<></>) : isMarquee ? (
-        <div className="w-full mx-auto overflow-hidden relative">
-          <div className="relative overflow-hidden">
-            <div className="carousel-fade left" />
-            <div className="carousel-fade right" />
-            <div
-              className="flex gap-6 pb-6 animate-scroll-x"
-              style={{
-                padding: "1rem 0",
-                width: "max-content",
-                animationDuration: `${speedSec}s`,
-                WebkitMaskImage: 'linear-gradient(to right, transparent 0px, black 72px, black calc(100% - 72px), transparent 100%)',
-                maskImage: 'linear-gradient(to right, transparent 0px, black 72px, black calc(100% - 72px), transparent 100%)',
-              }}
-            >
+        <div className="w-full mx-auto overflow-hidden relative py-8">
+          <div className="carousel-fade left" />
+          <div className="carousel-fade right" />
+          <div
+            className="flex gap-6 pb-6 animate-scroll-x"
+            style={{
+              padding: "1rem 0",
+              width: "max-content",
+              animationDuration: `${speedSec}s`,
+            }}
+          >
               {sponsorData.map((sponsor: SponsorItem, index: number) => (
                 <div className="w-[260px] shrink-0" key={`s-${index}`}>
                   <SponsorCard
@@ -58,7 +55,6 @@ function SponsorCardCarousel() {
                 </div>
               ))}
             </div>
-          </div>
         </div>
       ) : count === 1 ? (
         <div className="w-full flex justify-center">
@@ -95,23 +91,23 @@ function SponsorCardCarousel() {
         100% { transform: translateX(-50%); }
       }
       .animate-scroll-x {
-        animation: scroll-x 30s linear infinite;
+        animation: scroll-x linear infinite;
       }
       .carousel-fade {
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 72px;
+        width: 250px;
         pointer-events: none;
         z-index: 50;
       }
       .carousel-fade.left {
         left: 0;
-        background: linear-gradient(90deg, var(--color-background), transparent);
+        background: linear-gradient(to right, rgba(10, 14, 39, 1) 0%, rgba(10, 14, 39, 1) 25%, rgba(10, 14, 39, 0.2) 80%, transparent 100%);
       }
       .carousel-fade.right {
         right: 0;
-        background: linear-gradient(270deg, var(--color-background), transparent);
+        background: linear-gradient(to left, rgba(10, 14, 39, 1) 0%, rgba(10, 14, 39, 1) 25%, rgba(10, 14, 39, 0.2) 80%, transparent 100%);
       }
     `}</style>
     </>
