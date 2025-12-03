@@ -4,12 +4,12 @@ import type { TierStyle } from "./types/TierStyles";
 export const tierStyles: Record<"Terrestrial" | "Stellar" | "Galactic" | "default", TierStyle> = {
     Terrestrial: {
       border: Colors.terrestrial,
-      ribbonBg: "linear-gradient(90deg,#8B5E3C,#C78C46)",
+      ribbonBg: "linear-gradient(90deg,#059669,#34d399)",
       text: "#fff",
     },
     Stellar: {
       border: Colors.stellar,
-      ribbonBg: "linear-gradient(90deg,#60A5FA,#60A5FA)",
+      ribbonBg: "linear-gradient(90deg,#d97706,#fbbf24)",
       text: "#fff",
       scale: 1.02,
       shadow: `0 8px 20px ${Colors.stellar}40`,

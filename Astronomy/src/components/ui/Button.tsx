@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { Colors } from "../constants/colors";
+import { Colors } from "../../constants/colors";
 
 interface ButtonProps {
   children: ReactNode;

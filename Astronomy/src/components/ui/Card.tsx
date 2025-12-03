@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Colors } from "../constants/colors";
+import { Colors } from "../../constants/colors";
 
 interface CardProps {
   children: ReactNode;

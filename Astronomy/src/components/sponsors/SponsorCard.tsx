@@ -1,8 +1,9 @@
-import { Colors } from "../constants/colors";
+import { Colors } from "../../constants/colors";
 import { useRef, useEffect, useState } from "react";
-import type { SponsorItem } from "../constants/types/SponsorItem";
-import { formatToMMDDYYYY } from "../utils/formatDate";
-import { tierStyles } from "../constants/tierStyles";
+import type { SponsorItem } from "../../constants/types/SponsorItem";
+import { formatToMMDDYYYY } from "../../utils/formatDate";
+import { tierStyles } from "../../constants/tierStyles";
+import { GlobeIcon, StarIcon, RocketIcon } from "../ui/Icons";
 
 interface SponsorCardProps {
   name?: string;
@@ -35,7 +36,7 @@ export default function SponsorCard({
       textSize: "text-xs",
       minHeight: "min-h-[120px]",
       ribbonSize: "text-[9px]",
-      ribbonIcon: "text-xs",
+      ribbonIcon: "w-3 h-3",
     },
     md: {
       padding: "p-6",
@@ -44,7 +45,7 @@ export default function SponsorCard({
       textSize: "text-sm",
       minHeight: "min-h-[140px]",
       ribbonSize: "text-[10px]",
-      ribbonIcon: "text-sm",
+      ribbonIcon: "w-4 h-4",
     },
     lg: {
       padding: "p-8",
@@ -53,7 +54,7 @@ export default function SponsorCard({
       textSize: "text-lg",
       minHeight: "min-h-[180px]",
       ribbonSize: "text-xs",
-      ribbonIcon: "text-base",
+      ribbonIcon: "w-5 h-5",
     },
   };
 
@@ -86,7 +87,7 @@ export default function SponsorCard({
           }}
         >
           <span className={currentSize.ribbonIcon}>
-            {tier === "Terrestrial" ? "🌍" : tier === "Stellar" ? "✨" : "🚀"}
+            {tier === "Terrestrial" ? <GlobeIcon className="w-full h-full" /> : tier === "Stellar" ? <StarIcon className="w-full h-full" /> : <RocketIcon className="w-full h-full" />}
           </span>
           <span
             className={`uppercase tracking-[0.08em] ${currentSize.ribbonSize}`}
@@ -118,7 +119,7 @@ export default function SponsorCard({
         >
           <div
             ref={nameRef}
-            className="inline-block whitespace-nowrap scroll-text"
+            className="inline-block whitespace-nowrap animate-scroll-text"
             style={{ animation: overflow ? undefined : "none" }}
           >
             <span className="mx-2">{name}</span>
@@ -148,39 +149,21 @@ export default function SponsorCard({
     </div>
   );
 
-  if (website) {
-    return (
-      <a
-        href={website}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`Sponsor: ${name || "site"}`}
-      >
-        {content}
-      </a>
-    );
-  }
-
   return (
     <>
-      {content}
-      <style>{`
-        @keyframes float {
-          0% { transform: translateY(0) }
-          50% { transform: translateY(-6px) }
-          100% { transform: translateY(0) }
-        }
-        @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        .scroll-text {
-          animation: scroll 8s linear infinite;
-        }
-      `}</style>
+      {website ? (
+        <a
+          href={website}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Sponsor: ${name || "site"}`}
+        >
+          {content}
+        </a>
+      ) : (
+        content
+      )}
     </>
   );
 }
+

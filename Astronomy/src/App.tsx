@@ -1,9 +1,9 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import Header from "./components/Header";
+import Header from "./components/absolute/Header";
 import Connect from "./pages/Connect";
-import Footer from "./components/Footer";
+import Footer from "./components/absolute/Footer";
 import StarField from "./components/animations/StarField";
 import ShootingStars from "./components/animations/ShootingStars";
 import { Colors } from "./constants/colors";

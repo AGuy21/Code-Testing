@@ -1,5 +1,5 @@
 import GetSponsorData from "../../utils/GetSponsorData";
-import SponsorCard from "../SponsorCard";
+import SponsorCard from "../sponsors/SponsorCard";
 import type { SponsorItem } from "../../constants/types/SponsorItem";
 function SponsorCardCarousel() {
   const { sponsors: sponsorData, loading } = GetSponsorData();
