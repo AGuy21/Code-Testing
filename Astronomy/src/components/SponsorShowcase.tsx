@@ -24,8 +24,23 @@ function VacancyCard({ tier, size }: { tier: string; size: "sm" | "md" | "lg" })
   );
 }
 
+function SkeletonCard({ size }: { size: "sm" | "md" | "lg" }) {
+  const sizeClasses = {
+    sm: "h-[120px] max-w-[240px]",
+    md: "h-[140px] max-w-[280px]",
+    lg: "h-[180px] max-w-[350px]",
+  };
+
+  return (
+    <div className={`w-full ${sizeClasses[size]} rounded-xl bg-indigo-900/20 animate-pulse border border-indigo-500/10 flex flex-col items-center justify-center p-6`}>
+      <div className="w-16 h-16 rounded-full bg-indigo-500/20 mb-4" />
+      <div className="w-3/4 h-4 rounded bg-indigo-500/20" />
+    </div>
+  );
+}
+
 export default function SponsorShowcase() {
-  const sponsorData = GetSponsorData();
+  const { sponsors: sponsorData, loading } = GetSponsorData();
 
   // Organize sponsors by tier
   const galacticSponsors = sponsorData.filter((s) => s.tier === "Galactic");
@@ -58,7 +73,11 @@ export default function SponsorShowcase() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-          {galacticSponsors.length > 0 ? (
+          {loading ? (
+             <div className="w-full max-w-[350px]">
+               <SkeletonCard size="lg" />
+             </div>
+          ) : galacticSponsors.length > 0 ? (
             galacticSponsors.map((sponsor, index) => (
               <div key={`galactic-${index}`} className="w-full max-w-[350px]">
                 <SponsorCard
@@ -86,7 +105,13 @@ export default function SponsorShowcase() {
         }
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {stellarSponsors.length > 0 ? (
+          {loading ? (
+            <>
+              <SkeletonCard size="md" />
+              <SkeletonCard size="md" />
+              <SkeletonCard size="md" />
+            </>
+          ) : stellarSponsors.length > 0 ? (
             stellarSponsors.map((sponsor, index) => (
               <div key={`stellar-${index}`} className="w-full">
                 <SponsorCard
@@ -116,7 +141,14 @@ export default function SponsorShowcase() {
         }
       >
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {terrestrialSponsors.length > 0 ? (
+          {loading ? (
+            <>
+              <SkeletonCard size="sm" />
+              <SkeletonCard size="sm" />
+              <SkeletonCard size="sm" />
+              <SkeletonCard size="sm" />
+            </>
+          ) : terrestrialSponsors.length > 0 ? (
             terrestrialSponsors.map((sponsor, index) => (
               <div key={`terrestrial-${index}`} className="w-full">
                 <SponsorCard

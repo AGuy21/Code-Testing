@@ -5,24 +5,30 @@ import type { SponsorItem } from "../constants/types/SponsorItem";
 
 function GetSponsorData() {
     const [sponsorData, setSponsorData] = React.useState<SponsorItem[]>([]);
+    const [loading, setLoading] = React.useState(true);
 
     useEffect(() => {
         fetchSponsorData();
     }, []);
 
     async function fetchSponsorData() {
-        const sponsorsCol = collection(db, 'Sponsors');
-        const sponsorSnapshot = await getDocs(sponsorsCol);
-        
-        const newSponsorData = sponsorSnapshot.docs.map(doc => {
-            console.log(doc.id, " => ", doc.data());
-            return doc.data() as SponsorItem;
-        });
+        try {
+            const sponsorsCol = collection(db, 'Sponsors');
+            const sponsorSnapshot = await getDocs(sponsorsCol);
+            
+            const newSponsorData = sponsorSnapshot.docs.map(doc => {
+                return doc.data() as SponsorItem;
+            });
 
-        setSponsorData(newSponsorData);
+            setSponsorData(newSponsorData);
+        } catch (error) {
+            console.error("Error fetching sponsors:", error);
+        } finally {
+            setLoading(false);
+        }
     }
 
-    return sponsorData;
+    return { sponsors: sponsorData, loading };
 }
 
 export default GetSponsorData;

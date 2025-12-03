@@ -2,7 +2,10 @@ import GetSponsorData from "../../utils/GetSponsorData";
 import SponsorCard from "../SponsorCard";
 import type { SponsorItem } from "../../constants/types/SponsorItem";
 function SponsorCardCarousel() {
-  const sponsorData = GetSponsorData();
+  const { sponsors: sponsorData, loading } = GetSponsorData();
+  
+  if (loading) return <div className="w-full h-32 animate-pulse bg-indigo-900/20 rounded-xl" />;
+
   const count = sponsorData.length;
   const isMarquee = sponsorData.length >= 4; //TODO make this reactive
   const speedSec = Math.max(18, 40 - count * 2);
