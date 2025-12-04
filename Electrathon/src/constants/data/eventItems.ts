@@ -2,22 +2,49 @@ import type { EventItem } from "../types/EventItem";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 
+// Static practice events to supplement DB data
+const practiceEvents: EventItem[] = [
+  {
+    title: "Track Testing & Tuning",
+    date: "Every Thursday",
+    time: "3:30 PM - 5:30 PM",
+    description: "Weekly vehicle testing and driver training sessions. Open to all team members for observation.",
+    location: "Nease HS Track",
+    type: "Practice"
+  },
+  {
+    title: "Safety Inspection Day",
+    date: "Oct 15, 2025",
+    time: "9:00 AM - 12:00 PM",
+    description: "Mandatory safety check for all competition vehicles prior to the season opener.",
+    location: "Engineering Lab",
+    type: "Workshop"
+  }
+];
+
 export async function fetchEventItems(): Promise<EventItem[]> {
   try {
     const docRef = collection(db, "events");
     const snapshot = await getDocs(docRef);
-    return snapshot.docs.map((event) => {
+    const dbEvents = snapshot.docs.map((event) => {
       const data = event.data() as EventItem;
       return {
-        title: data.title ?? "Not working",
-        date: data.date ?? "",
-        time: data.time ?? "",
-        description: data.description ?? "",
-        location: data.location ?? "",
+        title: data.title ?? "Event",
+        date: data.date ?? "TBD",
+        time: data.time ?? "TBD",
+        description: data.description ?? "No description available.",
+        location: data.location ?? "TBD",
+        type: data.type ?? "Race", // Default to Race if not specified
+        trackLayoutUrl: data.trackLayoutUrl,
+        logoUrl: data.logoUrl
       } as EventItem;
     });
+
+    // Combine DB events with static practice events
+    return [...dbEvents, ...practiceEvents];
   } catch (err) {
     console.error("fetchEventItems error:", err);
-    return [];
+    // Return at least the practice events if DB fails
+    return practiceEvents;
   }
 }

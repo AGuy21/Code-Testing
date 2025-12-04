@@ -1,5 +1,8 @@
 import Container from "../components/ui/Container";
-import Card from "../components/ui/Card";
+import { sponsorshipTiers, teamEthos } from "../constants/data/sponsorshipData";
+import SectionHeader from "../components/ui/SectionHeader";
+import TechBorder from "../components/ui/TechBorder";
+import SponsorCard from "../components/SponsorCard";
 
 export default function About() {
   return (
@@ -15,14 +18,14 @@ export default function About() {
       <div className="absolute top-0 right-12 w-px h-full bg-[#d4af37]/10 pointer-events-none hidden md:block"></div>
 
       <Container size="lg" className="relative z-10">
-        <div className="text-center mb-16 relative">
+        <div className="text-center mb-24 relative">
           {/* Technical Markers */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-8 text-[10px] text-[#d4af37]/40 font-mono tracking-[0.5em]">
-            SEC-01 // OVERVIEW
+            SECTION 01 // OVERVIEW
           </div>
           
           <div className="inline-block px-3 py-1 mb-4 border border-[#d4af37]/30 text-[#d4af37] text-xs font-mono tracking-widest uppercase bg-[#0a2a20]">
-            System Information // About Us
+            Team Information // About Us
           </div>
           <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white mb-6">
             TEAM <span className="text-transparent text-stroke">ORIGIN</span>
@@ -32,76 +35,95 @@ export default function About() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <Card variant="cyber" className="h-full bg-[#0a2a20] border-[#d4af37]/30 relative overflow-hidden">
-            {/* Blueprint Corner Accents */}
-            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#d4af37]/50"></div>
-            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-[#d4af37]/50"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-[#d4af37]/50"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#d4af37]/50"></div>
-
-            <div className="flex items-center justify-between mb-4 border-b border-[#d4af37]/20 pb-2">
-              <h2 className="text-xl font-bold text-[#d4af37] uppercase tracking-wider">Identity</h2>
-              <span className="text-xs font-mono text-white/40">ID_CODE: NEASE_01</span>
+        <div className="space-y-24">
+          {/* Identity Section */}
+          <TechBorder side="left">
+            <div className="flex items-center gap-4 mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold text-white uppercase tracking-wider">Identity</h2>
+              <div className="h-px flex-grow bg-[#d4af37]/20"></div>
+              <span className="text-xs font-mono text-[#d4af37] border border-[#d4af37]/30 px-2 py-1">ESTABLISHED TEAM</span>
             </div>
-            <p className="text-white/80 leading-relaxed mb-4 font-mono text-sm">
-              The Nease Electrathon Club is a student-led organization dedicated to the design, construction, and racing of electric vehicles. 
-              We bring together students from diverse backgrounds to collaborate on complex engineering challenges.
-            </p>
-            <p className="text-white/80 leading-relaxed font-mono text-sm">
-              Our team operates like a professional racing outfit, with specialized roles in mechanical engineering, electrical systems, 
-              project management, and media relations.
-            </p>
-          </Card>
-
-          <Card variant="cyber" className="h-full bg-[#0a2a20] border-[#d4af37]/30 relative overflow-hidden">
-             {/* Blueprint Corner Accents */}
-             <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#d4af37]/50"></div>
-            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-[#d4af37]/50"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-[#d4af37]/50"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#d4af37]/50"></div>
-
-            <div className="flex items-center justify-between mb-4 border-b border-[#d4af37]/20 pb-2">
-              <h2 className="text-xl font-bold text-[#d4af37] uppercase tracking-wider">Directives</h2>
-              <span className="text-xs font-mono text-white/40">PRIORITY: ALPHA</span>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <p className="text-white/80 leading-relaxed font-mono text-sm">
+                {teamEthos.founding}
+              </p>
+              <p className="text-white/80 leading-relaxed font-mono text-sm">
+                {teamEthos.model}
+              </p>
             </div>
-            <p className="text-white/80 leading-relaxed mb-4 font-mono text-sm">
-              To inspire the next generation of STEM leaders by providing hands-on experience in sustainable transportation technology.
-            </p>
-            <ul className="space-y-3 mt-6">
-              {[
-                "Promote energy efficiency and green technology",
-                "Develop practical engineering and fabrication skills",
-                "Foster teamwork and leadership capabilities",
-                "Compete at the highest level of high school racing"
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 group">
-                  <span className="text-[#d4af37] mt-1 font-mono group-hover:translate-x-1 transition-transform">{">>"}</span>
-                  <span className="text-white/80 text-sm font-mono group-hover:text-white transition-colors">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+          </TechBorder>
+
+          {/* Mission & Ethos Section */}
+          <TechBorder side="right">
+            <div className="flex items-center gap-4 mb-6 flex-row-reverse">
+              <h2 className="text-3xl md:text-4xl font-bold text-white uppercase tracking-wider">Our Ethos</h2>
+              <div className="h-px flex-grow bg-[#d4af37]/20"></div>
+              <span className="text-xs font-mono text-[#d4af37] border border-[#d4af37]/30 px-2 py-1">CORE VALUES</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="order-2 md:order-1">
+                <p className="text-white/80 leading-relaxed font-mono text-sm text-right">
+                  {teamEthos.ethos}
+                </p>
+              </div>
+              <div className="order-1 md:order-2">
+                 <ul className="space-y-4 inline-block text-right">
+                  {[
+                    "Student-Led Engineering",
+                    "Sustainable Innovation",
+                    "Competitive Excellence",
+                    "Community Impact"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center justify-end gap-3 group">
+                      <span className="text-white/80 text-sm font-mono group-hover:text-white transition-colors">{item}</span>
+                      <span className="text-[#d4af37] mt-1 font-mono group-hover:-translate-x-1 transition-transform">{"<<"}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </TechBorder>
         </div>
 
-        <div className="relative">
-          <div className="absolute -inset-1 bg-gradient-to-r from-[#d4af37] to-[#0f3d2e] opacity-20 blur-lg"></div>
-          <Card variant="tech" className="p-8 md:p-12 text-center relative bg-[#0a2a20] border-[#d4af37]/40">
-            <h2 className="text-3xl font-bold text-white mb-2 uppercase tracking-tight">Initiate Sequence</h2>
-            <h3 className="text-[#d4af37] font-mono text-sm mb-8">JOIN_THE_TEAM.EXE</h3>
+        {/* Sponsorship Section */}
+        <div className="mt-24 mb-24">
+          <SectionHeader title="Sponsorship Opportunities" subtitle="FUEL THE FUTURE" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {sponsorshipTiers.map((tier, index) => (
+              <SponsorCard key={index} tier={tier} />
+            ))}
+          </div>
+          <div className="text-center mt-8">
+             <p className="text-white/50 text-sm font-mono">
+               For detailed sponsorship packages and availability, please contact Mr. Beale.
+             </p>
+          </div>
+        </div>
+
+        <div className="mt-24 relative border-t border-[#d4af37]/20 pt-16">
+          <div className="text-center">
+            <SectionHeader title="Join the Team" subtitle="BECOME A MEMBER" className="mb-8" />
             
-            <p className="text-lg text-white/70 max-w-3xl mx-auto mb-8 font-light">
+            <p className="text-lg text-white/70 max-w-3xl mx-auto mb-12 font-light">
               We meet weekly to work on projects, learn new skills, and prepare for competitions. 
               Whether you're interested in welding, coding, driving, or marketing, there's a place for you on our team.
             </p>
             
-            <div className="inline-block p-6 bg-[#0f3d2e] border border-[#d4af37]/30 clip-corner-br relative overflow-hidden group hover:border-[#d4af37] transition-colors">
-              <div className="absolute top-0 left-0 w-full h-full bg-[#d4af37]/5 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
-              <p className="text-[#d4af37] font-bold text-lg uppercase tracking-widest mb-1">Sync Coordinates</p>
-              <p className="text-white font-mono text-xl">Thursdays</p>
-              <p className="text-white/50 font-mono text-sm mt-2">After School - Panther Hall 10</p>
+            <div className="inline-flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border border-[#d4af37]/30 bg-[#0a2a20]/50 p-8 md:px-16 clip-corner-br">
+              <div className="text-center md:text-left">
+                <p className="text-[#d4af37] font-bold text-sm uppercase tracking-widest mb-1">Meeting Times</p>
+                <p className="text-white font-mono text-2xl">Thursdays</p>
+              </div>
+              <div className="hidden md:block w-px h-12 bg-[#d4af37]/30"></div>
+              <div className="text-center md:text-left">
+                <p className="text-[#d4af37] font-bold text-sm uppercase tracking-widest mb-1">Location</p>
+                <p className="text-white font-mono text-xl">Panther Hall 10</p>
+              </div>
             </div>
-          </Card>
+          </div>
         </div>
       </Container>
     </div>

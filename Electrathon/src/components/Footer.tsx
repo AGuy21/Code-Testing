@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           <div className="space-y-4">
             <div className="inline-block px-2 py-1 border border-[#d4af37]/30 text-[#d4af37] text-[10px] font-mono uppercase tracking-widest bg-[#d4af37]/5 mb-2">
-              System Offline
+              Nease HS
             </div>
             <h3 className="text-2xl font-bold text-white uppercase tracking-tight">
               Nease <span className="text-[#d4af37]">Electrathon</span>
@@ -27,7 +27,7 @@ export default function Footer() {
 
           <div>
             <h4 className="text-sm font-bold mb-6 text-[#d4af37] uppercase tracking-widest font-mono">
-              Navigation Protocols
+              Quick Links
             </h4>
             <ul className="space-y-3 text-white/60 text-sm font-mono">
               <li>
@@ -71,7 +71,7 @@ export default function Footer() {
 
           <div>
             <h4 className="text-sm font-bold mb-6 text-[#d4af37] uppercase tracking-widest font-mono">
-              Comms Uplink
+              Contact Info
             </h4>
             <ul className="space-y-4 text-white/60 text-sm">
               <li className="flex items-start gap-3">
@@ -85,18 +85,18 @@ export default function Footer() {
               <li className="flex items-center gap-3">
                 <span className="text-[#d4af37]">✉️</span>
                 <a
-                  href="mailto:electrathon@nease.edu"
+                  href="mailto:Mr.Beale@nease.edu"
                   className="hover:text-white transition-colors font-mono text-xs"
                 >
-                  electrathon@nease.edu
+                  Mr.Beale@nease.edu
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-[#d4af37] mt-1">📅</span>
                 <span className="font-light">
-                  Meetings: Tuesdays & Thursdays
+                  Meetings: Thursdays
                   <br />
-                  <span className="text-white/40 text-xs font-mono">LOC: Room M104</span>
+                  <span className="text-white/40 text-xs font-mono">Panther Hall 10</span>
                 </span>
               </li>
             </ul>
