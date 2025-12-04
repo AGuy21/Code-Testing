@@ -27,21 +27,27 @@ export default function Events() {
   }, []);
 
   return (
-    <div className="pt-32 pb-16 text-white">
-      <Container size="lg">
+    <div className="min-h-screen bg-black text-white pt-32 pb-16 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
+      
+      <Container size="lg" className="relative z-10">
         <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-            Upcoming <span className="text-[#d4af37]">Events</span>
+          <div className="inline-block px-3 py-1 mb-4 border border-[#d4af37]/30 text-[#d4af37] text-xs font-mono tracking-widest uppercase bg-[#d4af37]/5">
+            Mission Timeline
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white mb-6">
+            RACE <span className="text-transparent text-stroke">SCHEDULE</span>
           </h1>
-          <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-            Join us at our next race, workshop, or community demonstration.
+          <p className="text-xl text-white/60 max-w-3xl mx-auto font-light">
+            Join us at our next deployment. Race days, workshops, and community demonstrations.
           </p>
         </div>
 
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-white/70">Loading events...</p>
+            <div className="inline-block w-12 h-12 border-4 border-[#d4af37] border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-[#d4af37] font-mono text-sm animate-pulse">LOADING_DATA_STREAM...</p>
           </div>
         )}
 
@@ -53,35 +59,35 @@ export default function Events() {
             return (
               <Card 
                 key={event.id ?? index} 
-                variant="default" 
-                className="hover:-translate-y-1 flex flex-col h-full"
+                variant="tech" 
+                className="flex flex-col h-full group hover:border-[#d4af37] transition-colors duration-300"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-bold text-xl text-[#d4af37] pr-4">
+                <div className="flex justify-between items-start mb-4 border-b border-white/10 pb-4">
+                  <h3 className="font-bold text-xl text-white group-hover:text-[#d4af37] transition-colors pr-4 uppercase tracking-tight glitch-hover">
                     {event.title}
                   </h3>
-                  <span className="px-3 py-1 rounded-full bg-[#d4af37]/10 text-[#d4af37] text-xs font-semibold border border-[#d4af37]/20 whitespace-nowrap">
+                  <span className="px-3 py-1 bg-[#d4af37]/10 text-[#d4af37] text-xs font-mono border border-[#d4af37]/20 whitespace-nowrap clip-corner-br">
                     {event.date}
                   </span>
                 </div>
                 
-                <div className="space-y-3 mb-6 flex-grow">
-                  <div className="flex items-center gap-2 text-white/70 text-sm">
-                    <span>🕒</span>
+                <div className="space-y-4 mb-6 flex-grow">
+                  <div className="flex items-center gap-3 text-white/60 text-sm font-mono">
+                    <span className="text-[#d4af37]">T-MINUS:</span>
                     <span>{event.time}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-white/70 text-sm">
-                    <span>📍</span>
+                  <div className="flex items-center gap-3 text-white/60 text-sm font-mono">
+                    <span className="text-[#d4af37]">COORDS:</span>
                     <a
                       href={mapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-[#d4af37] transition-colors underline decoration-white/30 hover:decoration-[#d4af37]"
+                      className="hover:text-white transition-colors underline decoration-white/30 hover:decoration-[#d4af37]"
                     >
                       {event.location}, FL
                     </a>
                   </div>
-                  <p className="text-white/85 text-sm leading-relaxed pt-2 border-t border-white/10">
+                  <p className="text-white/70 text-sm leading-relaxed pt-4 border-t border-white/5 font-light">
                     {event.description}
                   </p>
                 </div>
@@ -90,9 +96,9 @@ export default function Events() {
                   href={mapsUrl} 
                   variant="outline" 
                   size="sm" 
-                  className="w-full"
+                  className="w-full border-[#d4af37]/30 text-[#d4af37] hover:bg-[#d4af37] hover:text-black font-mono text-xs uppercase tracking-widest"
                 >
-                  Get Directions
+                  Initialize Navigation
                 </Button>
               </Card>
             );
