@@ -4,16 +4,20 @@ import About from './pages/About.tsx';
 import Events from './pages/Events.tsx';
 import Header from './components/Header'
 import Connect from './pages/Connect.tsx';
+import Footer from './components/Footer';
+import CircuitBackground from './components/animations/CircuitBackground';
+
 function App() {
   const location = useLocation()
   const path = location.pathname
   const selectedPage = path === '/' ? 'Home' : path.replace('/', '').replace(/\/-?/, '')
 
   return (
-    <div className="min-h-screen bg-[#0f3d2e] text-white">
+    <div className="min-h-screen bg-[#0f3d2e] text-white relative overflow-x-hidden">
+      <CircuitBackground />
       <Header SelectedPage={selectedPage} />
 
-      <main className="racing-container py-6 md:py-8">
+      <main className="relative z-10">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -21,6 +25,7 @@ function App() {
           <Route path='/connect' element={<Connect />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   );
 }

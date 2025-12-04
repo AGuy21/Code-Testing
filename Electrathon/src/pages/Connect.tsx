@@ -1,30 +1,71 @@
 import insta from '../assets/images/Instagram-Logo.png'
+import Container from '../components/ui/Container'
+import Card from '../components/ui/Card'
+import Button from '../components/ui/Button'
 
 export default function Connect() {
   return (
-    <div className="py-12">
-      <div className="racing-container max-w-4xl mx-auto">
-        <div className="p-6 md:p-8 lg:p-10 text-center">
-          <h2 className="text-3xl lg:text-4xl text-[#d4af37] mb-4">Connect with Electrathon!</h2>
-          <p className="mt-4 text-white/85 text-base lg:text-lg">You can find our socials where we post our achievements and updates!</p>
-
-          <div className="mt-6 flex items-center justify-center gap-4">
-            <a href="https://www.instagram.com/neaseelectrathon/p/DKvVRmBJg4g" className="inline-flex items-center gap-3 px-6 py-3 rounded-md bg-[#d4af37] text-[#0f3d2e] font-semibold hover:bg-[#c29d2f] transition-all duration-300 shadow-lg shadow-[#d4af37]/30 hover:shadow-xl hover:shadow-[#d4af37]/40 hover:-translate-y-0.5">
-              <img src={insta} alt="instagram" className="w-6 h-6 object-contain" />
-              Visit our Instagram
-            </a>
-          </div>
-
-          <section className="mt-10 bg-white/5 rounded-lg p-6 md:p-8 border-2 border-[#d4af37]/20 hover:border-[#d4af37]/40 transition-all duration-300">
-            <h3 className="text-xl lg:text-2xl font-semibold text-[#d4af37] mb-3">Sponsors</h3>
-            <p className="mt-3 text-white/85 text-base lg:text-lg">Interested in sponsoring Electrathon? We welcome support from local businesses and community partners.</p>
-            <p className="mt-4 text-base lg:text-lg">
-              Contact us at{' '}
-              <a href="mailto:NHSelectrothon@gmail.com" className="inline-block px-3 py-1.5 bg-[#d4af37] text-[#0f3d2e] font-semibold rounded hover:bg-[#c29d2f] transition-colors">NHSelectrothon@gmail.com</a>
-            </p>
-          </section>
+    <div className="pt-32 pb-16 text-white">
+      <Container size="lg">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+            Connect with <span className="text-[#d4af37]">Electrathon</span>
+          </h1>
+          <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
+            Follow our journey, support our team, or get in touch with us.
+          </p>
         </div>
-      </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Card variant="gradient" className="text-center p-8 md:p-12 flex flex-col items-center justify-center h-full">
+            <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mb-6">
+              <img src={insta} alt="Instagram" className="w-10 h-10 object-contain invert" />
+            </div>
+            <h2 className="text-2xl font-bold text-[#d4af37] mb-4">Follow Us</h2>
+            <p className="text-white/85 mb-8 max-w-sm">
+              Check out our latest race photos, build updates, and team announcements on Instagram.
+            </p>
+            <Button 
+              href="https://www.instagram.com/neaseelectrathon/" 
+              variant="primary"
+              className="w-full sm:w-auto"
+            >
+              Visit our Instagram
+            </Button>
+          </Card>
+
+          <Card variant="checkered" className="text-center p-8 md:p-12 flex flex-col items-center justify-center h-full">
+            <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mb-6 text-4xl">
+              🤝
+            </div>
+            <h2 className="text-2xl font-bold text-[#d4af37] mb-4">Sponsorships</h2>
+            <p className="text-white/85 mb-8 max-w-sm">
+              Interested in sponsoring Electrathon? We welcome support from local businesses and community partners to help us race faster and learn more.
+            </p>
+            <Button 
+              href="mailto:NHSelectrothon@gmail.com" 
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              Email Us to Sponsor
+            </Button>
+          </Card>
+        </div>
+
+        <div className="mt-12">
+          <Card variant="default" className="p-8 text-center">
+            <h3 className="text-xl font-bold text-[#d4af37] mb-2">General Inquiries</h3>
+            <p className="text-white/70 mb-4">Have a question about the club or how to join?</p>
+            <a 
+              href="mailto:NHSelectrothon@gmail.com" 
+              className="text-lg font-semibold text-white hover:text-[#d4af37] transition-colors border-b border-[#d4af37]/30 hover:border-[#d4af37]"
+            >
+              NHSelectrothon@gmail.com
+            </a>
+          </Card>
+        </div>
+      </Container>
     </div>
   )
 }
+
