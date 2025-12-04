@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { headerItems } from "../constants/data/headerItems";
 import logo from "../assets/images/Electrothon.png";
 
@@ -10,15 +10,30 @@ interface HomeProps {
 export default function Header({ SelectedPage }: HomeProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="w-full bg-black/10 backdrop-blur-sm border-b-4 border-[#d4af37]/30 relative">
-      {/* Racing stripe accent on top */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent"></div>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b-4 ${
+        scrolled
+          ? "bg-[#0f3d2e]/90 backdrop-blur-md border-[#d4af37]/30 py-2 shadow-lg"
+          : "bg-transparent border-transparent py-4"
+      }`}
+    >
+      {/* Racing stripe accent on top - only visible when scrolled or always? Let's keep it always but subtle */}
+      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent transition-opacity duration-300 ${scrolled ? 'opacity-100' : 'opacity-50'}`}></div>
       
-      <div className="racing-container max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="racing-container max-w-[1400px] mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-white/5 flex items-center justify-center ring-2 ring-[#d4af37]/50 hover:ring-[#d4af37] transition-all duration-300">
+          <div className={`rounded-full overflow-hidden bg-white/5 flex items-center justify-center ring-2 ring-[#d4af37]/50 hover:ring-[#d4af37] transition-all duration-300 ${scrolled ? 'w-10 h-10' : 'w-12 h-12 sm:w-14 sm:h-14'}`}>
             <img
               src={logo}
               alt="Electrothon logo"
@@ -26,7 +41,7 @@ export default function Header({ SelectedPage }: HomeProps) {
             />
           </div>
           <div className="hidden sm:block">
-            <div className="text-lg font-semibold text-[#d4af37]">
+            <div className={`font-semibold text-[#d4af37] transition-all duration-300 ${scrolled ? 'text-lg' : 'text-xl'}`}>
               Electrathon
             </div>
             <div className="text-xs text-white/70">Nease High School</div>
@@ -110,7 +125,7 @@ export default function Header({ SelectedPage }: HomeProps) {
       {/* Mobile menu panel */}
 
       {open && (
-        <div className="sm:hidden mobile-menu-backdrop px-4 py-3 border-t border-white/5">
+        <div className="sm:hidden mobile-menu-backdrop px-4 py-3 border-t border-[#d4af37]/30 bg-[#0f3d2e]/95 backdrop-blur-xl absolute w-full left-0 top-full border-b-4">
           <div className="flex flex-col gap-2">
             {headerItems.map((item) => {
               const to = item.route === "/home" ? "/" : item.route;
@@ -137,3 +152,4 @@ export default function Header({ SelectedPage }: HomeProps) {
     </header>
   );
 }
+
