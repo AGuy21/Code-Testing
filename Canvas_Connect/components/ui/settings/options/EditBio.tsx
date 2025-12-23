@@ -11,6 +11,8 @@ import SaveUserData from "@/components/functions/SaveUserData";
 import { useUser } from "@clerk/clerk-expo";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
 
+import SelectionModal from "@/components/ui/SelectionModal";
+
 const EditBio = () => {
   const { user } = useUser();
   const { colors } = useThemeStore(); // Use dynamic colors
@@ -20,8 +22,16 @@ const EditBio = () => {
 
   const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [newBio, setNewBio] = useState(userData.bio || "");
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function SaveBio() {
+    if (newBio.length > 250) {
+      setErrorMessage("Bio must be less than 250 characters.");
+      setErrorVisible(true);
+      return;
+    }
+
     setUserData({ ...userData, bio: newBio });
     if (user) {
       SaveUserData({
@@ -40,6 +50,13 @@ const EditBio = () => {
 
   return (
     <>
+      <SelectionModal
+        visible={errorVisible}
+        title="Invalid Bio"
+        message={errorMessage}
+        onClose={() => setErrorVisible(false)}
+        options={[{ text: "OK", style: "cancel" }]}
+      />
       {isPromptOpen ? (
         <View style={[styles.promptContainer, { backgroundColor: colors.background, borderBottomColor: colors.text2 }]}>
           <TextInput
@@ -49,7 +66,7 @@ const EditBio = () => {
             placeholder="Tell us about yourself..."
             placeholderTextColor={colors.text2}
             multiline
-            maxLength={150}
+            maxLength={250}
           />
           <View style={styles.approvalBox}>
             <Pressable onPress={SaveBio}>

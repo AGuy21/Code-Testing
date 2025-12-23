@@ -13,6 +13,8 @@ import SaveUserData from "@/components/functions/SaveUserData";
 import { useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 
+import SelectionModal from "@/components/ui/SelectionModal";
+
 const ChangeUsername = () => {
   const { user } = useUser();
   const { colors } = useThemeStore();
@@ -22,8 +24,16 @@ const ChangeUsername = () => {
 
   const [isPromptOpen, setIsPromptOpen] = useState(false);
   const [newUsername, setNewUsername] = useState(userData.username);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function SaveUsername() {
+    if (newUsername.length < 3 || newUsername.length > 15) {
+      setErrorMessage("Username must be between 3 and 15 characters.");
+      setErrorVisible(true);
+      return;
+    }
+
     setUserData({ ...userData, username: newUsername });
     if (user) {
       SaveUserData({
@@ -48,6 +58,13 @@ const ChangeUsername = () => {
 
   return (
     <>
+      <SelectionModal
+        visible={errorVisible}
+        title="Invalid Username"
+        message={errorMessage}
+        onClose={() => setErrorVisible(false)}
+        options={[{ text: "OK", style: "cancel" }]}
+      />
       {isPromptOpen ? (
         <View
           style={[
