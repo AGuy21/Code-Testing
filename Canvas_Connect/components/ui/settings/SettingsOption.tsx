@@ -6,6 +6,7 @@ import {
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { router } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 
 type SettingsOptionProps = {
   text: string;
@@ -24,6 +25,7 @@ const SettingsOption = ({ text, setModalOpen }: SettingsOptionProps) => {
       onPress={() => openSettingsOption()}
     >
       <Text style={styles.settingText}> {text} </Text>
+      <AntDesign name="right" size={wp(5)} color={Colors.text} />
     </TouchableOpacity>
   );
 };
@@ -33,11 +35,12 @@ export default SettingsOption;
 const styles = StyleSheet.create({
   settingContainer: {
     width: wp(100),
-    flex: 0.075,
-    alignContent: "center",
-    justifyContent: "center",
+    paddingVertical: hp(2),
     paddingHorizontal: wp(5),
-    borderBottomWidth: wp(0.5),
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: hp(0.1),
     borderColor: Colors.text2,
   },
   settingText: {

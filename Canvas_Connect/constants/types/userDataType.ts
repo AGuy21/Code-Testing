@@ -3,4 +3,6 @@ export type userDataType = {
   username: string;
   profilePicture: string;
   posts: number[];
+  messagePrivacy: string;
+  isPrivate: boolean;
 };

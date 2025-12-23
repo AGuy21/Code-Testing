@@ -1,1 +1,6 @@
-export type userDatVariables = "profilePicture" | "username" | "email";
+export type userDatVariables =
+  | "profilePicture"
+  | "username"
+  | "email"
+  | "messagePrivacy"
+  | "isPrivate";

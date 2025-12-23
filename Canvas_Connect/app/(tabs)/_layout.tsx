@@ -53,6 +53,8 @@ export default function TabLayout() {
           email: user.emailAddresses[0].emailAddress,
           profilePicture: BaseProfilePicture,
           posts: [],
+          isPrivate: false,
+          messagePrivacy: "Everyone",
         });
         setUserData({
           username:
@@ -62,6 +64,8 @@ export default function TabLayout() {
           email: user.emailAddresses[0].emailAddress,
           profilePicture: BaseProfilePicture,
           posts: [],
+          isPrivate: false,
+          messagePrivacy: "Everyone",
         });
       }
     } catch (error) {

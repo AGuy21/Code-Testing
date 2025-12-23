@@ -37,6 +37,7 @@ export default function SettingsModal({
           text="Account Customization"
           setModalOpen={setModalOpen}
         />
+        <SettingsOption text="Privacy & Safety" setModalOpen={setModalOpen} />
       </View>
     </Modal>
   );

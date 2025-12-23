@@ -28,29 +28,25 @@ const SettingsButton = ({ icon, text, color, onPress }: SettingsButtonProps) => 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    flex: 0.1,
-    gap: wp(2.5),
+    paddingVertical: hp(2),
     paddingHorizontal: wp(5),
     width: wp(100),
     backgroundColor: Colors.background,
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomColor: Colors.text2,
-    borderBottomWidth: hp(0.2),
-    borderTopColor: Colors.text2,
-    borderTopWidth: hp(0.2),
+    borderBottomWidth: hp(0.1),
   },
   text: {
     fontFamily: "Nunito-Bold",
     color: Colors.text,
     fontSize: hp(1.75),
-    marginRight: wp(30),
   },
   leftSide: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: wp(2.5),
-  }
+    flexDirection: "row",
+    alignItems: "center",
+    gap: wp(4),
+  },
 });
 
 export default SettingsButton;

@@ -4,7 +4,7 @@ import { userDatVariables } from "@/constants/types/userDataVariables";
 
 type SaveUserDataProps = {
   userEmail: string;
-  newData: string;
+  newData: string | boolean;
   variable: userDatVariables;
 };
 

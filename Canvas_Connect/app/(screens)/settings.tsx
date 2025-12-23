@@ -1,15 +1,20 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import Colors from "@/constants/Colors";
-import DeleteUser from "@/components/ui/settings/options/DeleteUser";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+
+// Options
+import DeleteUser from "@/components/ui/settings/options/DeleteUser";
 import SignOut from "@/components/ui/settings/options/SignOut";
 import ChangeUsername from "@/components/ui/settings/options/ChangeUsername";
 import ChangeProfilePicture from "@/components/ui/settings/options/ChangeProfilePicture";
+import MessagePrivacy from "@/components/ui/settings/options/MessagePrivacy";
+import ProfileVisibility from "@/components/ui/settings/options/ProfileVisibility";
+import BlockedUsers from "@/components/ui/settings/options/BlockedUsers";
 
 const settings = () => {
   const { setting } = useLocalSearchParams();
@@ -22,7 +27,7 @@ const settings = () => {
       title: title,
       headerStyle: {
         backgroundColor: Colors.background,
-        borderBottonWidth: hp(0.2),
+        borderBottomWidth: hp(0.2),
         borderBottomColor: Colors.secondary,
       },
       headerTintColor: Colors.text,
@@ -32,25 +37,36 @@ const settings = () => {
     });
   }, [navigation]);
 
-  return (
-    <View style={styles.container}>
-      {setting === "Account Options" ? (
-        <>
-          <View style={styles.topContainer}>
-            <ChangeUsername />
-            <ChangeProfilePicture />
-          </View>
+  const renderContent = () => {
+    switch (setting) {
+      case "Account Options":
+        return (
+          <>
+            <View style={styles.section}>
+              <ChangeUsername />
+              <ChangeProfilePicture />
+            </View>
 
-          <View style={styles.bottomContainer}>
-            <SignOut />
-            <DeleteUser />
+            <View style={styles.footer}>
+              <SignOut />
+              <DeleteUser />
+            </View>
+          </>
+        );
+      case "Privacy & Safety":
+        return (
+          <View style={styles.section}>
+            <ProfileVisibility />
+            <MessagePrivacy />
+            <BlockedUsers />
           </View>
-        </>
-      ) : (
-        <></>
-      )}
-    </View>
-  );
+        );
+      default:
+        return <View />;
+    }
+  };
+
+  return <View style={styles.container}>{renderContent()}</View>;
 };
 
 export default settings;
@@ -61,13 +77,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     paddingTop: hp(2.5),
   },
-  topContainer: {
+  section: {
     flex: 1,
     alignItems: "flex-start",
   },
-  bottomContainer: {
-    flex: 1,
+  footer: {
     justifyContent: "flex-end",
-    paddingBottom: hp(2.5),
+    paddingBottom: hp(5),
   },
 });
