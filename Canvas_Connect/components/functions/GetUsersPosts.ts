@@ -6,32 +6,34 @@ import { useEffect, useState } from "react";
 
 export default function GetUsersPosts() {
   const userData = useUserDataStore((state) => state.data);
-  const [loadedPosts, setLoadedPosts] = useState<postType[]>([]);
+  const [loadedPosts, setLoadedPosts] = useState<postType[] | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
+      if (!userData.posts || userData.posts.length === 0) {
+        setLoadedPosts([]);
+        return;
+      }
+      
       const posts: postType[] = [];
       for (const postId of userData.posts) {
-        const docRef = doc(db, "posts", postId.toString());
-        const docSnap = await getDoc(docRef);
-        const postData = docSnap.data();
-        
-        if (postData !== undefined) {
-          posts.push(postData as postType);
+        try {
+          const docRef = doc(db, "posts", postId.toString());
+          const docSnap = await getDoc(docRef);
+          const postData = docSnap.data();
+          
+          if (docSnap.exists() && postData) {
+            posts.push({ ...(postData as postType), id: docSnap.id });
+          }
+        } catch (error) {
+          console.error("Error fetching post:", postId, error);
         }
       }
       setLoadedPosts(posts);
     };
 
-    if (userData.posts.length > 0) {
-      fetchPosts();
-    }
+    fetchPosts();
   }, [userData.posts]);
 
-  if (loadedPosts.length !== userData.posts.length) {
-    return null; // loading
-  }
-
-  // All posts loaded
   return loadedPosts;
 }
