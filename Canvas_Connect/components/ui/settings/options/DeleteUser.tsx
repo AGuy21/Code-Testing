@@ -71,25 +71,4 @@ const DeleteUser = () => {
 
 export default DeleteUser;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    flex: 0.075,
-    gap: wp(2.5),
-    paddingHorizontal: wp(5),
-    width: wp(100),
-    backgroundColor: Colors.background,
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomColor: Colors.text2,
-    borderBottomWidth: hp(0.2),
-    borderTopColor: Colors.text2,
-    borderTopWidth: hp(0.2),
-  },
-  text: {
-    fontFamily: "Nunito-Bold",
-    color: Colors.text,
-    fontSize: hp(1.75),
-    marginRight: wp(30),
-  },
-});
+const styles = StyleSheet.create({});

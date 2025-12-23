@@ -7,6 +7,7 @@ import {
 } from "react-native-responsive-screen";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import SettingsOption from "../settings/SettingsOption";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type SettingsModalProps = {
   modalOpen: boolean;
@@ -22,8 +23,8 @@ export default function SettingsModal({
   };
 
   return (
-    <Modal visible={modalOpen} animationType="slide" transparent={true}>
-      <View style={styles.container}>
+    <Modal visible={modalOpen} animationType="slide" transparent={false}>
+      <SafeAreaView style={styles.container}>
         {/** Header */}
         <View style={styles.header}>
           <Text style={styles.headerText}>Settings</Text>
@@ -38,7 +39,7 @@ export default function SettingsModal({
           setModalOpen={setModalOpen}
         />
         <SettingsOption text="Privacy & Safety" setModalOpen={setModalOpen} />
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }
@@ -49,21 +50,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flex: 0.05,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingRight: wp(5),
-    paddingTop: hp(0.05),
-    borderBottomWidth: wp(0.5),
+    paddingHorizontal: wp(5),
+    paddingVertical: hp(2),
+    borderBottomWidth: hp(0.1),
     borderColor: Colors.secondary,
   },
   headerText: {
-    width: wp(45),
-    paddingLeft: wp(5),
     fontFamily: "Nunito-Bold",
+    fontSize: hp(3),
     color: Colors.text,
-    fontSize: wp(7.5),
-    opacity: 0.8,
   },
 });
