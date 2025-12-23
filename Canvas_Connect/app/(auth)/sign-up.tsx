@@ -2,7 +2,7 @@ import * as React from "react";
 import { Text, TextInput, View, StyleSheet, Pressable } from "react-native";
 import { isClerkAPIResponseError, useSignUp } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -15,6 +15,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
+  const { colors } = useThemeStore();
 
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -134,21 +135,27 @@ export default function SignUpScreen() {
       <>
         <AuthHeader title={"Sign Up"} />
 
-        <View style={styles.container}>
-          <Text style={styles.text}>Verify your email</Text>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+          <Text style={[styles.text, { color: colors.text }]}>
+            Verify your email
+          </Text>
           <TextInput
             style={[
               styles.input,
-              { marginBottom: verifyEmailError ? hp(0) : hp(2) },
+              {
+                marginBottom: verifyEmailError ? hp(0) : hp(2),
+                color: colors.text,
+                borderColor: colors.primary,
+              },
             ]}
             value={code}
             placeholder="Enter your verification code"
             onChangeText={(code) => setCode(code)}
-            placeholderTextColor={Colors.text2}
+            placeholderTextColor={colors.text2}
           />
           {verifyEmailError && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.errorMessageText}>
+              <Text style={[styles.errorMessageText, { color: colors.error }]}>
                 {verifyEmailErrorMessage}
               </Text>
             </View>
@@ -165,47 +172,60 @@ export default function SignUpScreen() {
     <>
       <AuthHeader title={"Sign Up"} />
 
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <>
           <TextInput
-            style={[styles.input, { marginBottom: emailError ? hp(0) : hp(4) }]}
+            style={[
+              styles.input,
+              {
+                marginBottom: emailError ? hp(0) : hp(4),
+                color: colors.text,
+                borderColor: colors.primary,
+              },
+            ]}
             autoCapitalize="none"
             value={emailAddress}
             placeholder="Enter email"
             onChangeText={(email) => setEmailAddress(email)}
-            placeholderTextColor={Colors.text2}
+            placeholderTextColor={colors.text2}
           />
           {emailError && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.errorMessageText}>{emailErrorMessage}</Text>
+              <Text style={[styles.errorMessageText, { color: colors.error }]}>
+                {emailErrorMessage}
+              </Text>
             </View>
           )}
           <View
             style={[
               styles.input,
-              { marginBottom: passwordError ? hp(0) : hp(4) },
+              {
+                marginBottom: passwordError ? hp(0) : hp(4),
+                color: colors.text,
+                borderColor: colors.primary,
+              },
             ]}
           >
             <TextInput
-              style={{ color: Colors.text, flex: 90 }}
+              style={{ color: colors.text, flex: 90 }}
               value={password}
               placeholder="Enter password"
               secureTextEntry={passwordHidden}
               onChangeText={(password) => setPassword(password)}
-              placeholderTextColor={Colors.text2}
+              placeholderTextColor={colors.text2}
             />
 
             <>
               {passwordHidden ? (
                 <Pressable onPress={() => setPasswordHidden(!passwordHidden)}>
-                  <Entypo name="eye" size={wp(5)} color={Colors.secondary} />
+                  <Entypo name="eye" size={wp(5)} color={colors.secondary} />
                 </Pressable>
               ) : (
                 <Pressable onPress={() => setPasswordHidden(!passwordHidden)}>
                   <Entypo
                     name="eye-with-line"
                     size={wp(5)}
-                    color={Colors.secondary}
+                    color={colors.secondary}
                   />
                 </Pressable>
               )}
@@ -214,7 +234,7 @@ export default function SignUpScreen() {
 
           {passwordError && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.errorMessageText}>
+              <Text style={[styles.errorMessageText, { color: colors.error }]}>
                 {passwordErrorMessage}
               </Text>
             </View>
@@ -223,16 +243,20 @@ export default function SignUpScreen() {
           <View
             style={[
               styles.input,
-              { marginBottom: samePasswordError ? hp(0) : hp(4) },
+              {
+                marginBottom: samePasswordError ? hp(0) : hp(4),
+                color: colors.text,
+                borderColor: colors.primary,
+              },
             ]}
           >
             <TextInput
-              style={{ color: Colors.text, flex: 90 }}
+              style={{ color: colors.text, flex: 90 }}
               value={otherPassword}
               placeholder="Verify password"
               secureTextEntry={otherPasswordHidden}
               onChangeText={(otherPassword) => setOtherPassword(otherPassword)}
-              placeholderTextColor={Colors.text2}
+              placeholderTextColor={colors.text2}
             />
 
             <>
@@ -240,7 +264,7 @@ export default function SignUpScreen() {
                 <Pressable
                   onPress={() => setOtherPasswordHidden(!otherPasswordHidden)}
                 >
-                  <Entypo name="eye" size={wp(5)} color={Colors.secondary} />
+                  <Entypo name="eye" size={wp(5)} color={colors.secondary} />
                 </Pressable>
               ) : (
                 <Pressable
@@ -249,7 +273,7 @@ export default function SignUpScreen() {
                   <Entypo
                     name="eye-with-line"
                     size={wp(5)}
-                    color={Colors.secondary}
+                    color={colors.secondary}
                   />
                 </Pressable>
               )}
@@ -258,7 +282,7 @@ export default function SignUpScreen() {
 
           {samePasswordError && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.errorMessageText}>
+              <Text style={[styles.errorMessageText, { color: colors.error }]}>
                 Passwords do not match!
               </Text>
             </View>
@@ -270,7 +294,12 @@ export default function SignUpScreen() {
 
           {otherError && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.otherErrorMessageText}>
+              <Text
+                style={[
+                  styles.otherErrorMessageText,
+                  { color: colors.error },
+                ]}
+              >
                 {otherErrorMessage}
               </Text>
             </View>
@@ -281,9 +310,13 @@ export default function SignUpScreen() {
               // { marginTop: otherError ? hp() : hp(2) },
             ]}
           >
-            <Text style={styles.text}>Don't have an account?</Text>
+            <Text style={[styles.text, { color: colors.text }]}>
+              Don't have an account?
+            </Text>
             <Link href="/sign-in">
-              <Text style={styles.linkText}>Sign In</Text>
+              <Text style={[styles.linkText, { color: colors.secondary }]}>
+                Sign In
+              </Text>
             </Link>
           </View>
         </>
@@ -297,28 +330,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.background,
     paddingVertical: hp(10),
   },
   text: {
     fontFamily: "Nunito",
-    color: Colors.text,
     textAlign: "center",
     fontSize: wp(4),
     marginBottom: hp(1),
   },
   linkText: {
     fontFamily: "Nunito",
-    color: Colors.secondary,
     textAlign: "center",
     fontSize: wp(3),
   },
   input: {
-    color: Colors.text,
     width: wp(80),
     borderWidth: wp(0.5),
     borderRadius: wp(100),
-    borderColor: Colors.primary,
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
@@ -332,11 +360,9 @@ const styles = StyleSheet.create({
   },
   errorMessageText: {
     textAlign: "left",
-    color: Colors.error,
   },
   otherErrorMessageText: {
     textAlign: "center",
-    color: Colors.error,
   },
   questionContainer: {},
 });

@@ -5,7 +5,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useUserDataStore } from "../hooks/store";
@@ -18,6 +18,7 @@ import { db } from "@/Configs/FirebaseConfig";
 const PreviousPosts = () => {
   const userData = useUserDataStore((state) => state.data);
   const setUserData = useUserDataStore((state) => state.setData);
+  const { colors } = useThemeStore();
 
   // Refresh user data when the user comes back to screen, this is so that the posts list updates after creating a new post
   useFocusEffect(
@@ -43,17 +44,29 @@ const PreviousPosts = () => {
       data={userPosts}
       keyExtractor={(_, index) => index.toString()}
       renderItem={({ item }) => (
-        <View style={styles.previousPost}>
-          <Text style={styles.postTitle}>{item.title}</Text>
+        <View
+          style={[
+            styles.previousPost,
+            {
+              borderColor: colors.primaryLight,
+              backgroundColor: colors.primaryDark,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.postTitle,
+              { color: colors.background, backgroundColor: colors.primaryLight },
+            ]}
+          >
+            {item.title}
+          </Text>
           <LinearGradient
-            colors={["transparent", "transparent", Colors.primaryLight]}
+            colors={["transparent", "transparent", colors.primaryLight]}
             style={styles.imageGradient}
           />
 
-          <Image
-            source={{ uri: item.image }}
-            style={styles.postPicture}
-          />
+          <Image source={{ uri: item.image }} style={styles.postPicture} />
 
           <View style={styles.postStats}>
             <View
@@ -65,9 +78,13 @@ const PreviousPosts = () => {
               <FontAwesome
                 name="comments"
                 size={wp(6)}
-                color={Colors.background}
+                color={colors.background}
               />
-              <Text style={styles.postStatText}>{24}</Text>
+              <Text
+                style={[styles.postStatText, { color: colors.background }]}
+              >
+                {24}
+              </Text>
             </View>
             <View
               style={{
@@ -75,8 +92,12 @@ const PreviousPosts = () => {
                 gap: wp(1),
               }}
             >
-              <AntDesign name="heart" size={wp(6)} color={Colors.background} />
-              <Text style={styles.postStatText}>{item.likes}</Text>
+              <AntDesign name="heart" size={wp(6)} color={colors.background} />
+              <Text
+                style={[styles.postStatText, { color: colors.background }]}
+              >
+                {item.likes}
+              </Text>
             </View>
           </View>
         </View>
@@ -89,20 +110,16 @@ export default PreviousPosts;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
     flex: 1,
     paddingVertical: hp(2.5),
   },
   text: {
-    color: Colors.text,
     fontFamily: "Nunito-Medium",
   },
   titleText: {
     fontFamily: "Nunito-BlackItalic",
     fontSize: hp(3),
-    color: Colors.text,
     width: "90%",
-    borderBottomColor: Colors.tertiary,
     borderBottomWidth: hp(0.25),
   },
   previousPostsContainer: {
@@ -116,10 +133,8 @@ const styles = StyleSheet.create({
     width: wp(60),
     height: hp(20),
     borderWidth: wp(1),
-    borderColor: Colors.primaryLight,
     borderRadius: wp(3.5),
     marginRight: hp(2),
-    backgroundColor: Colors.primaryDark,
   },
   postTitle: {
     fontSize: wp(5),
@@ -127,9 +142,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Bold",
     alignItems: "center",
     justifyContent: "center",
-    color: Colors.background,
     flex: 0.15,
-    backgroundColor: Colors.primaryLight,
   },
   postPicture: {
     objectFit: "fill",
@@ -160,7 +173,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(2),
   },
   postStatText: {
-    color: Colors.background,
     fontSize: hp(2),
     fontFamily: "Nunito-Bold",
   },

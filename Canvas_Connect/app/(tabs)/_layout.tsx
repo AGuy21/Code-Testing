@@ -1,4 +1,3 @@
-import Colors from "@/constants/Colors";
 import React, { useEffect } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -13,6 +12,8 @@ import { useUserDataStore } from "@/components/hooks/store";
 import { generateFromEmail } from "unique-username-generator";
 import BaseProfilePicture from "@/constants/BaseProfilePicture";
 import { UserResource } from "@clerk/types";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
+import { ThemeKeys } from "@/constants/Themes";
 
 type TabBarIconType = {
   color: string;
@@ -21,6 +22,7 @@ type TabBarIconType = {
 
 export default function TabLayout() {
   const { user } = useUser();
+  const { colors, setTheme } = useThemeStore();
 
   const setLoading = useUserDataStore((state) => state.setLoading);
   const setUserData = useUserDataStore((state) => state.setData);
@@ -42,7 +44,11 @@ export default function TabLayout() {
 
       if (docSnap.exists()) {
         console.log("Got User's Data Successfully!");
-        setUserData(docSnap.data() as userDataType);
+        const userData = docSnap.data() as userDataType;
+        setUserData(userData);
+        if (userData.theme) {
+          setTheme(userData.theme as ThemeKeys);
+        }
       } else {
         console.log("User's Data not documented... creating new doc....");
         await setDoc(docRef, {
@@ -55,6 +61,8 @@ export default function TabLayout() {
           posts: [],
           isPrivate: false,
           messagePrivacy: "Everyone",
+          bio: "",
+          theme: "Default",
         });
         setUserData({
           username:
@@ -66,6 +74,8 @@ export default function TabLayout() {
           posts: [],
           isPrivate: false,
           messagePrivacy: "Everyone",
+          bio: "",
+          theme: "Default",
         });
       }
     } catch (error) {
@@ -79,10 +89,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveBackgroundColor: Colors.background,
-        tabBarInactiveBackgroundColor: Colors.background,
-        tabBarInactiveTintColor: Colors.primaryDark,
-        tabBarActiveTintColor: Colors.secondary,
+        tabBarActiveBackgroundColor: colors.background,
+        tabBarInactiveBackgroundColor: colors.background,
+        tabBarInactiveTintColor: colors.primaryDark,
+        tabBarActiveTintColor: colors.secondary,
       }}
     >
       <Tabs.Screen

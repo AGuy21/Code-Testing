@@ -5,13 +5,14 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import useChangeProfilePicture from "../hooks/useChangeProfilePicture";
 import { useUserDataStore } from "../hooks/store";
 
 export default function ProfilePicture() {
   const userData = useUserDataStore((state) => state.data)
   const { image, setImage, addImage } = useChangeProfilePicture();
+  const { colors } = useThemeStore();
   
   // refreshes to keep local state up to date if changed elsewhere
   useEffect(() => {
@@ -20,10 +21,10 @@ export default function ProfilePicture() {
 
   return (
     <View style={styles.container}>
-      {image && <Image source={{ uri: image }} style={styles.picture} />}
+      {image && <Image source={{ uri: image }} style={[styles.picture, { borderColor: colors.secondary }]} />}
       <View style={styles.uploadBtnContainer}>
         <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-          <Feather name="edit-3" size={wp(6)} color={Colors.primaryDark} />
+          <Feather name="edit-3" size={wp(6)} color={colors.primaryDark} />
         </TouchableOpacity>
       </View>
     </View>
@@ -53,6 +54,5 @@ const styles = StyleSheet.create({
     height: wp(50),
     borderRadius: 999,
     borderWidth: wp(0.4),
-    borderColor: Colors.secondary,
   },
 });

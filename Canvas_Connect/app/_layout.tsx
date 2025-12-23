@@ -6,7 +6,7 @@ import "react-native-reanimated";
 import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 import { tokenCache } from "@/cache";
 import { StatusBar } from "react-native";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -20,6 +20,7 @@ if (!publishableKey) {
 }
 
 export default function RootLayout() {
+  const { colors } = useThemeStore();
   const [loaded] = useFonts({
     "Nunito-Black": require("../assets/fonts/Nunito-Black.ttf"),
     "Nunito-BlackItalic": require("../assets/fonts/Nunito-BlackItalic.ttf"),
@@ -47,7 +48,7 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
-        <StatusBar backgroundColor={Colors.background} hidden={false} />
+        <StatusBar backgroundColor={colors.background} hidden={false} />
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(home)" options={{ headerShown: false }} />

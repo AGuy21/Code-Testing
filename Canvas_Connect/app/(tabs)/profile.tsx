@@ -1,6 +1,5 @@
 import { useUserDataStore } from "@/components/hooks/store";
 import ProfilePicture from "@/components/ui/ProfilePicture";
-import Colors from "@/constants/Colors";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {
   heightPercentageToDP as hp,
@@ -10,9 +9,11 @@ import SettingsModal from "@/components/ui/settings/SettingsModal";
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 
 export default function Profile() {
   const userData = useUserDataStore((state) => state.data);
+  const { colors } = useThemeStore();
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -20,14 +21,14 @@ export default function Profile() {
     
   }, [modalOpen]);
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/** Opens when modalOpen is equal to true if not stays hidden. */}
       <SettingsModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
       {/** Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setModalOpen(true)}>
 
-          <MaterialIcons name="settings" size={wp(7.5)} color={Colors.tertiary} />
+          <MaterialIcons name="settings" size={wp(7.5)} color={colors.tertiary} />
         </TouchableOpacity>
       </View>
       
@@ -36,8 +37,8 @@ export default function Profile() {
         <ProfilePicture />
       </View>
 
-      <Text style={styles.text}>{userData?.username}</Text>
-      <Text style={styles.text2}>{userData?.email}</Text>
+      <Text style={[styles.text, { color: colors.secondary }]}>{userData?.username}</Text>
+      <Text style={[styles.text2, { color: colors.text }]}>{userData?.email}</Text>
 
 
       {/* <SignOutButton /> */}
@@ -47,7 +48,6 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
     flex: 1,
     alignItems: "center",
   },
@@ -71,17 +71,14 @@ const styles = StyleSheet.create({
     height: wp(50),
     borderRadius: 999,
     borderWidth: wp(0.4),
-    borderColor: Colors.secondary,
   },
   text: {
     fontFamily: "Nunito-Bold",
-    color: Colors.secondary,
     textAlign: "center",
     fontSize: wp(5),
   },
   text2: {
     fontFamily: "Nunito",
-    color: Colors.text,
     textAlign: "center",
     fontSize: wp(3),
   },

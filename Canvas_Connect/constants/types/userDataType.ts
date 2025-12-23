@@ -5,4 +5,6 @@ export type userDataType = {
   posts: number[];
   messagePrivacy: string;
   isPrivate: boolean;
+  bio: string;
+  theme: string;
 };

@@ -1,77 +1,62 @@
 import React, { useState } from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import SettingsButton from "../SettingsButton";
-import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { useUserDataStore } from "@/components/hooks/store";
 import Entypo from "@expo/vector-icons/Entypo";
-
 import SaveUserData from "@/components/functions/SaveUserData";
 import { useUser } from "@clerk/clerk-expo";
-import { router } from "expo-router";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 
-const ChangeUsername = () => {
+const EditBio = () => {
   const { user } = useUser();
-  const { colors } = useThemeStore();
+  const { colors } = useThemeStore(); // Use dynamic colors
 
   const userData = useUserDataStore((state) => state.data);
   const setUserData = useUserDataStore((state) => state.setData);
 
   const [isPromptOpen, setIsPromptOpen] = useState(false);
-  const [newUsername, setNewUsername] = useState(userData.username);
+  const [newBio, setNewBio] = useState(userData.bio || "");
 
-  async function SaveUsername() {
-    setUserData({ ...userData, username: newUsername });
+  async function SaveBio() {
+    setUserData({ ...userData, bio: newBio });
     if (user) {
       SaveUserData({
         userEmail: userData.email,
-        newData: newUsername,
-        variable: "username",
+        newData: newBio,
+        variable: "bio",
       });
-    } else {
-      alert(
-        "cant save data due to issue with your email, please sign back in or restart!"
-      );
-      router.replace("/(auth)/sign-in");
     }
-
     setIsPromptOpen(false);
   }
 
-  function CancelUsernameChange() {
+  function CancelBioChange() {
     setIsPromptOpen(false);
-    setNewUsername(userData.username);
+    setNewBio(userData.bio || "");
   }
 
   return (
     <>
       {isPromptOpen ? (
-        <View
-          style={[
-            styles.promptContainer,
-            {
-              backgroundColor: colors.background,
-              borderBottomColor: colors.text2,
-            },
-          ]}
-        >
+        <View style={[styles.promptContainer, { backgroundColor: colors.background, borderBottomColor: colors.text2 }]}>
           <TextInput
-            style={[
-              styles.editBox,
-              { color: colors.text, borderBottomColor: colors.primaryDark },
-            ]}
-            value={newUsername}
-            onChangeText={(newUsername) => setNewUsername(newUsername)}
+            style={[styles.editBox, { color: colors.text, borderBottomColor: colors.primaryDark }]}
+            value={newBio}
+            onChangeText={setNewBio}
+            placeholder="Tell us about yourself..."
+            placeholderTextColor={colors.text2}
+            multiline
+            maxLength={150}
           />
           <View style={styles.approvalBox}>
-            <Pressable onPress={SaveUsername}>
+            <Pressable onPress={SaveBio}>
               <Entypo name="check" size={wp(6)} color={colors.secondary} />
             </Pressable>
 
-            <Pressable onPress={CancelUsernameChange}>
+            <Pressable onPress={CancelBioChange}>
               <Entypo name="cross" size={wp(7)} color={colors.error} />
             </Pressable>
           </View>
@@ -79,8 +64,8 @@ const ChangeUsername = () => {
       ) : (
         <SettingsButton
           onPress={() => setIsPromptOpen(true)}
-          icon={"drive-file-rename-outline"}
-          text="Change Username"
+          icon={"description"}
+          text="Edit Bio"
           color={colors.primaryLight}
         />
       )}
@@ -110,10 +95,9 @@ const styles = StyleSheet.create({
     paddingLeft: wp(3),
     fontFamily: "Nunito-Bold",
     fontSize: hp(1.75),
-  },
-  text: {
-    fontFamily: "Nunito-Bold",
-    fontSize: hp(1.75),
+    height: hp(15), // Increased height
+    textAlignVertical: "top", // Start text at top
   },
 });
-export default ChangeUsername;
+
+export default EditBio;

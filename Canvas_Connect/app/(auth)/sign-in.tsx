@@ -2,7 +2,7 @@ import { isClerkAPIResponseError, useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { Text, TextInput, View, StyleSheet, Pressable } from "react-native";
 import React from "react";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -15,6 +15,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 export default function Page() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const router = useRouter();
+  const { colors } = useThemeStore();
 
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -92,47 +93,60 @@ export default function Page() {
   return (
     <>
       <AuthHeader title={"Sign In"} />
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         <TextInput
-          style={[styles.input, { marginBottom: emailError ? hp(0) : hp(4) }]}
+          style={[
+            styles.input,
+            {
+              marginBottom: emailError ? hp(0) : hp(4),
+              borderColor: colors.primary,
+              color: colors.text,
+            },
+          ]}
           autoCapitalize="none"
           value={emailAddress}
           placeholder="Enter email"
           onChangeText={(email) => setEmailAddress(email)}
-          placeholderTextColor={Colors.text2}
+          placeholderTextColor={colors.text2}
         />
         {emailError && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>{emailErrorMessage}</Text>
+            <Text style={[styles.errorMessageText, { color: colors.error }]}>
+              {emailErrorMessage}
+            </Text>
           </View>
         )}
 
         <View
           style={[
             styles.input,
-            { marginBottom: passwordError ? hp(0) : hp(4) },
+            {
+              marginBottom: passwordError ? hp(0) : hp(4),
+              borderColor: colors.primary,
+              color: colors.text,
+            },
           ]}
         >
           <TextInput
-            style={{ color: Colors.text, flex: 90 }}
+            style={{ color: colors.text, flex: 90 }}
             value={password}
             placeholder="Enter password"
             secureTextEntry={passwordHidden}
             onChangeText={(password) => setPassword(password)}
-            placeholderTextColor={Colors.text2}
+            placeholderTextColor={colors.text2}
           />
 
           <>
             {passwordHidden ? (
               <Pressable onPress={() => setPasswordHidden(!passwordHidden)}>
-                <Entypo name="eye" size={wp(5)} color={Colors.secondary} />
+                <Entypo name="eye" size={wp(5)} color={colors.secondary} />
               </Pressable>
             ) : (
               <Pressable onPress={() => setPasswordHidden(!passwordHidden)}>
                 <Entypo
                   name="eye-with-line"
                   size={wp(5)}
-                  color={Colors.secondary}
+                  color={colors.secondary}
                 />
               </Pressable>
             )}
@@ -141,7 +155,9 @@ export default function Page() {
 
         {passwordError && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>{passwordErrorMessage}</Text>
+            <Text style={[styles.errorMessageText, { color: colors.error }]}>
+              {passwordErrorMessage}
+            </Text>
           </View>
         )}
 
@@ -151,7 +167,9 @@ export default function Page() {
 
         {otherError && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.otherErrorMessageText}>
+            <Text
+              style={[styles.otherErrorMessageText, { color: colors.error }]}
+            >
               {otherErrorMessage}
             </Text>
           </View>
@@ -163,9 +181,13 @@ export default function Page() {
             { marginTop: otherError ? hp(0) : hp(2) },
           ]}
         >
-          <Text style={styles.text}>Don't have an account?</Text>
+          <Text style={[styles.text, { color: colors.text }]}>
+            Don't have an account?
+          </Text>
           <Link href="/sign-up">
-            <Text style={styles.linkText}>Sign Up</Text>
+            <Text style={[styles.linkText, { color: colors.secondary }]}>
+              Sign Up
+            </Text>
           </Link>
         </View>
       </View>
@@ -178,18 +200,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.background,
     paddingVertical: hp(10),
   },
   text: {
     fontFamily: "Nunito",
-    color: Colors.text,
     textAlign: "center",
     fontSize: wp(4),
   },
   linkText: {
     fontFamily: "Nunito",
-    color: Colors.secondary,
     textAlign: "center",
     fontSize: wp(3),
   },
@@ -197,8 +216,6 @@ const styles = StyleSheet.create({
     width: wp(80),
     borderWidth: wp(0.5),
     borderRadius: wp(100),
-    borderColor: Colors.primary,
-    color: Colors.text,
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
@@ -211,11 +228,9 @@ const styles = StyleSheet.create({
   },
   errorMessageText: {
     textAlign: "left",
-    color: Colors.error,
   },
   otherErrorMessageText: {
     textAlign: "center",
-    color: Colors.error,
   },
   questionContainer: {
     alignItems: "center",

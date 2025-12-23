@@ -1,6 +1,5 @@
 import { View, Text, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import React, { Dispatch, SetStateAction } from "react";
-import Colors from "@/constants/Colors";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -8,6 +7,7 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import SettingsOption from "../settings/SettingsOption";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 
 type SettingsModalProps = {
   modalOpen: boolean;
@@ -18,18 +18,19 @@ export default function SettingsModal({
   modalOpen,
   setModalOpen,
 }: SettingsModalProps) {
+  const { colors } = useThemeStore();
   const changeModalOpen = () => {
     setModalOpen(false);
   };
 
   return (
     <Modal visible={modalOpen} animationType="slide" transparent={false}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         {/** Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Settings</Text>
+        <View style={[styles.header, { borderColor: colors.secondary }]}>
+          <Text style={[styles.headerText, { color: colors.text }]}>Settings</Text>
           <TouchableOpacity onPress={changeModalOpen}>
-            <AntDesign name="close" size={wp(7.5)} color={Colors.tertiary} />
+            <AntDesign name="close" size={wp(7.5)} color={colors.tertiary} />
           </TouchableOpacity>
         </View>
         {/** Body */}
@@ -46,7 +47,6 @@ export default function SettingsModal({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
     flex: 1,
   },
   header: {
@@ -56,11 +56,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     paddingVertical: hp(2),
     borderBottomWidth: hp(0.1),
-    borderColor: Colors.secondary,
   },
   headerText: {
     fontFamily: "Nunito-Bold",
     fontSize: hp(3),
-    color: Colors.text,
   },
 });

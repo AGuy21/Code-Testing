@@ -4,7 +4,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 
@@ -12,12 +12,20 @@ interface AuthHeaderProps {
   title: string;
 }
 const AuthHeader: React.FC<AuthHeaderProps> = ({ title }) => {
+  const { colors } = useThemeStore();
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { backgroundColor: colors.background }]}>
       <Pressable onPress={() => router.back()}>
-        <Ionicons name="arrow-back-sharp" size={wp(7)} color={Colors.primary} />
+        <Ionicons name="arrow-back-sharp" size={wp(7)} color={colors.primary} />
       </Pressable>
-      <Text style={styles.headerText}>{title}</Text>
+      <Text
+        style={[
+          styles.headerText,
+          { color: colors.primary, borderBottomColor: colors.primary },
+        ]}
+      >
+        {title}
+      </Text>
     </View>
   );
 };
@@ -32,13 +40,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: Colors.background,
   },
   headerText: {
-    color: Colors.primary,
     fontFamily: "Nunito-Bold",
     fontSize: wp(5),
-    borderBottomColor: Colors.primary,
     borderBottomWidth: wp(0.4),
     width: wp(25),
     textAlign: "center",

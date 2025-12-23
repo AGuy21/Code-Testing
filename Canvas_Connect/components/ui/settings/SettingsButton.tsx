@@ -5,7 +5,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 
 type SettingsButtonProps = {
   icon: any;
@@ -15,13 +15,20 @@ type SettingsButtonProps = {
 };
 
 const SettingsButton = ({ icon, text, color, onPress }: SettingsButtonProps) => {
+  const { colors } = useThemeStore();
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        { backgroundColor: colors.background, borderBottomColor: colors.text2 },
+      ]}
+      onPress={onPress}
+    >
       <View style={styles.leftSide}>
         <MaterialIcons name={icon} size={wp(7.5)} color={color} />
-        <Text style={styles.text}>{text}</Text>
+        <Text style={[styles.text, { color: colors.text }]}>{text}</Text>
       </View>
-      <AntDesign name="right" size={wp(7.5)} color={Colors.text} />
+      <AntDesign name="right" size={wp(7.5)} color={colors.text} />
     </TouchableOpacity>
   );
 };
@@ -31,15 +38,12 @@ const styles = StyleSheet.create({
     paddingVertical: hp(2),
     paddingHorizontal: wp(5),
     width: wp(100),
-    backgroundColor: Colors.background,
     alignItems: "center",
     justifyContent: "space-between",
-    borderBottomColor: Colors.text2,
     borderBottomWidth: hp(0.1),
   },
   text: {
     fontFamily: "Nunito-Bold",
-    color: Colors.text,
     fontSize: hp(1.75),
   },
   leftSide: {

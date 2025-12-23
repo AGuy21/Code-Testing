@@ -2,7 +2,7 @@ import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import {  router } from "expo-router";
 import {  View, StyleSheet, Image } from "react-native";
 import { Redirect } from "expo-router";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -10,8 +10,9 @@ import {
 import Button from "@/components/ui/Button";
 
 export default function Page() {
+  const { colors } = useThemeStore();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <SignedIn>
         <Redirect href={"/(tabs)"} />
       </SignedIn>
@@ -27,7 +28,7 @@ export default function Page() {
             minWidth={wp(40)}
             minHeight={hp(6)}
             fontSize={wp(4.5)}
-            bgColor={Colors.tertiary}
+            bgColor={colors.tertiary}
           >
             Sign In
           </Button>
@@ -37,7 +38,7 @@ export default function Page() {
             minWidth={wp(40)}
             minHeight={hp(6)}
             fontSize={wp(4.5)}
-            bgColor={Colors.tertiary}
+            bgColor={colors.tertiary}
           >
             Sign Up
           </Button>
@@ -52,7 +53,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.background,
     height: hp(200),
     width: wp(100),
   },

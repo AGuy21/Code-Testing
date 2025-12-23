@@ -3,4 +3,6 @@ export type userDatVariables =
   | "username"
   | "email"
   | "messagePrivacy"
-  | "isPrivate";
+  | "isPrivate"
+  | "bio"
+  | "theme";

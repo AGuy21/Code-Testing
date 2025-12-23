@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert } from "react-native";
 import SettingsButton from "../SettingsButton";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import { useUserDataStore } from "@/components/hooks/store";
 import SaveUserData from "@/components/functions/SaveUserData";
 import { useUser } from "@clerk/clerk-expo";
@@ -10,6 +10,7 @@ const ProfileVisibility = () => {
   const { user } = useUser();
   const userData = useUserDataStore((state) => state.data);
   const setUserData = useUserDataStore((state) => state.setData);
+  const { colors } = useThemeStore();
 
   const isPrivate = userData.isPrivate || false;
 
@@ -43,7 +44,7 @@ const ProfileVisibility = () => {
     <SettingsButton
       icon={isPrivate ? "lock" : "public"}
       text={`Account Type: ${isPrivate ? "Private" : "Public"}`}
-      color={Colors.tertiary}
+      color={colors.tertiary}
       onPress={handlePress}
     />
   );

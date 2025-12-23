@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, BackHandler } from "react-native";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -11,6 +11,7 @@ import SettingsButton from "../SettingsButton";
 
 const DeleteUser = () => {
   const { userId } = useAuth();
+  const { colors } = useThemeStore();
 
   function confirmDeletion() {
     console.log("Asking for user confirmation before deleting account..");
@@ -64,7 +65,7 @@ const DeleteUser = () => {
       onPress={confirmDeletion}
       icon={"delete-forever"}
       text="Delete Account"
-      color={Colors.error}
+      color={colors.error}
     />
   );
 };

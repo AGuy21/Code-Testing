@@ -1,10 +1,10 @@
-import Colors from "@/constants/Colors";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -13,9 +13,9 @@ interface ButtonProps {
   minWidth?: number;
   minHeight?: number;
   fontSize?: number;
-  bgColor?: typeof Colors.primary;
-  bgDisabledColor?: typeof Colors.primaryLight;
-  textColor?: typeof Colors.text;
+  bgColor?: string;
+  bgDisabledColor?: string;
+  textColor?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -25,13 +25,19 @@ const Button: React.FC<ButtonProps> = ({
   minWidth,
   minHeight,
   fontSize,
-  bgColor = Colors.tertiary,
-  bgDisabledColor = Colors.primaryLight,
-  textColor = Colors.text,
+  bgColor,
+  bgDisabledColor,
+  textColor,
 }) => {
+  const { colors } = useThemeStore();
+
+  const effectiveBgColor = bgColor || colors.tertiary;
+  const effectiveBgDisabledColor = bgDisabledColor || colors.primaryLight;
+  const effectiveTextColor = textColor || colors.text;
+
   const styles = StyleSheet.create({
     button: {
-      backgroundColor: bgColor,
+      backgroundColor: effectiveBgColor,
       borderRadius: wp(6),
       paddingHorizontal: wp(5),
       paddingVertical: hp(1),
@@ -46,14 +52,14 @@ const Button: React.FC<ButtonProps> = ({
       justifyContent: "center",
     },
     buttonText: {
-      color: textColor,
+      color: effectiveTextColor,
       fontWeight: "bold",
       textAlign: "center",
       fontSize: fontSize,
       fontFamily: "Nunito-Bold",
     },
     disabled: {
-      backgroundColor: bgDisabledColor,
+      backgroundColor: effectiveBgDisabledColor,
       opacity: 0.5,
       borderRadius: wp(2),
       paddingHorizontal: wp(5),

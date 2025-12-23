@@ -1,11 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import Colors from "@/constants/Colors";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 
 // Options
 import DeleteUser from "@/components/ui/settings/options/DeleteUser";
@@ -15,9 +15,12 @@ import ChangeProfilePicture from "@/components/ui/settings/options/ChangeProfile
 import MessagePrivacy from "@/components/ui/settings/options/MessagePrivacy";
 import ProfileVisibility from "@/components/ui/settings/options/ProfileVisibility";
 import BlockedUsers from "@/components/ui/settings/options/BlockedUsers";
+import EditBio from "@/components/ui/settings/options/EditBio";
+import ThemeSelector from "@/components/ui/settings/options/ThemeSelector";
 
 const settings = () => {
   const { setting } = useLocalSearchParams();
+  const { colors } = useThemeStore(); // Use dynamic colors
   var title = setting as string;
 
   const navigation = useNavigation();
@@ -26,16 +29,16 @@ const settings = () => {
     navigation.setOptions({
       title: title,
       headerStyle: {
-        backgroundColor: Colors.background,
+        backgroundColor: colors.background,
         borderBottomWidth: hp(0.2),
-        borderBottomColor: Colors.secondary,
+        borderBottomColor: colors.secondary,
       },
-      headerTintColor: Colors.text,
+      headerTintColor: colors.text,
       headerTitleStyle: {
         fontFamily: "Nunito-Bold",
       },
     });
-  }, [navigation]);
+  }, [navigation, colors]); // Re-run when colors change
 
   const renderContent = () => {
     switch (setting) {
@@ -53,6 +56,13 @@ const settings = () => {
             </View>
           </>
         );
+      case "Account Customization":
+        return (
+          <View style={styles.section}>
+            <EditBio />
+            <ThemeSelector />
+          </View>
+        );
       case "Privacy & Safety":
         return (
           <View style={styles.section}>
@@ -66,7 +76,11 @@ const settings = () => {
     }
   };
 
-  return <View style={styles.container}>{renderContent()}</View>;
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {renderContent()}
+    </View>
+  );
 };
 
 export default settings;
@@ -74,7 +88,6 @@ export default settings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
     paddingTop: hp(2.5),
   },
   section: {

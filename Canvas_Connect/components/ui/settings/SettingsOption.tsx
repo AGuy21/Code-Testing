@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -14,6 +14,8 @@ type SettingsOptionProps = {
 };
 
 const SettingsOption = ({ text, setModalOpen }: SettingsOptionProps) => {
+  const { colors } = useThemeStore();
+
   function openSettingsOption() {
     setModalOpen(false);
     router.push({ pathname: "/(screens)/settings", params: { setting: text } });
@@ -21,11 +23,11 @@ const SettingsOption = ({ text, setModalOpen }: SettingsOptionProps) => {
 
   return (
     <TouchableOpacity
-      style={styles.settingContainer}
+      style={[styles.settingContainer, { borderColor: colors.text2 }]}
       onPress={() => openSettingsOption()}
     >
-      <Text style={styles.settingText}> {text} </Text>
-      <AntDesign name="right" size={wp(5)} color={Colors.text} />
+      <Text style={[styles.settingText, { color: colors.text }]}> {text} </Text>
+      <AntDesign name="right" size={wp(5)} color={colors.text} />
     </TouchableOpacity>
   );
 };
@@ -41,10 +43,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     borderBottomWidth: hp(0.1),
-    borderColor: Colors.text2,
   },
   settingText: {
-    color: Colors.text,
     fontFamily: "Nunito-Medium",
     fontSize: hp(1.75),
   },

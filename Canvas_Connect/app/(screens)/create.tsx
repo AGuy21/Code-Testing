@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRouter } from "expo-router";
-import Colors from "@/constants/Colors";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -30,19 +30,20 @@ const create = () => {
   const navigation = useNavigation();
   const router = useRouter();
   const userData = useUserDataStore((state) => state.data);
+  const { colors } = useThemeStore();
 
   useEffect(() => {
     navigation.setOptions({
       title: "Create Post",
       headerStyle: {
-        backgroundColor: Colors.background,
+        backgroundColor: colors.background,
       },
-      headerTintColor: Colors.text,
+      headerTintColor: colors.text,
       headerTitleStyle: {
         fontFamily: "Nunito-Bold",
       },
     });
-  }, [navigation]);
+  }, [navigation, colors]);
 
   useEffect(() => {
     checkForCameraRollPermission();
@@ -117,22 +118,28 @@ const create = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderTopColor: colors.tertiary }]}>
         <TextInput
           style={[
             styles.titleInput,
-            { marginBottom: errors.title ? hp(0) : hp(4) },
+            {
+              marginBottom: errors.title ? hp(0) : hp(4),
+              borderColor: colors.secondary,
+              color: colors.text,
+            },
           ]}
           value={title}
           placeholder="Enter title"
           onChangeText={setTitle}
-          placeholderTextColor={Colors.text2}
+          placeholderTextColor={colors.text2}
           editable={!isSubmitting}
         />
         {errors.title && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>{errors.title}</Text>
+            <Text style={[styles.errorMessageText, { color: colors.error }]}>
+              {errors.title}
+            </Text>
           </View>
         )}
       </View>
@@ -140,7 +147,10 @@ const create = () => {
       <View style={[styles.main, { gap: errors.picture ? hp(0) : hp(2.5) }]}>
         {picture ? (
           <Image
-            style={styles.pictureInput}
+            style={[
+              styles.pictureInput,
+              { color: colors.text, borderColor: colors.primaryLight },
+            ]}
             source={{ uri: picture }}
             resizeMode="cover"
           />
@@ -154,32 +164,43 @@ const create = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: hp(2),
+                color: colors.text,
+                borderColor: colors.primaryLight,
               },
             ]}
           >
-            <Text style={styles.text}>Tap to add a picture</Text>
-            <MaterialIcons name="photo" size={wp(10)} color={Colors.text2} />
+            <Text style={[styles.text, { color: colors.text }]}>
+              Tap to add a picture
+            </Text>
+            <MaterialIcons name="photo" size={wp(10)} color={colors.text2} />
           </Pressable>
         )}
 
         {errors.picture && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>{errors.picture}</Text>
+            <Text style={[styles.errorMessageText, { color: colors.error }]}>
+              {errors.picture}
+            </Text>
           </View>
         )}
 
         <TextInput
-          style={styles.descriptionInput}
+          style={[
+            styles.descriptionInput,
+            { borderColor: colors.secondary, color: colors.text },
+          ]}
           multiline={true}
           placeholder="Enter description"
-          placeholderTextColor={Colors.text2}
+          placeholderTextColor={colors.text2}
           value={description}
           onChangeText={setDescription}
           editable={!isSubmitting}
         />
         {errors.description && (
           <View style={styles.errorMessageView}>
-            <Text style={styles.errorMessageText}>{errors.description}</Text>
+            <Text style={[styles.errorMessageText, { color: colors.error }]}>
+              {errors.description}
+            </Text>
           </View>
         )}
       </View>
@@ -188,20 +209,31 @@ const create = () => {
         <View>
           {errors.other && (
             <View style={styles.errorMessageView}>
-              <Text style={styles.otherErrorMessageText}>{errors.other}</Text>
+              <Text
+                style={[
+                  styles.otherErrorMessageText,
+                  { color: colors.error },
+                ]}
+              >
+                {errors.other}
+              </Text>
             </View>
           )}
         </View>
 
         <Pressable
-          style={[styles.createButton, isSubmitting && { opacity: 0.5 }]}
+          style={[
+            styles.createButton,
+            { backgroundColor: colors.secondary },
+            isSubmitting && { opacity: 0.5 },
+          ]}
           onPress={submitPost}
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <ActivityIndicator size="small" color={Colors.text2} />
+            <ActivityIndicator size="small" color={colors.text2} />
           ) : (
-            <MaterialIcons name="add" size={wp(10)} color={Colors.text2} />
+            <MaterialIcons name="add" size={wp(10)} color={colors.text2} />
           )}
         </Pressable>
       </View>
@@ -214,11 +246,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.background,
   },
   text: {
     fontFamily: "Nunito",
-    color: Colors.text,
     textAlign: "center",
     fontSize: wp(4),
   },
@@ -228,7 +258,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     paddingLeft: wp(10),
-    borderTopColor: Colors.tertiary,
     borderTopWidth: wp(0.2),
     paddingTop: hp(2),
   },
@@ -250,8 +279,6 @@ const styles = StyleSheet.create({
   titleInput: {
     width: wp(60),
     borderBottomWidth: wp(0.5),
-    borderColor: Colors.secondary,
-    color: Colors.text,
     paddingRight: wp(2),
     fontFamily: "Nunito",
     fontSize: wp(4),
@@ -259,17 +286,13 @@ const styles = StyleSheet.create({
   pictureInput: {
     width: wp(80),
     height: wp(80),
-    color: Colors.text,
     fontFamily: "Nunito",
     borderWidth: wp(0.25),
-    borderColor: Colors.primaryLight,
   },
   descriptionInput: {
     width: wp(80),
     height: hp(20),
     borderWidth: wp(0.25),
-    borderColor: Colors.secondary,
-    color: Colors.text,
     fontFamily: "Nunito",
     borderRadius: hp(2),
     textAlignVertical: "top",
@@ -282,15 +305,12 @@ const styles = StyleSheet.create({
   },
   errorMessageText: {
     textAlign: "left",
-    color: Colors.error,
   },
   otherErrorMessageText: {
     textAlign: "center",
-    color: Colors.error,
   },
   createButton: {
     marginRight: wp(5),
-    backgroundColor: Colors.secondary,
     borderRadius: hp(100),
     alignSelf: "flex-end",
     width: wp(15),

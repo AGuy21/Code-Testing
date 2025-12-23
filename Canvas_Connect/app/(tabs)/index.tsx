@@ -1,7 +1,7 @@
 import PreviousPosts from "@/components/ui/PreviousPosts";
-import Colors from "@/constants/Colors";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -11,18 +11,19 @@ import { useRouter } from "expo-router";
 
 export default function Home() {
   const router = useRouter();
+  const { colors } = useThemeStore();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.previousPostsContainer}>
-        <Text style={styles.titleText}>Previous Posts</Text>
+        <Text style={[styles.titleText, { color: colors.text, borderBottomColor: colors.tertiary }]}>Previous Posts</Text>
         
         <PreviousPosts />
 
       </View>
       <View style={styles.footer}>
-        <Pressable style={styles.newPostButton} onPress={() => router.push("/create")} >
-          <MaterialIcons name="draw" size={wp(10)} color={Colors.text2} />
+        <Pressable style={[styles.newPostButton, { backgroundColor: colors.secondary }]} onPress={() => router.push("/create")} >
+          <MaterialIcons name="draw" size={wp(10)} color={colors.text2} />
         </Pressable>
       </View>
     </SafeAreaView>
@@ -31,7 +32,6 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background,
     flex: 1,
     paddingVertical: hp(2.5),
   },
@@ -39,9 +39,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontFamily: "Nunito-BlackItalic",
     fontSize: hp(3),
-    color: Colors.text,
     width: "90%",
-    borderBottomColor: Colors.tertiary,
     borderBottomWidth: hp(0.25),
   },
   previousPostsContainer: {
@@ -53,7 +51,6 @@ const styles = StyleSheet.create({
   },
   newPostButton: {
     marginRight: wp(5),
-    backgroundColor: Colors.secondary,
     borderRadius: hp(100),
     alignSelf:"flex-end",
     width: wp(15),
