@@ -6,4 +6,5 @@ export type postType = {
     creatorEmail: string;
     likes: number;
     likedBy?: string[];
+    commentsCount?: number;
 };

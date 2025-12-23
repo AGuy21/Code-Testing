@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -10,6 +10,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { postType } from "@/constants/types/postType";
 import { useRouter } from "expo-router";
 import { useUserDataStore } from "@/components/hooks/store";
+import { collection, getCountFromServer } from "firebase/firestore";
+import { db } from "@/Configs/FirebaseConfig";
 
 type PostCardProps = {
   post: postType;
@@ -19,8 +21,25 @@ const PostCard = ({ post }: PostCardProps) => {
   const { colors } = useThemeStore();
   const router = useRouter();
   const userData = useUserDataStore((state) => state.data);
+  const [commentCount, setCommentCount] = useState(post.commentsCount || 0);
 
   const isLiked = post.likedBy?.includes(userData.email) || false;
+
+  useEffect(() => {
+    // Only fetch if commentsCount is undefined (legacy posts)
+    if (post.commentsCount === undefined) {
+      const fetchCount = async () => {
+        try {
+          const commentsRef = collection(db, "posts", post.id, "comments");
+          const snapshot = await getCountFromServer(commentsRef);
+          setCommentCount(snapshot.data().count);
+        } catch (error) {
+          console.log("Error fetching comment count:", error);
+        }
+      };
+      fetchCount();
+    }
+  }, [post.id, post.commentsCount]);
 
   return (
     <TouchableOpacity
@@ -72,7 +91,7 @@ const PostCard = ({ post }: PostCardProps) => {
               color={colors.background}
             />
             <Text style={[styles.postStatText, { color: colors.background }]}>
-              {24}
+              {commentCount}
             </Text>
           </View>
           <View

@@ -63,10 +63,11 @@ const create = () => {
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [3, 3],
-      quality: 1,
+      quality: 0.5,
+      base64: true,
     });
-    if (!_image.canceled) {
-      setPicture(_image.assets[0].uri);
+    if (!_image.canceled && _image.assets[0].base64) {
+      setPicture(`data:image/jpeg;base64,${_image.assets[0].base64}`);
     }
   };
 
@@ -95,6 +96,7 @@ const create = () => {
           image: picture,
           creatorEmail: userData.email,
           likes: 0,
+          commentsCount: 0,
         },
       });
 
@@ -149,7 +151,7 @@ const create = () => {
           <Image
             style={[
               styles.pictureInput,
-              { color: colors.text, borderColor: colors.primaryLight },
+              { borderColor: colors.primaryLight },
             ]}
             source={{ uri: picture }}
             resizeMode="cover"
@@ -164,13 +166,15 @@ const create = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: hp(2),
-                color: colors.text,
                 borderColor: colors.primaryLight,
               },
             ]}
           >
             <Text style={[styles.text, { color: colors.text }]}>
               Tap to add a picture
+            </Text>
+            <Text style={[styles.text, { color: colors.text2, fontSize: wp(3) }]}>
+              (Allowed: JPEG, PNG)
             </Text>
             <MaterialIcons name="photo" size={wp(10)} color={colors.text2} />
           </Pressable>

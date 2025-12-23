@@ -7,6 +7,7 @@ export interface PostData {
   image: string;
   creatorEmail: string;
   likes: number;
+  commentsCount: number;
 }
 
 type SavePostProps = {

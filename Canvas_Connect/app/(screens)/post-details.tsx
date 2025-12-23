@@ -140,6 +140,13 @@ const PostDetails = () => {
         profilePicture: userData.profilePicture || BaseProfilePicture,
         createdAt: new Date(),
       });
+
+      // Update comments count on the post document
+      const postRef = doc(db, "posts", postId as string);
+      await updateDoc(postRef, {
+        commentsCount: increment(1)
+      });
+
       setNewComment("");
     } catch (error) {
       console.error("Error adding comment:", error);
