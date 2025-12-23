@@ -7,6 +7,9 @@ import { useEffect, useState } from "react";
 export default function GetUsersPosts() {
   const userData = useUserDataStore((state) => state.data);
   const [loadedPosts, setLoadedPosts] = useState<postType[] | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refresh = () => setRefreshKey((prev) => prev + 1);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -33,7 +36,7 @@ export default function GetUsersPosts() {
     };
 
     fetchPosts();
-  }, [userData.posts]);
+  }, [userData.posts, refreshKey]);
 
-  return loadedPosts;
+  return { posts: loadedPosts, refresh };
 }

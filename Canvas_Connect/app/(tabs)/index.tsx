@@ -16,10 +16,7 @@ export default function Home() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.previousPostsContainer}>
-        <Text style={[styles.titleText, { color: colors.text, borderBottomColor: colors.tertiary }]}>Previous Posts</Text>
-        
         <PreviousPosts />
-
       </View>
       <View style={styles.footer}>
         <Pressable style={[styles.newPostButton, { backgroundColor: colors.secondary }]} onPress={() => router.push("/create")} >
@@ -36,12 +33,6 @@ const styles = StyleSheet.create({
     paddingVertical: hp(2.5),
   },
 
-  titleText: {
-    fontFamily: "Nunito-BlackItalic",
-    fontSize: hp(3),
-    width: "90%",
-    borderBottomWidth: hp(0.25),
-  },
   previousPostsContainer: {
     paddingLeft: wp(2.5),
   },

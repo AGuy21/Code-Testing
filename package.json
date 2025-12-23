@@ -4,6 +4,7 @@
     "@react-native-firebase/auth": "^21.6.0",
     "expo": "~54.0.0",
     "expo-build": "^0.0.0",
+    "expo-navigation-bar": "~5.0.10",
     "properties": "^1.2.1"
   }
 }

@@ -167,8 +167,9 @@ const PostDetails = () => {
 
   return (
     <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={[styles.container, { backgroundColor: colors.background }]}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
       <View style={[styles.header, { borderBottomColor: colors.primaryDark }]}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>

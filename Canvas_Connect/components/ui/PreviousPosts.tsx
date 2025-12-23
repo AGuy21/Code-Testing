@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import {
   heightPercentageToDP as hp,
@@ -10,11 +10,14 @@ import { useFocusEffect } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/Configs/FirebaseConfig";
 import PostCard from "./PostCard";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useThemeStore } from "@/components/hooks/useThemeStore";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const PreviousPosts = () => {
   const userData = useUserDataStore((state) => state.data);
   const setUserData = useUserDataStore((state) => state.setData);
+  const { colors } = useThemeStore();
+  const { posts, refresh } = GetUsersPosts();
 
   // Refresh user data when the user comes back to screen, this is so that the posts list updates after creating a new post
   useFocusEffect(
@@ -31,22 +34,52 @@ const PreviousPosts = () => {
     }, [userData?.email])
   );
 
-  const userPosts = GetUsersPosts();
-
   return (
-    <FlatList
-      style={styles.previousPostsLists}
-      horizontal={true}
-      data={userPosts}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <PostCard post={item} />}
-    />
+    <View>
+      <View style={styles.headerContainer}>
+        <Text style={[styles.titleText, { color: colors.text }]}>
+          Previous Posts
+        </Text>
+        <TouchableOpacity onPress={refresh} style={styles.refreshButton}>
+          <MaterialIcons name="refresh" size={wp(6)} color={colors.text} />
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          height: hp(0.25),
+          backgroundColor: colors.tertiary,
+          width: "95%",
+          marginBottom: hp(1),
+        }}
+      />
+      <FlatList
+        style={styles.previousPostsLists}
+        horizontal={true}
+        data={posts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <PostCard post={item} />}
+      />
+    </View>
   );
 };
 
 export default PreviousPosts;
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "95%",
+  },
+  titleText: {
+    fontFamily: "Nunito-BlackItalic",
+    fontSize: hp(3),
+    flex: 1,
+  },
+  refreshButton: {
+    padding: wp(2),
+  },
   previousPostsLists: {
     height: hp(23),
     width: wp(100),

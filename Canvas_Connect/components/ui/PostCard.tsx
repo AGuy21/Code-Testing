@@ -26,8 +26,11 @@ const PostCard = ({ post }: PostCardProps) => {
   const isLiked = post.likedBy?.includes(userData.email) || false;
 
   useEffect(() => {
-    // Only fetch if commentsCount is undefined (legacy posts)
-    if (post.commentsCount === undefined) {
+    // If commentsCount is provided in the post object (new posts), use it
+    if (post.commentsCount !== undefined) {
+      setCommentCount(post.commentsCount);
+    } else {
+      // Otherwise fetch it (legacy posts)
       const fetchCount = async () => {
         try {
           const commentsRef = collection(db, "posts", post.id, "comments");

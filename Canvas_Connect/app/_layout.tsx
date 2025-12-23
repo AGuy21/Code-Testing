@@ -7,6 +7,8 @@ import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 import { tokenCache } from "@/cache";
 import { StatusBar } from "react-native";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
+import * as NavigationBar from "expo-navigation-bar";
+import { Platform } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,6 +40,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      if (Platform.OS === "android") {
+        NavigationBar.setVisibilityAsync("hidden");
+        NavigationBar.setBehaviorAsync("overlay-swipe");
+      }
     }
   }, [loaded]);
 
