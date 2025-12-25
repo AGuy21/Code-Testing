@@ -5,14 +5,8 @@ export default function SponsorItem({ sponsor }: { sponsor: Sponsor }) {
   const tier = getTierFromAmount(sponsor.dollars);
   const accentColor = tier?.color || "#d4af37"; // Default to gold if no tier found
 
-  return (
-    <div 
-      className="group relative bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]"
-      style={{ 
-        // We use CSS variables or inline styles for dynamic colors
-        borderColor: 'rgba(255,255,255,0.1)',
-      }}
-    >
+  const CardContent = () => (
+    <>
       {/* Dynamic hover border using a pseudo-element or just inline style on hover is tricky in React without CSS-in-JS or Tailwind arbitrary values. 
           Let's use a style tag for the specific instance or just apply the color to the border directly on hover via a wrapper or inline style logic.
           Actually, simpler: apply the color to the border directly and use opacity.
@@ -54,6 +48,33 @@ export default function SponsorItem({ sponsor }: { sponsor: Sponsor }) {
           ${sponsor.dollars}
         </span>
       </div>
+    </>
+  );
+
+  if (sponsor.link) {
+    return (
+      <a 
+        href={sponsor.link} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="group relative bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)] block"
+        style={{ 
+          borderColor: 'rgba(255,255,255,0.1)',
+        }}
+      >
+        <CardContent />
+      </a>
+    );
+  }
+
+  return (
+    <div 
+      className="group relative bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]"
+      style={{ 
+        borderColor: 'rgba(255,255,255,0.1)',
+      }}
+    >
+      <CardContent />
     </div>
   );
 }

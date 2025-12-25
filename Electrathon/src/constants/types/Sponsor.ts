@@ -4,4 +4,5 @@ export interface Sponsor {
   dollars: string;
   date: string;
   image: string;
+  link?: string;
 }

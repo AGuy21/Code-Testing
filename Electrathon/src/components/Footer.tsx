@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Container from "./ui/Container";
 import { useEffect, useState } from "react";
 import { fetchSponsors } from "../constants/data/sponsorItems";
+import { getTierFromAmount } from "../utils/sponsorshipUtils";
 import type { Sponsor } from "../constants/types/Sponsor";
 
 export default function Footer() {
@@ -122,12 +123,43 @@ export default function Footer() {
             <p className="text-[#d4af37] text-xs font-mono uppercase tracking-widest mb-4 text-center">
               Proudly Sponsored By
             </p>
-            <div className="flex flex-wrap justify-center gap-6 md:gap-8 items-center opacity-70 hover:opacity-100 transition-opacity">
-              {sponsors.map((sponsor, index) => (
-                <div key={index} className="text-white/60 hover:text-white transition-colors text-sm font-bold uppercase tracking-wider">
-                  {sponsor.name}
-                </div>
-              ))}
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8 items-center">
+              {sponsors.map((sponsor, index) => {
+                const tier = getTierFromAmount(sponsor.dollars);
+                const tierName = tier?.name || "Bronze";
+                
+                let styleClass = "text-[#cd7f32] text-xs font-medium opacity-60 hover:opacity-100"; // Bronze/Default
+                
+                if (tierName === "Platinum") {
+                  styleClass = "text-[#00b4d8] text-lg font-black tracking-wide drop-shadow-[0_0_10px_rgba(0,180,216,0.6)] opacity-100 hover:scale-105";
+                } else if (tierName === "Gold") {
+                  styleClass = "text-[#d4af37] text-base font-bold tracking-wide opacity-100 hover:scale-105 drop-shadow-[0_0_5px_rgba(212,175,55,0.3)]";
+                } else if (tierName === "Silver") {
+                  styleClass = "text-[#c0c0c0] text-sm font-semibold opacity-80 hover:opacity-100";
+                }
+
+                const content = (
+                  <span className={`${styleClass} transition-all duration-300 uppercase tracking-wider`}>
+                    {sponsor.name}
+                  </span>
+                );
+
+                return sponsor.link ? (
+                  <a 
+                    key={index} 
+                    href={sponsor.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block"
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <div key={index}>
+                    {content}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

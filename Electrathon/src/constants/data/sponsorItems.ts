@@ -13,6 +13,7 @@ export async function fetchSponsors(): Promise<Sponsor[]> {
         dollars: data.dollars || "0",
         date: data.date || "",
         image: data.image || "",
+        link: data.link || "",
       };
     });
     return sponsors;

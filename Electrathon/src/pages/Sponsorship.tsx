@@ -43,35 +43,6 @@ export default function Sponsorship() {
             BECOME A <span className="text-transparent text-stroke">SPONSOR</span>
           </h1>
 
-          {/* Sponsor Marquee */}
-          <div className="w-full overflow-hidden bg-white/5 border-y border-[#d4af37]/10 py-3 mb-8 backdrop-blur-sm">
-            <div className="flex whitespace-nowrap animate-marquee hover:pause-on-hover">
-              <div className="flex items-center gap-8 px-4">
-                <span className="text-white/40 font-mono uppercase tracking-widest text-sm">Proudly Sponsored By:</span>
-                {sponsors.length > 0 ? (
-                  sponsors.map((sponsor, index) => (
-                    <span key={`s1-${index}`} className="text-[#d4af37] font-bold uppercase tracking-wider">
-                      {sponsor.name}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-white/20 italic">Your Name Could Be Here</span>
-                )}
-                {/* Duplicate for seamless loop */}
-                <span className="text-white/40 font-mono uppercase tracking-widest text-sm ml-8">Proudly Sponsored By:</span>
-                {sponsors.length > 0 ? (
-                  sponsors.map((sponsor, index) => (
-                    <span key={`s2-${index}`} className="text-[#d4af37] font-bold uppercase tracking-wider">
-                      {sponsor.name}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-white/20 italic">Your Name Could Be Here</span>
-                )}
-              </div>
-            </div>
-          </div>
-
           <div className="max-w-4xl mx-auto space-y-6 text-left md:text-center bg-[#0a2a20]/50 backdrop-blur-sm p-6 md:p-8 rounded-lg border border-[#d4af37]/20">
             <p className="text-lg text-white/90 font-light leading-relaxed">
               Allen D Nease Electrathon is a team that competes in electric car endurance racing consisting of passionate drivers and crew members from St Johns County.

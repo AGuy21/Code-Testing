@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { headerItems } from "../constants/data/headerItems";
 import logo from "../assets/images/Electrothon.png";
+import SponsorMarquee from "./SponsorMarquee";
 
 interface HomeProps {
   SelectedPage?: string;
@@ -149,6 +150,9 @@ export default function Header({ SelectedPage }: HomeProps) {
           </div>
         </div>
       )}
+
+      {/* Sponsor Marquee */}
+      <SponsorMarquee />
     </header>
   );
 }

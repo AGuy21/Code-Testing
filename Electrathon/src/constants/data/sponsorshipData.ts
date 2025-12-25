@@ -20,7 +20,7 @@ export const sponsorshipTiers: SponsorshipTier[] = [
       "Logo prominently displayed on team shirts",
       "Provided banner up to 6'x10' displayed at events"
     ],
-    color: "#e5e4e2" // Platinum
+    color: "#00b4d8" // Platinum (Blue)
   },
   {
     name: "Gold",
