@@ -9,6 +9,7 @@ interface ButtonProps {
   variant?: "primary" | "secondary" | "outline" | "ghost" | "cyber";
   className?: string;
   size?: "sm" | "md" | "lg";
+  download?: string;
 }
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
   variant = "primary",
   className = "",
   size = "md",
+  download,
 }: ButtonProps) {
   const baseStyles =
     "inline-flex items-center justify-center font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none";
@@ -53,7 +55,7 @@ export default function Button({
 
   if (href) {
     return (
-      <a href={href} className={classes} target="_blank" rel="noopener noreferrer">
+      <a href={href} className={classes} target="_blank" rel="noopener noreferrer" download={download}>
         {children}
       </a>
     );

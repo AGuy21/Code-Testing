@@ -1,9 +1,6 @@
 import insta from '../assets/images/Instagram-Logo.png'
 import Container from '../components/ui/Container'
 import Button from '../components/ui/Button'
-import SectionHeader from '../components/ui/SectionHeader'
-import WishlistItem from '../components/WishlistItem'
-import { wishlistItems, beneficiaries } from '../constants/data/wishlistData'
 
 export default function Connect() {
   return (
@@ -64,7 +61,7 @@ export default function Connect() {
                 Interested in sponsoring Electrathon? We welcome support from local businesses and community partners.
               </p>
               <Button 
-                href="mailto:Mr.Beale@nease.edu" 
+                href="mailto:John.Beale@stjohns.k12.fl.us" 
                 variant="outline"
                 className="border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-black clip-corner-br"
               >
@@ -72,65 +69,42 @@ export default function Connect() {
               </Button>
             </div>
           </div>
+        </div>
 
-          {/* Fundraising & Wishlist Section */}
-          <div className="border-t border-[#d4af37]/20 pt-16">
-            <SectionHeader title="Support The Team" subtitle="FUNDRAISING & DONATIONS" />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* Amazon Wishlist */}
-              <div className="bg-[#0a2a20] border border-[#d4af37]/20 p-8 relative">
-                <h3 className="text-xl font-bold text-white mb-6 uppercase flex items-center gap-3">
-                  <span className="text-[#d4af37]">📦</span> Amazon Wishlist
-                </h3>
-                <p className="text-white/60 text-sm mb-6 font-light">
-                  Directly support our build by purchasing tools and equipment we need for the season.
-                </p>
-                <div className="space-y-4 mb-8">
-                  {wishlistItems.map((item, index) => (
-                    <WishlistItem key={index} item={item} />
-                  ))}
+        <div className="mt-24 pt-16 border-t border-[#d4af37]/10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+            <div className="text-left">
+              <h3 className="text-2xl font-bold text-white mb-6 uppercase tracking-wider">Contact Information</h3>
+              <div className="space-y-4 text-white/80 font-light">
+                <div>
+                  <p className="font-bold text-[#d4af37]">John Beale</p>
+                  <a href="mailto:John.Beale@stjohns.k12.fl.us" className="hover:text-[#d4af37] transition-colors">John.Beale@stjohns.k12.fl.us</a>
+                  <p className="text-sm mt-1">904-547-8300 from 7:30-9:00 AM on weekdays</p>
                 </div>
-                <Button href="#" className="w-full bg-[#d4af37] text-black font-bold hover:bg-white">
-                  View Full Wishlist
-                </Button>
+                <div className="pt-4 border-t border-[#d4af37]/10">
+                  <p>Allen D. Nease Senior High School</p>
+                  <p>Stellar Academy of Engineering</p>
+                  <p>Transportation Technology Club</p>
+                </div>
               </div>
-
-              {/* Beneficiaries */}
-              <div className="bg-[#0a2a20] border border-[#d4af37]/20 p-8 relative">
-                <h3 className="text-xl font-bold text-white mb-6 uppercase flex items-center gap-3">
-                  <span className="text-[#d4af37]">❤️</span> Our Supporters
-                </h3>
-                <p className="text-white/60 text-sm mb-6 font-light">
-                  A special thank you to the individuals and organizations that keep us racing.
-                </p>
-                <ul className="grid grid-cols-1 gap-3">
-                  {beneficiaries.map((name, index) => (
-                    <li key={index} className="flex items-center gap-3 text-white/80 font-mono text-sm p-3 bg-[#0f3d2e] border border-white/5">
-                      <span className="text-[#d4af37]">★</span> {name}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-8 p-4 bg-[#d4af37]/5 border border-[#d4af37]/20 text-center">
-                  <p className="text-[#d4af37] text-xs font-mono mb-2">WANT TO SEE YOUR NAME HERE?</p>
-                  <a href="mailto:Mr.Beale@nease.edu" className="text-white underline hover:text-[#d4af37] transition-colors text-sm">
-                    Become a Benefactor
+            </div>
+            
+            <div className="text-left md:text-right">
+              <h3 className="text-2xl font-bold text-white mb-6 uppercase tracking-wider">School Address</h3>
+              <div className="space-y-2 text-white/80 font-light">
+                <p className="font-bold text-lg">ALLEN D. NEASE HIGH SCHOOL</p>
+                <p>10550 Ray Road</p>
+                <p>Ponte Vedra, FL 32081</p>
+                <div className="pt-2 mt-2 border-t border-[#d4af37]/10 inline-block text-left md:text-right">
+                  <p>O 904-547-8300</p>
+                  <p>F 904-547-8305</p>
+                  <a href="https://www-nhs.stjohns.k12.fl.us" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:underline block mt-1">
+                    www-nhs.stjohns.k12.fl.us
                   </a>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="mt-24 pt-16 border-t border-[#d4af37]/10 text-center">
-          <h3 className="text-xl font-bold text-[#d4af37] mb-2 uppercase tracking-widest">Direct Contact</h3>
-          <p className="text-white/50 mb-4 font-mono text-sm">For official inquiries, please contact Mr. Beale</p>
-          <a 
-            href="mailto:Mr.Beale@nease.edu" 
-            className="text-2xl md:text-4xl font-black text-white hover:text-[#d4af37] transition-colors tracking-tight"
-          >
-            Mr.Beale@nease.edu
-          </a>
         </div>
       </Container>
     </div>

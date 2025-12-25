@@ -85,10 +85,10 @@ export default function Footer() {
               <li className="flex items-center gap-3">
                 <span className="text-[#d4af37]">✉️</span>
                 <a
-                  href="mailto:Mr.Beale@nease.edu"
+                  href="mailto:John.Beale@stjohns.k12.fl.us"
                   className="hover:text-white transition-colors font-mono text-xs"
                 >
-                  Mr.Beale@nease.edu
+                  John.Beale@stjohns.k12.fl.us
                 </a>
               </li>
               <li className="flex items-start gap-3">

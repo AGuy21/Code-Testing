@@ -30,7 +30,7 @@ export default function SponsorCard({ tier }: SponsorCardProps) {
       </ul>
       
       <Button 
-        href="mailto:Mr.Beale@nease.edu" 
+        href="mailto:John.Beale@stjohns.k12.fl.us" 
         variant="outline" 
         size="sm" 
         className="w-full border-[#d4af37]/30 text-[#d4af37] hover:bg-[#d4af37] hover:text-black text-xs"

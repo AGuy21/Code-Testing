@@ -1,46 +1,27 @@
-export interface WishlistItem {
-  name: string;
-  price: string;
-  priority: "High" | "Medium" | "Low";
-  link: string;
+export interface Donation {
+  donor: string;
+  item: string;
+  amount: string;
 }
 
-export const wishlistItems: WishlistItem[] = [
+export const recentDonations: Donation[] = [
   {
-    name: "Heavy Duty Pop-up Tent",
-    price: "$250",
-    priority: "High",
-    link: "#"
+    donor: "John Smith",
+    item: "Metric Wrench Set",
+    amount: "$120"
   },
   {
-    name: "Wireless Headset System",
-    price: "$150",
-    priority: "High",
-    link: "#"
+    donor: "Sarah Connor",
+    item: "Safety Equipment",
+    amount: "$250"
   },
   {
-    name: "Portable SSD (1TB)",
-    price: "$80",
-    priority: "Medium",
-    link: "#"
-  },
-  {
-    name: "Metric Tool Set",
-    price: "$120",
-    priority: "Medium",
-    link: "#"
-  },
-  {
-    name: "GoPro Mounting Kit",
-    price: "$45",
-    priority: "Low",
-    link: "#"
+    donor: "Tech Solutions Inc.",
+    item: "Battery Management System",
+    amount: "$500"
   }
 ];
 
 export const beneficiaries = [
-  "Local Engineering Firms",
-  "Alumni Donors",
-  "Parent Booster Club",
-  "Community Partners"
+  "Supermarket Solutions"
 ];

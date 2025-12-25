@@ -4,6 +4,7 @@ import About from './pages/About.tsx';
 import Events from './pages/Events.tsx';
 import Header from './components/Header'
 import Connect from './pages/Connect.tsx';
+import Sponsorship from './pages/Sponsorship.tsx';
 import Footer from './components/Footer';
 import CircuitBackground from './components/animations/CircuitBackground';
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/events" element={<Events />} />
           <Route path='/connect' element={<Connect />} />
+          <Route path='/sponsorship' element={<Sponsorship />} />
         </Routes>
       </main>
       <Footer />

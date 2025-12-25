@@ -87,21 +87,8 @@ export default function About() {
           </TechBorder>
         </div>
 
-        {/* Sponsorship Section */}
-        <div className="mt-24 mb-24">
-          <SectionHeader title="Sponsorship Opportunities" subtitle="FUEL THE FUTURE" />
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {sponsorshipTiers.map((tier, index) => (
-              <SponsorCard key={index} tier={tier} />
-            ))}
-          </div>
-          <div className="text-center mt-8">
-             <p className="text-white/50 text-sm font-mono">
-               For detailed sponsorship packages and availability, please contact Mr. Beale.
-             </p>
-          </div>
-        </div>
+        {/* Sponsorship Section Removed - Moved to Sponsorship Page */}
+
 
         <div className="mt-24 relative border-t border-[#d4af37]/20 pt-16">
           <div className="text-center">
