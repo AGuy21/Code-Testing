@@ -1,15 +1,35 @@
+import { useEffect, useState } from "react";
 import Container from "../components/ui/Container";
 import SectionHeader from "../components/ui/SectionHeader";
 import SponsorCard from "../components/SponsorCard";
 import Button from "../components/ui/Button";
 import DonationItem from "../components/DonationItem";
+import SponsorItem from "../components/SponsorItem";
 import { sponsorshipTiers } from "../constants/data/sponsorshipData";
-import { recentDonations, beneficiaries } from "../constants/data/wishlistData";
+import { fetchDonators } from "../constants/data/donatorItems";
+import { fetchSponsors } from "../constants/data/sponsorItems";
+import type { Donator } from "../constants/types/Donator";
+import type { Sponsor } from "../constants/types/Sponsor";
 import sponsorshipPdf from "../assets/Electrathon Sponsorship info sheet.pdf";
 import qrCode from "../assets/images/QR code electrathon.png";
 import CircuitBackground from "../components/animations/CircuitBackground";
 
 export default function Sponsorship() {
+  const [donators, setDonators] = useState<Donator[]>([]);
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const [donatorsData, sponsorsData] = await Promise.all([
+        fetchDonators(),
+        fetchSponsors()
+      ]);
+      setDonators(donatorsData);
+      setSponsors(sponsorsData);
+    };
+    loadData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0f3d2e] text-white pt-32 pb-16 relative overflow-hidden">
       <CircuitBackground />
@@ -22,6 +42,36 @@ export default function Sponsorship() {
           <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white mb-6">
             BECOME A <span className="text-transparent text-stroke">SPONSOR</span>
           </h1>
+
+          {/* Sponsor Marquee */}
+          <div className="w-full overflow-hidden bg-white/5 border-y border-[#d4af37]/10 py-3 mb-8 backdrop-blur-sm">
+            <div className="flex whitespace-nowrap animate-marquee hover:pause-on-hover">
+              <div className="flex items-center gap-8 px-4">
+                <span className="text-white/40 font-mono uppercase tracking-widest text-sm">Proudly Sponsored By:</span>
+                {sponsors.length > 0 ? (
+                  sponsors.map((sponsor, index) => (
+                    <span key={`s1-${index}`} className="text-[#d4af37] font-bold uppercase tracking-wider">
+                      {sponsor.name}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-white/20 italic">Your Name Could Be Here</span>
+                )}
+                {/* Duplicate for seamless loop */}
+                <span className="text-white/40 font-mono uppercase tracking-widest text-sm ml-8">Proudly Sponsored By:</span>
+                {sponsors.length > 0 ? (
+                  sponsors.map((sponsor, index) => (
+                    <span key={`s2-${index}`} className="text-[#d4af37] font-bold uppercase tracking-wider">
+                      {sponsor.name}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-white/20 italic">Your Name Could Be Here</span>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="max-w-4xl mx-auto space-y-6 text-left md:text-center bg-[#0a2a20]/50 backdrop-blur-sm p-6 md:p-8 rounded-lg border border-[#d4af37]/20">
             <p className="text-lg text-white/90 font-light leading-relaxed">
               Allen D Nease Electrathon is a team that competes in electric car endurance racing consisting of passionate drivers and crew members from St Johns County.
@@ -83,8 +133,8 @@ export default function Sponsorship() {
                 Thank you to our community for their generous contributions.
               </p>
               <div className="space-y-4 mb-8">
-                {recentDonations.map((donation, index) => (
-                  <DonationItem key={index} donation={donation} />
+                {donators.map((donation, index) => (
+                  <DonationItem key={donation.id || index} donation={donation} />
                 ))}
               </div>
               <div className="flex flex-col items-center gap-4">
@@ -105,18 +155,15 @@ export default function Sponsorship() {
               <p className="text-white/60 text-sm mb-6 font-light">
                 We are proud to be supported by these amazing organizations and individuals.
               </p>
-              <div className="space-y-4">
-                {beneficiaries.length > 0 ? (
-                  <ul className="space-y-3">
-                    {beneficiaries.map((beneficiary, index) => (
-                      <li key={index} className="flex items-center gap-3 text-white/80 border-b border-[#d4af37]/10 pb-2 last:border-0">
-                        <span className="text-[#d4af37] text-xs">●</span>
-                        {beneficiary}
-                      </li>
-                    ))}
-                  </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {sponsors.length > 0 ? (
+                  sponsors.map((sponsor, index) => (
+                    <SponsorItem key={sponsor.id || index} sponsor={sponsor} />
+                  ))
                 ) : (
-                  <p className="text-white/40 italic">No sponsors listed yet. Be the first!</p>
+                  <div className="col-span-full text-center py-8 border border-dashed border-[#d4af37]/20 rounded-lg">
+                    <p className="text-white/40 italic">No sponsors listed yet. Be the first!</p>
+                  </div>
                 )}
               </div>
             </div>

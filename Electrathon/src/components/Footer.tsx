@@ -1,7 +1,20 @@
 import { Link } from "react-router-dom";
 import Container from "./ui/Container";
+import { useEffect, useState } from "react";
+import { fetchSponsors } from "../constants/data/sponsorItems";
+import type { Sponsor } from "../constants/types/Sponsor";
 
 export default function Footer() {
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+
+  useEffect(() => {
+    const loadSponsors = async () => {
+      const data = await fetchSponsors();
+      setSponsors(data);
+    };
+    loadSponsors();
+  }, []);
+
   return (
     <footer className="border-t border-[#d4af37]/20 bg-[#0a2a20] relative overflow-hidden pt-16">
       {/* Engineering accent line */}
@@ -102,6 +115,22 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+
+        {/* Sponsors Section */}
+        {sponsors.length > 0 && (
+          <div className="border-t border-[#d4af37]/10 pt-8 mt-8 mb-8">
+            <p className="text-[#d4af37] text-xs font-mono uppercase tracking-widest mb-4 text-center">
+              Proudly Sponsored By
+            </p>
+            <div className="flex flex-wrap justify-center gap-6 md:gap-8 items-center opacity-70 hover:opacity-100 transition-opacity">
+              {sponsors.map((sponsor, index) => (
+                <div key={index} className="text-white/60 hover:text-white transition-colors text-sm font-bold uppercase tracking-wider">
+                  {sponsor.name}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="border-t border-[#d4af37]/10 pt-8 mt-12 flex flex-col md:flex-row justify-between items-center gap-4 text-white/30 text-xs font-mono">
           <p>

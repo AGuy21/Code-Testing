@@ -60,13 +60,22 @@ export default function Connect() {
               <p className="text-white/60 mb-8 max-w-sm mx-auto md:ml-auto md:mr-0 font-light">
                 Interested in sponsoring Electrathon? We welcome support from local businesses and community partners.
               </p>
-              <Button 
-                href="mailto:John.Beale@stjohns.k12.fl.us" 
-                variant="outline"
-                className="border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-black clip-corner-br"
-              >
-                Contact Mr. Beale
-              </Button>
+              <div className="flex flex-col md:flex-row justify-center md:justify-end gap-4">
+                <Button 
+                  href="mailto:John.Beale@stjohns.k12.fl.us" 
+                  variant="outline"
+                  className="border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37] hover:text-black clip-corner-br"
+                >
+                  Contact Mr. Beale
+                </Button>
+                <Button 
+                  to="/sponsorship" 
+                  variant="primary"
+                  className="bg-[#d4af37] text-black font-bold hover:bg-white clip-corner-br"
+                >
+                  Learn More
+                </Button>
+              </div>
             </div>
           </div>
         </div>
