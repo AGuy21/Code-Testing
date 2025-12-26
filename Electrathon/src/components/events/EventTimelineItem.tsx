@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from './ui/Button';
-import type { EventItem } from '../constants/types/EventItem';
+import Button from '../ui/Button';
+import type { EventItem } from '../../constants/types/EventItem';
 
 interface EventTimelineItemProps {
   event: EventItem;
@@ -50,14 +50,13 @@ export default function EventTimelineItem({ event }: EventTimelineItemProps) {
           )}
         </div>
 
-        <div className="md:w-1/4 flex md:justify-end items-start">
+        <div className="md:w-1/4 flex justify-start md:justify-end items-start">
           <Button 
-            href={mapsUrl} 
-            variant="outline" 
-            size="sm" 
-            className="border-[#d4af37]/30 text-[#d4af37] hover:bg-[#d4af37] hover:text-black font-mono text-xs uppercase tracking-widest"
+            href={mapsUrl}
+            variant="outline"
+            className="text-xs py-2 px-4 border-white/20 text-white/60 hover:border-[#d4af37] hover:text-[#d4af37]"
           >
-            Get Directions
+            View Map
           </Button>
         </div>
       </div>
