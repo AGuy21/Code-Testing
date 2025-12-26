@@ -2,10 +2,10 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home.tsx';
 import About from './pages/About.tsx';
 import Events from './pages/Events.tsx';
-import Header from './components/Header'
+import Header from './components/layout/Header'
 import Connect from './pages/Connect.tsx';
 import Sponsorship from './pages/Sponsorship.tsx';
-import Footer from './components/Footer';
+import Footer from './components/layout/Footer';
 import CircuitBackground from './components/animations/CircuitBackground';
 
 function App() {

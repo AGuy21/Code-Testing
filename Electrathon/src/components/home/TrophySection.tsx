@@ -1,5 +1,5 @@
 import Container from '../ui/Container'
-import TrophyCard from '../TrophyCard'
+import TrophyCard from './TrophyCard'
 import type { Trophy } from '../../constants/types/Trophy'
 
 interface TrophySectionProps {

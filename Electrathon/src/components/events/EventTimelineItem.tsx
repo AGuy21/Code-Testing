@@ -50,13 +50,14 @@ export default function EventTimelineItem({ event }: EventTimelineItemProps) {
           )}
         </div>
 
-        <div className="md:w-1/4 flex justify-start md:justify-end items-start">
-          <Button 
+        <div className="md:w-1/4 flex md:justify-end items-start">
+          <Button
             href={mapsUrl}
             variant="outline"
-            className="text-xs py-2 px-4 border-white/20 text-white/60 hover:border-[#d4af37] hover:text-[#d4af37]"
+            size="sm"
+            className="border-[#d4af37]/30 text-[#d4af37] hover:bg-[#d4af37] hover:text-black font-mono text-xs uppercase tracking-widest"
           >
-            View Map
+            Get Directions
           </Button>
         </div>
       </div>

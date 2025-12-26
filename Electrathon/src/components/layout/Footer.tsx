@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import Container from "./ui/Container";
+import Container from ".././ui/Container";
 import { useEffect, useState } from "react";
-import { fetchSponsors } from "../utils/fetchUtils";
-import { getTierFromAmount } from "../utils/sponsorshipUtils";
-import type { Sponsor } from "../constants/types/Sponsor";
+import { fetchSponsors } from "../../utils/fetchUtils";
+import { getTierFromAmount } from "../../utils/sponsorshipUtils";
+import type { Sponsor } from "../../constants/types/Sponsor";
 
 export default function Footer() {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
@@ -108,9 +108,9 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <span className="text-[#d4af37] mt-1">📅</span>
                 <span className="font-light">
-                  Meetings: Thursdays
+                  Meetings: Thursdays 4-5PM
                   <br />
-                  <span className="text-white/40 text-xs font-mono">Panther Hall 10</span>
+                  <span className="text-white/40 text-xs font-mono">Panther Hall 210</span>
                 </span>
               </li>
             </ul>

@@ -14,7 +14,7 @@ export default function JoinTeamSection() {
         <div className="inline-flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border border-[#d4af37]/30 bg-[#0a2a20]/50 p-8 md:px-16 clip-corner-br">
           <div className="text-center md:text-left">
             <p className="text-[#d4af37] font-bold text-sm uppercase tracking-widest mb-1">Meeting Times</p>
-            <p className="text-white font-mono text-2xl">Thursdays 3-4PM</p>
+            <p className="text-white font-mono text-2xl">Thursdays 4-5PM</p>
           </div>
           <div className="hidden md:block w-px h-12 bg-[#d4af37]/30"></div>
           <div className="text-center md:text-left">

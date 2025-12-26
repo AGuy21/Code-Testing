@@ -1,6 +1,6 @@
 import SectionHeader from '../ui/SectionHeader'
-import DonationItem from '../DonationItem'
-import SponsorItem from '../SponsorItem'
+import DonationItem from './DonationItem'
+import SponsorItem from './SponsorItem'
 import Button from '../ui/Button'
 import qrCode from '../../assets/images/QR code electrathon.png'
 import type { Donator } from '../../constants/types/Donator'

@@ -1,6 +1,6 @@
 import Container from '../ui/Container'
-import TeamRoleCard from '../TeamRoleCard'
-import PhaseItem from '../PhaseItem'
+import TeamRoleCard from './TeamRoleCard'
+import PhaseItem from './PhaseItem'
 
 export default function AboutSection() {
   return (

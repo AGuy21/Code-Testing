@@ -1,6 +1,6 @@
 import Container from '../ui/Container'
 import SectionHeader from '../ui/SectionHeader'
-import ImageShowcase from '../ImageShowcase'
+import ImageShowcase from './ImageShowcase'
 
 export default function ImageShowcaseSection() {
   return (

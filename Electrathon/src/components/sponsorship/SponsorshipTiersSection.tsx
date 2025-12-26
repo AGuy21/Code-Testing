@@ -1,5 +1,5 @@
 import SectionHeader from '../ui/SectionHeader'
-import SponsorCard from '../SponsorCard'
+import SponsorCard from './SponsorCard'
 import { sponsorshipTiers } from '../../constants/data/sponsorshipData'
 
 export default function SponsorshipTiersSection() {
