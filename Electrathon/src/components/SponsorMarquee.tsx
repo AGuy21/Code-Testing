@@ -18,8 +18,8 @@ export default function SponsorMarquee() {
   // The previous code showed "Your Name Could Be Here"
   
   const renderSponsors = () => (
-    <div className="flex items-center gap-12 px-4">
-      <span className="text-white/30 font-mono uppercase tracking-widest text-[10px]">Proudly Sponsored By.</span>
+    <div className="flex items-end gap-12 px-4 pb-1">
+      <span className="text-white/30 font-mono uppercase tracking-widest text-[10px] mb-0.5">Proudly Sponsored By.</span>
       {sponsors.length > 0 ? (
         sponsors.map((sponsor, index) => {
           const tier = getTierFromAmount(sponsor.dollars);

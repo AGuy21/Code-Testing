@@ -75,7 +75,8 @@ export default function Home() {
                 <span className="text-[#d4af37] text-2xl md:text-3xl normal-case opacity-90 font-mono">Behind the Machine</span>
               </h2>
               <p className="text-lg text-white/70 mb-8 leading-relaxed font-light">
-                Electrathon isn't just a club. It's a high-performance engineering team. We combine mechanical precision, electrical mastery, and strategic planning to dominate the track.
+                Electrathon isn't just a club. It's a high-performance engineering team. 
+                We combine mechanical precision, logistical masterminds, and robust improvement to dominate the track.
               </p>
               <div className="space-y-4">
                 <TeamRoleCard 
@@ -84,14 +85,14 @@ export default function Home() {
                   subtitle="CAD Design & Fabrication" 
                 />
                 <TeamRoleCard 
-                  icon="⚡" 
-                  title="Power Systems" 
-                  subtitle="Advanced Battery Tech" 
+                  icon="📋" 
+                  title="Logistic Environment" 
+                  subtitle="Organized & Efficient" 
                 />
                 <TeamRoleCard 
-                  icon="🏎️" 
-                  title="Race Strategy" 
-                  subtitle="Data-Driven Performance" 
+                  icon="📊" 
+                  title="Robust Improvement" 
+                  subtitle="Data-Driven Improvment" 
                 />
               </div>
             </div>
@@ -105,7 +106,7 @@ export default function Home() {
                 <PhaseItem 
                   phase="PHASE 02" 
                   title="Competition" 
-                  description="Face off against top teams across the state. Strategy and endurance are key to victory." 
+                  description="Face off against top teams across the state. Strategy and improvement are key to victory." 
                 />
                 <PhaseItem 
                   phase="PHASE 03" 

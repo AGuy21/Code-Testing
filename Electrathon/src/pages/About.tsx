@@ -1,8 +1,7 @@
 import Container from "../components/ui/Container";
-import { sponsorshipTiers, teamEthos } from "../constants/data/sponsorshipData";
+import { teamEthos } from "../constants/data/sponsorshipData";
 import SectionHeader from "../components/ui/SectionHeader";
 import TechBorder from "../components/ui/TechBorder";
-import SponsorCard from "../components/SponsorCard";
 
 export default function About() {
   return (
@@ -87,7 +86,6 @@ export default function About() {
           </TechBorder>
         </div>
 
-        {/* Sponsorship Section Removed - Moved to Sponsorship Page */}
 
 
         <div className="mt-24 relative border-t border-[#d4af37]/20 pt-16">
@@ -102,12 +100,12 @@ export default function About() {
             <div className="inline-flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border border-[#d4af37]/30 bg-[#0a2a20]/50 p-8 md:px-16 clip-corner-br">
               <div className="text-center md:text-left">
                 <p className="text-[#d4af37] font-bold text-sm uppercase tracking-widest mb-1">Meeting Times</p>
-                <p className="text-white font-mono text-2xl">Thursdays</p>
+                <p className="text-white font-mono text-2xl">Thursdays 3-4PM</p>
               </div>
               <div className="hidden md:block w-px h-12 bg-[#d4af37]/30"></div>
               <div className="text-center md:text-left">
                 <p className="text-[#d4af37] font-bold text-sm uppercase tracking-widest mb-1">Location</p>
-                <p className="text-white font-mono text-xl">Panther Hall 10</p>
+                <p className="text-white font-mono text-xl">Panther Hall 210</p>
               </div>
             </div>
           </div>
