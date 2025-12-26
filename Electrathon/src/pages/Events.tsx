@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchEventItems } from "../constants/data/eventItems";
+import { fetchEventItems } from "../utils/fetchUtils";
 import type { EventItem } from "../constants/types/EventItem";
 import Container from "../components/ui/Container";
 import Button from "../components/ui/Button";

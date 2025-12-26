@@ -1,9 +1,7 @@
 import type { EventItem } from "../types/EventItem";
-import { db } from "../../firebase";
-import { collection, getDocs } from "firebase/firestore";
 
 // Static practice events to supplement DB data
-const practiceEvents: EventItem[] = [
+export const practiceEvents: EventItem[] = [
   {
     title: "Electrathon Meeting",
     date: "Every Thursday",
@@ -22,29 +20,3 @@ const practiceEvents: EventItem[] = [
   }
 ];
 
-export async function fetchEventItems(): Promise<EventItem[]> {
-  try {
-    const docRef = collection(db, "events");
-    const snapshot = await getDocs(docRef);
-    const dbEvents = snapshot.docs.map((event) => {
-      const data = event.data() as EventItem;
-      return {
-        title: data.title ?? "Event",
-        date: data.date ?? "TBD",
-        time: data.time ?? "TBD",
-        description: data.description ?? "No description available.",
-        location: data.location ?? "TBD",
-        type: data.type ?? "Race", // Default to Race if not specified
-        trackLayoutUrl: data.trackLayoutUrl,
-        logoUrl: data.logoUrl
-      } as EventItem;
-    });
-
-    // Combine DB events with static practice events
-    return [...dbEvents, ...practiceEvents];
-  } catch (err) {
-    console.error("fetchEventItems error:", err);
-    // Return at least the practice events if DB fails
-    return practiceEvents;
-  }
-}

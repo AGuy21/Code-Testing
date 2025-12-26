@@ -1,4 +1,4 @@
-import type { Trophy } from '../constants/data/statsData';
+import type { Trophy } from '../constants/types/Trophy';
 
 interface TrophyCardProps {
   trophy: Trophy;

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Container from "./ui/Container";
 import { useEffect, useState } from "react";
-import { fetchSponsors } from "../constants/data/sponsorItems";
+import { fetchSponsors } from "../utils/fetchUtils";
 import { getTierFromAmount } from "../utils/sponsorshipUtils";
 import type { Sponsor } from "../constants/types/Sponsor";
 

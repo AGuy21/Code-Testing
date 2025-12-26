@@ -1,4 +1,5 @@
-import { sponsorshipTiers, type SponsorshipTier } from "../constants/data/sponsorshipData";
+import { sponsorshipTiers } from "../constants/data/sponsorshipData";
+import type { SponsorshipTier } from "../constants/types/SponsorshipTier";
 
 export function getTierFromAmount(amount: string | number): SponsorshipTier | null {
   // Remove any non-numeric characters (like '$' or ',')

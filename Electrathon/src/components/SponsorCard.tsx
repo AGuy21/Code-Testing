@@ -1,6 +1,5 @@
-import React from 'react';
 import Button from './ui/Button';
-import type { SponsorshipTier } from '../constants/data/sponsorshipData';
+import type { SponsorshipTier } from '../constants/types/SponsorshipTier';
 
 interface SponsorCardProps {
   tier: SponsorshipTier;

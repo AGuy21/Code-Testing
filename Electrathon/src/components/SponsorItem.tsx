@@ -57,7 +57,7 @@ export default function SponsorItem({ sponsor }: { sponsor: Sponsor }) {
         href={sponsor.link} 
         target="_blank" 
         rel="noopener noreferrer"
-        className="group relative bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)] block"
+        className="group relative bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(0,0,0,0.3)]"
         style={{ 
           borderColor: 'rgba(255,255,255,0.1)',
         }}
