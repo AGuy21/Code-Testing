@@ -1,4 +1,3 @@
-import React from 'react'
 import type { EventItem } from '../../constants/types/EventItem'
 import EventTimelineItem from './EventTimelineItem'
 

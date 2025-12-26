@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface PhaseItemProps {
   phase: string;
   title: string;

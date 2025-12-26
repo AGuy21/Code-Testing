@@ -1,5 +1,5 @@
-import Button from './ui/Button';
-import type { SponsorshipTier } from '../constants/types/SponsorshipTier';
+import Button from '.././ui/Button';
+import type { SponsorshipTier } from '../../constants/types/SponsorshipTier';
 
 interface SponsorCardProps {
   tier: SponsorshipTier;

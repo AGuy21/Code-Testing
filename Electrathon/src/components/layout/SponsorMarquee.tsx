@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { fetchSponsors } from "../utils/fetchUtils";
-import { getTierFromAmount } from "../utils/sponsorshipUtils";
-import type { Sponsor } from "../constants/types/Sponsor";
+import { fetchSponsors } from "../../utils/fetchUtils";
+import { getTierFromAmount } from "../../utils/sponsorshipUtils";
+import type { Sponsor } from "../../constants/types/Sponsor";
 
 export default function SponsorMarquee() {
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);

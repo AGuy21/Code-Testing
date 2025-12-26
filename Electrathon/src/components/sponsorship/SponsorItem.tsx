@@ -1,5 +1,5 @@
-import type { Sponsor } from "../constants/types/Sponsor";
-import { getTierFromAmount } from "../utils/sponsorshipUtils";
+import type { Sponsor } from "../../constants/types/Sponsor";
+import { getTierFromAmount } from "../../utils/sponsorshipUtils";
 
 export default function SponsorItem({ sponsor }: { sponsor: Sponsor }) {
   const tier = getTierFromAmount(sponsor.dollars);

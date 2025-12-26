@@ -1,4 +1,4 @@
-import type { Donator } from "../constants/types/Donator";
+import type { Donator } from "../../constants/types/Donator";
 
 export default function DonationItem({ donation }: { donation: Donator }) {
   const fullName = `${donation.first} ${donation.last}`;
