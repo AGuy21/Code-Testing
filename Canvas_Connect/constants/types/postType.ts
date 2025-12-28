@@ -8,4 +8,6 @@ export type postType = {
     likedBy?: string[];
     commentsCount?: number;
     createdAt?: any;
+    creatorUsername?: string;
+    creatorProfilePic?: string;
 };

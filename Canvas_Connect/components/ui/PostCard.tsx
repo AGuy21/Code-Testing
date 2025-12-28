@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import { useUserDataStore } from "@/components/hooks/store";
 import { collection, getCountFromServer } from "firebase/firestore";
 import { db } from "@/Configs/FirebaseConfig";
+import { useActivePostStore } from "@/components/hooks/useActivePostStore";
 
 type PostCardProps = {
   post: postType;
@@ -22,6 +23,7 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
   const { colors } = useThemeStore();
   const router = useRouter();
   const userData = useUserDataStore((state) => state.data);
+  const setActivePost = useActivePostStore((state) => state.setActivePost);
   const [commentCount, setCommentCount] = useState(post.commentsCount || 0);
 
   const isLiked = useMemo(() => post.likedBy?.includes(userData.email) || false, [post.likedBy, userData.email]);
@@ -56,12 +58,10 @@ const PostCard = ({ post, variant = "default" }: PostCardProps) => {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() =>
-        router.push({
-          pathname: "/(screens)/post-details",
-          params: { postId: post.id },
-        })
-      }
+      onPress={() => {
+        setActivePost(post);
+        router.push("/(screens)/post-details");
+      }}
     >
       <View
         style={[

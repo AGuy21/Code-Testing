@@ -14,60 +14,20 @@ export type Comment = {
   createdAt: any;
 };
 
-export const usePostDetails = (postId: string) => {
+export const usePostDetails = (post: postType) => {
   const userData = useUserDataStore((state) => state.data);
   
-  const [post, setPost] = useState<postType | null>(null);
-  const [creatorUsername, setCreatorUsername] = useState("");
-  const [creatorProfilePic, setCreatorProfilePic] = useState(BaseProfilePicture);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(post.likedBy?.includes(userData.email) || false);
   const [loading, setLoading] = useState(true);
   const [errorVisible, setErrorVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (!postId) return;
-
-    const postRef = doc(db, "posts", postId);
-    
-    // Subscribe to post updates
-    const unsubscribePost = onSnapshot(postRef, async (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data() as postType;
-        setPost({ ...data, id: docSnap.id });
-        
-        // Fetch creator username and pfp
-        if (data.creatorEmail) {
-            try {
-                const userDoc = await getDoc(doc(db, "users", data.creatorEmail));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    setCreatorUsername(userData.username);
-                    if (userData.profilePicture) {
-                        setCreatorProfilePic(userData.profilePicture);
-                    }
-                } else {
-                    setCreatorUsername(data.creatorEmail); // Fallback
-                }
-            } catch (e) {
-                console.error("Error fetching creator:", e);
-                setCreatorUsername(data.creatorEmail);
-            }
-        }
-
-        if (data['likedBy'] && Array.isArray(data['likedBy'])) {
-            setIsLiked(data['likedBy'].includes(userData.email));
-        }
-      } else {
-        setErrorMessage("Post not found");
-        setErrorVisible(true);
-      }
-      setLoading(false);
-    });
+    if (!post.id) return;
 
     // Subscribe to comments
-    const commentsRef = collection(db, "posts", postId, "comments");
+    const commentsRef = collection(db, "posts", post.id, "comments");
     const q = query(commentsRef, orderBy("createdAt", "desc"));
     const unsubscribeComments = onSnapshot(q, (snapshot) => {
       const loadedComments: Comment[] = [];
@@ -75,18 +35,20 @@ export const usePostDetails = (postId: string) => {
         loadedComments.push({ id: doc.id, ...doc.data() } as Comment);
       });
       setComments(loadedComments);
+      setLoading(false);
     });
 
     return () => {
-      unsubscribePost();
       unsubscribeComments();
     };
-  }, [postId, userData.email]);
+  }, [post.id]);
 
   const handleLike = async () => {
-    if (!post) return;
-    const postRef = doc(db, "posts", postId);
+    const postRef = doc(db, "posts", post.id);
     
+    // Optimistic update
+    setIsLiked(!isLiked);
+
     try {
       if (isLiked) {
         await updateDoc(postRef, {
@@ -101,6 +63,8 @@ export const usePostDetails = (postId: string) => {
       }
     } catch (error) {
       console.error("Error updating like:", error);
+      // Revert on error
+      setIsLiked(isLiked);
     }
   };
 
@@ -108,7 +72,7 @@ export const usePostDetails = (postId: string) => {
     if (text.trim().length === 0) return;
     
     try {
-      const commentsRef = collection(db, "posts", postId, "comments");
+      const commentsRef = collection(db, "posts", post.id, "comments");
       await addDoc(commentsRef, {
         text: text,
         userEmail: userData.email,
@@ -118,7 +82,7 @@ export const usePostDetails = (postId: string) => {
       });
 
       // Update comments count on the post document
-      const postRef = doc(db, "posts", postId);
+      const postRef = doc(db, "posts", post.id);
       await updateDoc(postRef, {
         commentsCount: increment(1)
       });
@@ -133,9 +97,6 @@ export const usePostDetails = (postId: string) => {
   };
 
   return {
-    post,
-    creatorUsername,
-    creatorProfilePic,
     comments,
     isLiked,
     loading,

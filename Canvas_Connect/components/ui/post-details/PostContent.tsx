@@ -4,6 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
 import { postType } from "@/constants/types/postType";
+import { router } from "expo-router";
 
 type PostContentProps = {
   post: postType;
@@ -26,10 +27,15 @@ const PostContent = React.memo(({
 
   return (
     <View style={styles.postContainer}>
-      <View style={styles.userInfo}>
+      <TouchableOpacity style={styles.userInfo} onPress={() =>
+        router.push({
+          pathname: "/(screens)/profile-details",
+          params: { postId: post.id },
+        })
+      }>
          <Image source={{ uri: creatorProfilePic }} style={[styles.profilePic, { borderColor: colors.secondary }]} />
          <Text style={[styles.username, { color: colors.text }]}>{creatorUsername}</Text>
-      </View>
+      </TouchableOpacity>
       
       <Image source={{ uri: post.image }} style={styles.postImage} resizeMode="contain" />
       

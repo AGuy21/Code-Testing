@@ -60,6 +60,8 @@ export const useCreatePost = () => {
           likes: 0,
           commentsCount: 0,
           createdAt: new Date(),
+          creatorUsername: userData.username,
+          creatorProfilePic: userData.profilePicture,
         },
       });
 

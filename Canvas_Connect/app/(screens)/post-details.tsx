@@ -9,7 +9,7 @@ import {
   Platform,
   ActivityIndicator,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -18,16 +18,15 @@ import { usePostDetails } from "@/components/hooks/usePostDetails";
 import PostContent from "@/components/ui/post-details/PostContent";
 import CommentList from "@/components/ui/post-details/CommentList";
 import CommentInput from "@/components/ui/post-details/CommentInput";
+import { postType } from "@/constants/types/postType";
+import { useActivePostStore } from "@/components/hooks/useActivePostStore";
 
 const PostDetails = () => {
-  const { postId } = useLocalSearchParams();
+  const post = useActivePostStore((state) => state.activePost);
   const router = useRouter();
   const { colors } = useThemeStore();
   
   const {
-    post,
-    creatorUsername,
-    creatorProfilePic,
     comments,
     isLiked,
     loading,
@@ -36,21 +35,19 @@ const PostDetails = () => {
     setErrorVisible,
     handleLike,
     addComment
-  } = usePostDetails(postId as string);
+  } = usePostDetails(post || {} as postType);
 
   const handleCommentError = (message: string) => {
     alert(message); 
   };
 
-  if (loading) {
+  if (!post) {
     return (
-      <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center' }]}>
+      <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
-
-  if (!post) return null;
 
   return (
     <KeyboardAvoidingView 
@@ -68,14 +65,18 @@ const PostDetails = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <PostContent 
             post={post}
-            creatorUsername={creatorUsername}
-            creatorProfilePic={creatorProfilePic}
+            creatorUsername={post.creatorUsername || post.creatorEmail}
+            creatorProfilePic={post.creatorProfilePic || ""}
             isLiked={isLiked}
             commentsCount={comments.length}
             onLike={handleLike}
         />
 
-        <CommentList comments={comments} />
+        {loading ? (
+          <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: hp(2) }} />
+        ) : (
+          <CommentList comments={comments} />
+        )}
       </ScrollView>
 
       <CommentInput onAddComment={addComment} onError={handleCommentError} />
