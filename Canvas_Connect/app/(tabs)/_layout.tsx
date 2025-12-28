@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Platform } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -14,6 +15,7 @@ import BaseProfilePicture from "@/constants/BaseProfilePicture";
 import { UserResource } from "@clerk/types";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
 import { ThemeKeys } from "@/constants/Themes";
+import * as NavigationBar from "expo-navigation-bar";
 
 type TabBarIconType = {
   color: string;
@@ -22,10 +24,17 @@ type TabBarIconType = {
 
 export default function TabLayout() {
   const { user } = useUser();
-  const { colors, setTheme } = useThemeStore();
+  const { colors, setTheme, themeName } = useThemeStore();
 
   const setLoading = useUserDataStore((state) => state.setLoading);
   const setUserData = useUserDataStore((state) => state.setData);
+  
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setBackgroundColorAsync(colors.background);
+      NavigationBar.setButtonStyleAsync(themeName === "Light" ? "dark" : "light");
+    }
+  }, [colors.background, themeName]);
 
   useEffect(() => {
     if (!user) {

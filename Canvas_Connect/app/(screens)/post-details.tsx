@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -20,11 +20,18 @@ import CommentList from "@/components/ui/post-details/CommentList";
 import CommentInput from "@/components/ui/post-details/CommentInput";
 import { postType } from "@/constants/types/postType";
 import { useActivePostStore } from "@/components/hooks/useActivePostStore";
-
+import * as NavigationBar from "expo-navigation-bar";
 const PostDetails = () => {
   const post = useActivePostStore((state) => state.activePost);
   const router = useRouter();
-  const { colors } = useThemeStore();
+  const { colors, themeName } = useThemeStore();
+
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setBackgroundColorAsync(colors.background);
+      NavigationBar.setButtonStyleAsync(themeName === "Light" ? "dark" : "light");
+    }
+  }, [colors.background, themeName]);
   
   const {
     comments,
@@ -51,7 +58,7 @@ const PostDetails = () => {
 
   return (
     <KeyboardAvoidingView 
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : "padding"}
       style={[styles.container, { backgroundColor: colors.background }]}
       keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
     >

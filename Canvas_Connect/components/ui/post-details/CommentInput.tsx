@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
-
+import { KeyboardAvoidingView, Platform } from "react-native";
 type CommentInputProps = {
   onAddComment: (text: string) => Promise<boolean | void>;
   onError: (message: string) => void;
@@ -27,7 +27,9 @@ export default function CommentInput({ onAddComment, onError }: CommentInputProp
   };
 
   return (
-    <View style={[styles.inputContainer, { backgroundColor: colors.background, borderTopColor: colors.primaryDark }]}>
+    <View 
+      style={[styles.inputContainer, { backgroundColor: colors.background, borderTopColor: colors.primaryDark }]}
+    >
       <TextInput
         style={[styles.input, { color: colors.text, backgroundColor: colors.primaryDark }]}
         placeholder="Add a comment..."
