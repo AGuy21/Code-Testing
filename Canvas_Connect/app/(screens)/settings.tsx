@@ -46,8 +46,7 @@ const settings = () => {
         return (
           <>
             <View style={styles.section}>
-              <ChangeUsername />
-              <ChangeProfilePicture />
+
             </View>
 
             <View style={styles.footer}>
@@ -59,6 +58,8 @@ const settings = () => {
       case "Account Customization":
         return (
           <View style={styles.section}>
+            <ChangeUsername />
+            <ChangeProfilePicture />
             <EditBio />
             <ThemeSelector />
           </View>

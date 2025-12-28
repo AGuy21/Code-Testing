@@ -4,12 +4,12 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { useUserDataStore } from "../hooks/store";
-import GetUsersPosts from "../functions/GetUsersPosts";
+import { useUserDataStore } from "@/components/hooks/store";
+import GetUsersPosts from "@/components/functions/GetUsersPosts";
 import { useFocusEffect } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/Configs/FirebaseConfig";
-import PostCard from "./PostCard";
+import PostCard from "@/components/ui/PostCard";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 

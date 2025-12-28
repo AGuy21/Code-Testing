@@ -4,8 +4,8 @@ import { useThemeStore } from "@/components/hooks/useThemeStore";
 import { usePaginatedPosts, SortOption } from "@/components/hooks/usePaginatedPosts";
 import SelectionModal from "@/components/ui/SelectionModal";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ArtHeader from "@/components/ui/art/ArtHeader";
-import ArtList from "@/components/ui/art/ArtList";
+import ArtHeader from "../../components/ui/art/ArtHeader";
+import ArtList from "../../components/ui/art/ArtList";
 
 export default function Art() {
   const { colors } = useThemeStore();
