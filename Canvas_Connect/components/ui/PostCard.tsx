@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -15,15 +15,24 @@ import { db } from "@/Configs/FirebaseConfig";
 
 type PostCardProps = {
   post: postType;
+  variant?: "default" | "large";
 };
 
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = React.memo(({ post, variant = "default" }: PostCardProps) => {
   const { colors } = useThemeStore();
   const router = useRouter();
   const userData = useUserDataStore((state) => state.data);
   const [commentCount, setCommentCount] = useState(post.commentsCount || 0);
 
-  const isLiked = post.likedBy?.includes(userData.email) || false;
+  const isLiked = useMemo(() => post.likedBy?.includes(userData.email) || false, [post.likedBy, userData.email]);
+
+  const { cardWidth, cardHeight, contentWidth, titleSize, cardMarginRight } = useMemo(() => ({
+    cardWidth: variant === "large" ? wp(90) : wp(60),
+    cardHeight: variant === "large" ? hp(40) : hp(20),
+    contentWidth: variant === "large" ? wp(88) : wp(58),
+    titleSize: variant === "large" ? hp(3.5) : wp(5),
+    cardMarginRight: variant === "large" ? 0 : hp(2),
+  }), [variant]);
 
   useEffect(() => {
     // If commentsCount is provided in the post object (new posts), use it
@@ -46,6 +55,7 @@ const PostCard = ({ post }: PostCardProps) => {
 
   return (
     <TouchableOpacity
+      activeOpacity={0.8}
       onPress={() =>
         router.push({
           pathname: "/(screens)/post-details",
@@ -57,22 +67,37 @@ const PostCard = ({ post }: PostCardProps) => {
         style={[
           styles.previousPost,
           {
-            borderColor: colors.primaryLight,
+            borderColor: colors.primary,
             backgroundColor: colors.primaryDark,
+            width: cardWidth,
+            height: cardHeight,
+            marginRight: cardMarginRight,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 4,
+            },
+            shadowOpacity: 0.3,
+            shadowRadius: 4.65,
+            elevation: 8,
           },
         ]}
       >
         <Text
           style={[
             styles.postTitle,
-            { color: colors.background, backgroundColor: colors.primaryLight },
+            { 
+              color:colors.background, 
+              backgroundColor: colors.primary,
+              fontSize: titleSize,
+            },
           ]}
         >
           {post.title}
         </Text>
         <LinearGradient
-          colors={["transparent", "transparent", colors.primaryLight]}
-          style={styles.imageGradient}
+          colors={["transparent", "transparent", colors.primary]}
+          style={[styles.imageGradient, { width: contentWidth }]}
         />
 
         <Image
@@ -81,7 +106,7 @@ const PostCard = ({ post }: PostCardProps) => {
           resizeMode="cover"
         />
 
-        <View style={styles.postStats}>
+        <View style={[styles.postStats, { width: contentWidth }]}>
           <View
             style={{
               flexDirection: "row",
@@ -116,21 +141,16 @@ const PostCard = ({ post }: PostCardProps) => {
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 export default PostCard;
 
 const styles = StyleSheet.create({
   previousPost: {
-    flex: 1,
-    width: wp(60),
-    height: hp(20),
     borderWidth: wp(1),
     borderRadius: wp(3.5),
-    marginRight: hp(2),
   },
   postTitle: {
-    fontSize: wp(5),
     paddingLeft: wp(2),
     fontFamily: "Nunito-Bold",
     alignItems: "center",
@@ -146,7 +166,6 @@ const styles = StyleSheet.create({
   imageGradient: {
     position: "absolute",
     bottom: 0,
-    width: wp(58),
     height: "85%",
     zIndex: 10,
     borderBottomLeftRadius: wp(3.5),
@@ -155,7 +174,6 @@ const styles = StyleSheet.create({
   postStats: {
     position: "absolute",
     zIndex: 15,
-    width: wp(58),
     height: hp(5),
     bottom: 0,
     borderBottomLeftRadius: wp(3.5),

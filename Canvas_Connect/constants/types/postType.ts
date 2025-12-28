@@ -7,4 +7,5 @@ export type postType = {
     likes: number;
     likedBy?: string[];
     commentsCount?: number;
+    createdAt?: any;
 };
