@@ -7,6 +7,9 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRouter } from "expo-router";
@@ -97,6 +100,7 @@ const create = () => {
           creatorEmail: userData.email,
           likes: 0,
           commentsCount: 0,
+          createdAt: new Date(),
         },
       });
 
@@ -120,136 +124,146 @@ const create = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { borderTopColor: colors.tertiary }]}>
-        <TextInput
-          style={[
-            styles.titleInput,
-            {
-              marginBottom: errors.title ? hp(0) : hp(4),
-              borderColor: colors.secondary,
-              color: colors.text,
-            },
-          ]}
-          value={title}
-          placeholder="Enter title"
-          onChangeText={setTitle}
-          placeholderTextColor={colors.text2}
-          editable={!isSubmitting}
-        />
-        {errors.title && (
-          <View style={styles.errorMessageView}>
-            <Text style={[styles.errorMessageText, { color: colors.error }]}>
-              {errors.title}
-            </Text>
-          </View>
-        )}
-      </View>
-
-      <View style={[styles.main, { gap: errors.picture ? hp(0) : hp(2.5) }]}>
-        {picture ? (
-          <Image
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={[styles.container, { backgroundColor: colors.background }]}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={[styles.header, { borderTopColor: colors.tertiary }]}>
+          <TextInput
             style={[
-              styles.pictureInput,
-              { borderColor: colors.primaryLight },
-            ]}
-            source={{ uri: picture }}
-            resizeMode="cover"
-          />
-        ) : (
-          <Pressable
-            onPress={addImage}
-            disabled={isSubmitting}
-            style={[
-              styles.pictureInput,
+              styles.titleInput,
               {
-                alignItems: "center",
-                justifyContent: "center",
-                gap: hp(2),
-                borderColor: colors.primaryLight,
+                marginBottom: errors.title ? hp(0) : hp(4),
+                borderColor: colors.secondary,
+                color: colors.text,
               },
             ]}
-          >
-            <Text style={[styles.text, { color: colors.text }]}>
-              Tap to add a picture
-            </Text>
-            <Text style={[styles.text, { color: colors.text2, fontSize: wp(3) }]}>
-              (Allowed: JPEG, PNG)
-            </Text>
-            <MaterialIcons name="photo" size={wp(10)} color={colors.text2} />
-          </Pressable>
-        )}
-
-        {errors.picture && (
-          <View style={styles.errorMessageView}>
-            <Text style={[styles.errorMessageText, { color: colors.error }]}>
-              {errors.picture}
-            </Text>
-          </View>
-        )}
-
-        <TextInput
-          style={[
-            styles.descriptionInput,
-            { borderColor: colors.secondary, color: colors.text },
-          ]}
-          multiline={true}
-          placeholder="Enter description"
-          placeholderTextColor={colors.text2}
-          value={description}
-          onChangeText={setDescription}
-          editable={!isSubmitting}
-        />
-        {errors.description && (
-          <View style={styles.errorMessageView}>
-            <Text style={[styles.errorMessageText, { color: colors.error }]}>
-              {errors.description}
-            </Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.footer}>
-        <View>
-          {errors.other && (
+            value={title}
+            placeholder="Enter title"
+            onChangeText={setTitle}
+            placeholderTextColor={colors.text2}
+            editable={!isSubmitting}
+          />
+          {errors.title && (
             <View style={styles.errorMessageView}>
-              <Text
-                style={[
-                  styles.otherErrorMessageText,
-                  { color: colors.error },
-                ]}
-              >
-                {errors.other}
+              <Text style={[styles.errorMessageText, { color: colors.error }]}>
+                {errors.title}
               </Text>
             </View>
           )}
         </View>
 
-        <Pressable
-          style={[
-            styles.createButton,
-            { backgroundColor: colors.secondary },
-            isSubmitting && { opacity: 0.5 },
-          ]}
-          onPress={submitPost}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator size="small" color={colors.text2} />
+        <View style={[styles.main, { gap: errors.picture ? hp(0) : hp(2.5) }]}>
+          {picture ? (
+            <Image
+              style={[
+                styles.pictureInput,
+                { borderColor: colors.primaryLight },
+              ]}
+              source={{ uri: picture }}
+              resizeMode="cover"
+            />
           ) : (
-            <MaterialIcons name="add" size={wp(10)} color={colors.text2} />
+            <Pressable
+              onPress={addImage}
+              disabled={isSubmitting}
+              style={[
+                styles.pictureInput,
+                {
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: hp(2),
+                  borderColor: colors.primaryLight,
+                },
+              ]}
+            >
+              <Text style={[styles.text, { color: colors.text }]}>
+                Tap to add a picture
+              </Text>
+              <Text style={[styles.text, { color: colors.text2, fontSize: wp(3) }]}>
+                (Allowed: JPEG, PNG)
+              </Text>
+              <MaterialIcons name="photo" size={wp(10)} color={colors.text2} />
+            </Pressable>
           )}
-        </Pressable>
-      </View>
-    </View>
+
+          {errors.picture && (
+            <View style={styles.errorMessageView}>
+              <Text style={[styles.errorMessageText, { color: colors.error }]}>
+                {errors.picture}
+              </Text>
+            </View>
+          )}
+
+          <TextInput
+            style={[
+              styles.descriptionInput,
+              { borderColor: colors.secondary, color: colors.text },
+            ]}
+            multiline={true}
+            placeholder="Enter description"
+            placeholderTextColor={colors.text2}
+            value={description}
+            onChangeText={setDescription}
+            editable={!isSubmitting}
+          />
+          {errors.description && (
+            <View style={styles.errorMessageView}>
+              <Text style={[styles.errorMessageText, { color: colors.error }]}>
+                {errors.description}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.footer}>
+          <View>
+            {errors.other && (
+              <View style={styles.errorMessageView}>
+                <Text
+                  style={[
+                    styles.otherErrorMessageText,
+                    { color: colors.error },
+                  ]}
+                >
+                  {errors.other}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          <Pressable
+            style={[
+              styles.createButton,
+              { backgroundColor: colors.secondary },
+              isSubmitting && { opacity: 0.5 },
+            ]}
+            onPress={submitPost}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color={colors.text2} />
+            ) : (
+              <MaterialIcons name="add" size={wp(10)} color={colors.text2} />
+            )}
+          </Pressable>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: hp(2),
   },
   text: {
     fontFamily: "Nunito",
@@ -257,22 +271,21 @@ const styles = StyleSheet.create({
     fontSize: wp(4),
   },
   header: {
-    flex: 0.1,
     width: wp(100),
     justifyContent: "center",
     alignItems: "flex-start",
     paddingLeft: wp(10),
     borderTopWidth: wp(0.2),
     paddingTop: hp(2),
+    marginBottom: hp(2),
   },
   main: {
-    flex: 0.8,
     width: wp(100),
     alignItems: "center",
     gap: hp(2.5),
+    marginBottom: hp(2),
   },
   footer: {
-    flex: 0.1,
     flexDirection: "row",
     alignItems: "center",
     width: wp(100),
