@@ -18,7 +18,7 @@ type PostCardProps = {
   variant?: "default" | "large";
 };
 
-const PostCard = React.memo(({ post, variant = "default" }: PostCardProps) => {
+const PostCard = ({ post, variant = "default" }: PostCardProps) => {
   const { colors } = useThemeStore();
   const router = useRouter();
   const userData = useUserDataStore((state) => state.data);
@@ -141,7 +141,7 @@ const PostCard = React.memo(({ post, variant = "default" }: PostCardProps) => {
       </View>
     </TouchableOpacity>
   );
-});
+};
 
 export default PostCard;
 
