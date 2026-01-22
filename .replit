@@ -15,15 +15,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "CSNHS Dev Server"
+args = "Electrathon Dev Server"
 
 [[workflows.workflow]]
-name = "CSNHS Dev Server"
+name = "Electrathon Dev Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd CSNHS && npm run dev"
+args = "cd Electrathon && npm run dev"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -33,7 +33,11 @@ outputType = "webview"
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
 [deployment]
 deploymentTarget = "static"
-build = ["bash", "-c", "cd CSNHS && npm run build"]
-publicDir = "CSNHS/dist"
+build = ["bash", "-c", "cd Electrathon && npm run build"]
+publicDir = "Electrathon/dist"

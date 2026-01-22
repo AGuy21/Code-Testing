@@ -4,12 +4,12 @@
 This repository contains multiple projects the user is working on, including web apps, mobile apps (React Native/Expo), and Python scripts.
 
 ## Current State
-The main runnable project is **CSNHS** - a React/Vite web application for the Computer Science National Honor Society.
+The active project is **Electrathon** - a React/Vite web application.
 
 ## Project Structure
-- **CSNHS/** - React + Vite + TypeScript + Tailwind CSS web app (main project, running on port 5000)
+- **Electrathon/** - React + Vite + TypeScript + Tailwind CSS web app (Active, running on port 5000)
+- **CSNHS/** - React + Vite + TypeScript + Tailwind CSS web app
 - **Astronomy/** - React + Vite web app with Firebase
-- **Electrathon/** - React + Vite web app with Firebase
 - **Learning-React-JS/** - React + Vite learning project
 - **App/, Budget_Buddy/, Canvas_Connect/, Test/, Themes/** - React Native/Expo mobile apps
 - **Python/** - Python scripts
@@ -17,17 +17,17 @@ The main runnable project is **CSNHS** - a React/Vite web application for the Co
 - **clerkApp/** - Clerk authentication app
 
 ## Running the Project
-The CSNHS project is configured as the main workflow and runs on port 5000 with:
+The Electrathon project is configured as the main workflow and runs on port 5000 with:
 ```bash
-cd CSNHS && npm run dev
+cd Electrathon && npm run dev
 ```
 
-## Tech Stack (CSNHS)
-- React 18
+## Tech Stack (Electrathon)
+- React 19
 - TypeScript
-- Vite
-- Tailwind CSS
-- React Router DOM
+- Vite 7
+- Tailwind CSS 4
+- Firebase
 
 ## Deployment
-Static deployment configured for CSNHS - builds to `CSNHS/dist`.
+Static deployment configured for Electrathon - builds to `Electrathon/dist`.
