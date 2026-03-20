@@ -3,7 +3,6 @@ import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useThemeStore } from "@/components/hooks/useThemeStore";
-import { KeyboardAvoidingView, Platform } from "react-native";
 type CommentInputProps = {
   onAddComment: (text: string) => Promise<boolean | void>;
   onError: (message: string) => void;

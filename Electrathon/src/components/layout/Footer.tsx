@@ -110,7 +110,7 @@ export default function Footer() {
                 <span className="font-light">
                   Meetings: Thursdays 4-5PM
                   <br />
-                  <span className="text-white/40 text-xs font-mono">Panther Hall 210</span>
+                  <span className="text-white/40 text-xs font-mono">Panther Hall 220</span>
                 </span>
               </li>
             </ul>

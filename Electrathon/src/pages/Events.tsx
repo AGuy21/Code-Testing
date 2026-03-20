@@ -4,6 +4,7 @@ import type { EventItem } from "../constants/types/EventItem";
 import Container from "../components/ui/Container";
 import EventsHeader from "../components/events/EventsHeader";
 import EventsList from "../components/events/EventsList";
+import CircuitBackground from "../components/animations/CircuitBackground";
 
 type RemoteEvent = EventItem & { id?: string };
 
@@ -28,11 +29,12 @@ export default function Events() {
 
   return (
     <div className="min-h-screen bg-[#0f3d2e] text-white pt-32 pb-16 relative overflow-hidden">
-      {/* Background Elements */}
       <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
       
       <Container size="lg" className="relative z-10">
         <EventsHeader />
+        <CircuitBackground/>
+
         <EventsList events={events} loading={loading} />
       </Container>
     </div>
