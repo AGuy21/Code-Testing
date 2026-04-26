@@ -11,11 +11,13 @@ export default function JoinTeamSection() {
           className="mb-8"
         />
 
-        <p className="text-lg text-white/70 max-w-3xl mx-auto mb-12 font-light gap-5 flex flex-col items-center">
-          We meet weekly to work on projects, learn new skills, and prepare for
-          competitions. Whether you're interested in welding, coding, driving,
-          or marketing, there's a place for you on our team.
-          {/*!IMPORTANT need to replace the PDF with the actual PDF from beale  */}
+        <div className="text-lg text-white/70 max-w-3xl mx-auto mb-12 font-light gap-5 flex flex-col items-center">
+          <p>
+            We meet every week after school to build the car, practice skills, and get ready for races. Whether you like welding, coding, driving, or helping keep the team organized, there’s a place for you.
+          </p>
+          <p>
+            No experience is required—just bring curiosity and a willingness to learn.
+          </p>
           <Button
             href={clubFormPDF}
             download="Electrathon Club Interest Form.pdf"
@@ -23,7 +25,7 @@ export default function JoinTeamSection() {
           >
             Download Interest Form (PDF)
           </Button>
-        </p>
+        </div>
 
         <div className="inline-flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 border border-[#d4af37]/30 bg-[#0a2a20]/50 p-8 md:px-16 clip-corner-br">
           <div className="text-center md:text-left">

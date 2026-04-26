@@ -10,13 +10,5 @@ export const practiceEvents: EventItem[] = [
     location: "Allen D. Nease High School",
     type: "Practice"
   },
-  {
-    title: "Safety Inspection Day",
-    date: "Oct 15, 2025",
-    time: "9:00 AM - 12:00 PM",
-    description: "Mandatory safety check for all competition vehicles prior to the season opener. Located in the school parking lot.",
-    location: "Allen D. Nease High School",
-    type: "Workshop"
-  }
 ];
 

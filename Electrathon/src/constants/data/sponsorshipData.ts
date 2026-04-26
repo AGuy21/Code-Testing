@@ -56,7 +56,7 @@ export const sponsorshipTiers: SponsorshipTier[] = [
 ];
 
 export const teamEthos = {
-  founding: "Founded in 2020 our mission is to foster knowledge and hands on experience in motorsports and electric vehicles for students of Allen D Nease High School. This year we aim to compete in at least 3 more races and at least 4 in the next season as well as promoting the growth of Electrathon in St Johns county where we have encouraged the growth of two other teams and Northeast Florida where opportunities we have created have helped to inspire teams in Duval and other counties as well.",
-  model: "We operate on a 'Student-Run, Mentor-Guided' model. Every weld, wire, and line of code is executed by students. Our mentors provide safety oversight and industry wisdom, but the engineering decisions are ours.",
-  ethos: "Innovation through iteration. We believe that failure is just data. We test, we break, we analyze, and we rebuild better. Our goal isn't just to win races, but to build the engineers of tomorrow."
+  founding: "Started in 2020, our club gives students hands-on experience with electric vehicle design, fabrication, and race-day teamwork. This season, we’re focused on more races, stronger performance, and growing the program around St. Johns County.",
+  model: "We’re student-led, with mentors helping us stay safe and on track. Students do the design, builds, and race prep, while teachers support with guidance and resources.",
+  ethos: "We learn by doing. That means testing ideas, fixing mistakes, and making each car better than the last. Winning feels great, but the main goal is building skills and confidence."
 };

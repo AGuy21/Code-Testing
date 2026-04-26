@@ -13,7 +13,7 @@ export default function SponsorshipContactSection() {
         <h2 className="text-3xl font-bold text-white mb-2 uppercase tracking-wider">Sponsorships</h2>
         <p className="text-[#d4af37] font-mono text-xs mb-6">PARTNER WITH US</p>
         <p className="text-white/60 mb-8 max-w-sm mx-auto md:ml-auto md:mr-0 font-light">
-          Interested in sponsoring Electrathon? We welcome support from local businesses and community partners.
+          Want to support our student team? We welcome local businesses, parents, and community partners who want to help us build skills and race stronger.
         </p>
         <div className="flex flex-col md:flex-row justify-center md:justify-end gap-4">
           <Button 

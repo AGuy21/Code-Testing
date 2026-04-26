@@ -9,12 +9,12 @@ export default function ImageShowcaseSection() {
         <SectionHeader title="Track Success" className="mb-12" />
         <div className="transform -skew-x-3">
           <ImageShowcase
-            image1Url="/path/to/daytona-race.jpg"
-            image1Alt="Victory at Daytona International Speedway"
-            image1Caption="Daytona International Speedway - 1st Place"
-            image2Url="/path/to/engineering-work.jpg"
-            image2Alt="Active Engineering in the Lab"
-            image2Caption="Active Engineering & Fabrication"
+            image1Url="../../assets/images/ACH02308.jpg"
+            image1Alt="Meet The Team"
+            image1Caption="Meet The Electrathon Team Prepared For Daytona"
+            image2Url="../../assets/images/ACH02969.jpg"
+            image2Alt="Racing At Daytona"
+            image2Caption="Racing At Daytona With Our New Car In 2025"
           />
         </div>
       </Container>

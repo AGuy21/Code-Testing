@@ -34,8 +34,8 @@ export default function Footer() {
               Nease <span className="text-[#d4af37]">Electrathon</span>
             </h3>
             <p className="text-white/60 text-sm leading-relaxed max-w-xs font-light">
-              Designing, building, and racing the future of electric mobility.
-              Join us in pushing the boundaries of efficiency and engineering.
+              Building electric cars, learning together, and racing as a student team.
+              Join us to support the next generation of makers and problem-solvers.
             </p>
           </div>
 

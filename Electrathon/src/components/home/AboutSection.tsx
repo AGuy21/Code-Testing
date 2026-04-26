@@ -17,24 +17,23 @@ export default function AboutSection() {
               <span className="text-[#d4af37] text-2xl md:text-3xl normal-case opacity-90 font-mono">Behind the Machine</span>
             </h2>
             <p className="text-lg text-white/70 mb-8 leading-relaxed font-light">
-              Electrathon isn't just a club. It's a high-performance engineering team. 
-              We combine mechanical precision, logistical masterminds, and robust improvement to dominate the track.
+              We’re a team of students who meet after school to build an electric race car, learn new skills, and prepare for races together. It’s about hands-on work, good teamwork, and having fun while doing it.
             </p>
             <div className="space-y-4">
               <TeamRoleCard 
-                icon="📐" 
-                title="Precision Engineering" 
-                subtitle="CAD Design & Fabrication" 
+                icon="🛠️" 
+                title="Build & Learn" 
+                subtitle="Hands-on fabrication and wiring" 
               />
               <TeamRoleCard 
-                icon="📋" 
-                title="Logistic Environment" 
-                subtitle="Organized & Efficient" 
+                icon="📅" 
+                title="Plan & Prep" 
+                subtitle="Practice days, events, and teamwork" 
               />
               <TeamRoleCard 
-                icon="📊" 
-                title="Robust Improvement" 
-                subtitle="Data-Driven Improvment" 
+                icon="⚡" 
+                title="Improve Every Week" 
+                subtitle="Make the car better with every meet" 
               />
             </div>
           </div>

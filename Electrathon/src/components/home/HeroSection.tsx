@@ -19,8 +19,8 @@ export default function HeroSection() {
             <span className="text-transparent text-stroke hover:text-[#d4af37] transition-colors duration-300">ELECTRATHON</span>
           </h1>
           <p className="text-xl md:text-2xl text-white/80 max-w-2xl mb-10 font-light border-l-4 border-[#d4af37] pl-6">
-            Pushing the limits of electric vehicle engineering. <br />
-            <span className="text-[#d4af37] font-semibold">Design. Build. Race. Win.</span>
+            A student-run club where we design, build, and race electric endurance cars while learning real skills together. <br />
+            <span className="text-[#d4af37] font-semibold">Build. Learn. Race. Repeat.</span>
           </p>
           <div className="flex flex-wrap gap-6">
             <Button to="/about" size="lg" className="clip-corner-br bg-[#d4af37] text-black font-bold hover:bg-white hover:text-black transition-all">

@@ -29,10 +29,9 @@ export default function Header({ SelectedPage }: HomeProps) {
           : "bg-transparent border-transparent py-4"
       }`}
     >
-      {/* Racing stripe accent on top - only visible when scrolled or always? Let's keep it always but subtle */}
       <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent transition-opacity duration-300 ${scrolled ? 'opacity-100' : 'opacity-50'}`}></div>
       
-      <div className="racing-container max-w-[1400px] mx-auto px-4 flex items-center justify-between">
+      <div className="racing-container max-w-[1400px] mx-auto px-4 flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className={`rounded-full overflow-hidden bg-white/5 flex items-center justify-center ring-2 ring-[#d4af37]/50 hover:ring-[#d4af37] transition-all duration-300 ${scrolled ? 'w-10 h-10' : 'w-12 h-12 sm:w-14 sm:h-14'}`}>
             <img
