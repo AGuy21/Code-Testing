@@ -17,7 +17,7 @@ export default function DonationsSection({ donators, sponsors }: DonationsSectio
       <SectionHeader title="Other Ways to Support" subtitle="DONATIONS & PARTNERS" />
       
       <div className="text-center mb-12">
-        <p className="text-xl text-white/90 font-light italic">
+        <p className="text-xl text-white/90 font-light italic border-l-4 border-[#d4af37] pl-4 py-3 inline-block bg-[#0a2a20]/50 backdrop-blur-sm rounded-r-lg">
           "Financial donations and donations in kind are also greatly appreciated."
         </p>
       </div>

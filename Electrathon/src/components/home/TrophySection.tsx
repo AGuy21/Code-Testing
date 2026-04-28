@@ -28,8 +28,8 @@ export default function TrophySection({ trophies, loading }: TrophySectionProps)
             ))}
           </div>
         ) : (
-          <div className="text-center text-white/60 py-12 font-mono border border-white/10 rounded">
-            No Data Found
+          <div className="text-center text-white/60 py-12 font-mono border border-[#d4af37]/20 rounded-lg bg-[#0a2a20]/50">
+            <p>🏆 Competition results coming soon</p>
           </div>
         )}
       </Container>

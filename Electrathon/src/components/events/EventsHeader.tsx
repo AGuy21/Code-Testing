@@ -6,7 +6,7 @@ export default function EventsHeader() {
         RACE <span className="text-transparent text-stroke">SCHEDULE</span>
       </h1>
       <p className="text-xl text-white/60 max-w-3xl mx-auto font-light">
-        Join us at our next deployment. Race days, workshops, and community demonstrations.
+        Join us at our upcoming events and track our progress throughout the season.
       </p>
     </div>
   )
