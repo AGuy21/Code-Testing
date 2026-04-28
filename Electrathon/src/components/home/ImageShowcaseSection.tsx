@@ -1,6 +1,8 @@
 import Container from '../ui/Container'
 import SectionHeader from '../ui/SectionHeader'
 import ImageShowcase from './ImageShowcase'
+import image1Url from '../../assets/images/ACH02308.jpg'
+import image2Url from '../../assets/images/ACH02969.jpg'
 
 export default function ImageShowcaseSection() {
   return (
@@ -9,10 +11,10 @@ export default function ImageShowcaseSection() {
         <SectionHeader title="Track Success" className="mb-12" />
         <div className="transform -skew-x-3">
           <ImageShowcase
-            image1Url="../../assets/images/ACH02308.jpg"
+            image1Url={image1Url}
             image1Alt="Meet The Team"
             image1Caption="Meet The Electrathon Team Prepared For Daytona"
-            image2Url="../../assets/images/ACH02969.jpg"
+            image2Url={image2Url}
             image2Alt="Racing At Daytona"
             image2Caption="Racing At Daytona With Our New Car In 2025"
           />
