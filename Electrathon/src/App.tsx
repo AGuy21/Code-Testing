@@ -1,10 +1,10 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import Home from './pages/Home.tsx';
-import About from './pages/About.tsx';
-import Events from './pages/Events.tsx';
+import Home from './pages/Home';
+import About from './pages/About';
+import Events from './pages/Events';
 import Header from './components/layout/Header'
-import Connect from './pages/Connect.tsx';
-import Sponsorship from './pages/Sponsorship.tsx';
+import Connect from './pages/Connect';
+import Sponsorship from './pages/Sponsorship';
 import Footer from './components/layout/Footer';
 import CircuitBackground from './components/animations/CircuitBackground';
 
