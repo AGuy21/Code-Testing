@@ -19,7 +19,7 @@ export default function SponsorMarquee() {
   
   const renderSponsors = () => (
     <div className="flex items-end gap-12 px-4 pb-1">
-      <span className="text-white/30 font-mono uppercase tracking-widest text-[10px] mb-0.5">Proudly Sponsored By.</span>
+      <span className="text-white/30 font-mono uppercase tracking-widest text-[10px] mb-0.5">Proudly Sponsored By:</span>
       {sponsors.length > 0 ? (
         sponsors.map((sponsor, index) => {
           const tier = getTierFromAmount(sponsor.dollars);
@@ -62,6 +62,12 @@ export default function SponsorMarquee() {
   return (
     <div className="w-full overflow-hidden bg-[#0a2a20]/90 border-t border-[#d4af37]/10 py-2 backdrop-blur-sm flex items-center justify-center h-10">
       <div className="flex whitespace-nowrap animate-marquee hover:pause-on-hover items-center">
+        {renderSponsors()}
+        {renderSponsors()}
+        {renderSponsors()}
+        {renderSponsors()}
+        {renderSponsors()}
+        {renderSponsors()}
         {renderSponsors()}
         {renderSponsors()}
         {renderSponsors()}
