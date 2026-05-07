@@ -1,35 +1,23 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Helper: read and sanitize a Vite env variable
-const env = (import.meta as unknown as { env: Record<string, string | undefined> }).env;
-
-function getEnv(key: string): string | undefined {
-  const raw = env?.[key];
-  if (!raw) return undefined;
-  // Trim surrounding quotes, trailing commas and whitespace that sometimes appear in malformed .env files.
-  // This removes leading/trailing quotes and commas even when quotes are followed by a comma (e.g. '"VAL",').
-  return String(raw).replace(/^[\s"',]+|[\s"',]+$/g, "");
-}
-
-// Build firebase config from Vite env vars
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: getEnv("VITE_FIREBASE_API_KEY") ?? "",
-  authDomain: getEnv("VITE_FIREBASE_AUTH_DOMAIN") ?? "",
-  projectId: getEnv("VITE_FIREBASE_PROJECT_ID") ?? "",
-  storageBucket: getEnv("VITE_FIREBASE_STORAGE_BUCKET") ?? "",
-  messagingSenderId: getEnv("VITE_FIREBASE_MESSAGING_SENDER_ID") ?? "",
-  appId: getEnv("VITE_FIREBASE_APP_ID") ?? "",
-  measurementId: getEnv("VITE_FIREBASE_MEASUREMENT_ID") ?? "",
+  apiKey: "AIzaSyAYXm6xeJuEUYfykzxDLQjYjSxklLP_ZSw",
+  authDomain: "neaseelectrathon-7e4aa.firebaseapp.com",
+  projectId: "neaseelectrathon-7e4aa",
+  storageBucket: "neaseelectrathon-7e4aa.firebasestorage.app",
+  messagingSenderId: "931190644344",
+  appId: "1:931190644344:web:4266e0c3038407bbe7578d",
+  measurementId: "G-TY1ZZPCP65"
 };
 
-// If the storageBucket looks like the newer 'firebasestorage.app' host, transform it to appspot.com
-// because client SDK endpoints expect <project-id>.appspot.com for certain operations.
-if (firebaseConfig.storageBucket && firebaseConfig.storageBucket.includes("firebasestorage.app")) {
-  firebaseConfig.storageBucket = firebaseConfig.storageBucket.replace(".firebasestorage.app", ".appspot.com");
-}
-
-export const app = initializeApp(firebaseConfig as unknown as Record<string, string>);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
 export const db = getFirestore(app);
-
-export default { app, db };

@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "nease-electrathon-144"
-  }
+    "default": "nease-electrathon-144",
+    "NeaseElectrathon": "neaseelectrathon-7e4aa"
+  },
+  "targets": {},
+  "etags": {}
 }
