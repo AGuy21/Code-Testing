@@ -6,8 +6,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "site": "neaseelectrathon",
-    "public": "public",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -21,5 +20,3 @@
     ]
   }
 }
-
-
