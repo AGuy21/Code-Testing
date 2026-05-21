@@ -1,9 +1,12 @@
-rules_version = '1';
-
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Matches all documents in the database
     match /{document=**} {
-      allow read, write: if true;
+      // Allows anyone to read data without authentication
+      allow read: if true;
+      
+      // Explicitly denies all write requests from client-side SDKs
+      allow write: if false;
     }
   }
-}
+}    
