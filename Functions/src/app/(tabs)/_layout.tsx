@@ -56,67 +56,75 @@ export default function TabLayout() {
           ),
         }}
       />
-<Tabs.Screen
-  name="add"
-  options={{
-    tabBarLabel: () => null, 
-    tabBarButton: (props) => {
-      // EXTRACTED: accessibilityState tells us if the tab is currently active
-      const { children, style, delayLongPress, accessibilityState, ...safeProps } = props as any;
-      const isFocused = accessibilityState?.selected;
+      <Tabs.Screen
+        name="add"
+        options={{
+          tabBarLabel: () => null,
 
-      return (
-        <TouchableOpacity
-          {...safeProps}
-          style={[
-            style,
-            {
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          ]}
-        >
-          <View
-            style={{
-              width: 70,
-              height: 70,
-              borderRadius: 35, 
-              backgroundColor: '#363636',
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: -30, 
-            }}
-          >
-            <View
-              style={{
-                width: 60,
-                height: 60,
-                borderRadius: 30, 
-                backgroundColor: secondaryColor, 
-                opacity: 0.8,
-                alignItems: "center",
-                justifyContent: "center",
-                elevation: 5,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-              }}
-            >
-              {/* DYNAMIC: Changes color and icon style based on focus state */}
-              <Ionicons
-                size={36}
-                name={isFocused ? "add" : "add-outline"}
-                color={isFocused ? primaryColor : "#fff"} 
-              />
-            </View>
-          </View>
-        </TouchableOpacity>
-      );
-    },
-  }}
-/>
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              size={36}
+              name="add"
+              color={focused ? primaryColor : "gray"}
+            />
+          ),
 
+          tabBarButton: ({ children, style, ...props }) => {
+            const { delayLongPress, ...safeProps } = props as any;
+
+            return (
+              <TouchableOpacity
+                {...safeProps}
+                style={[
+                  style,
+                  {
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                ]}
+              >
+                <View
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: 100,
+                    marginBottom: 60,
+                    backgroundColor: "#363636",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 100,
+                      backgroundColor: secondaryColor,
+                      opacity: 0.8,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      elevation: 5,
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                    }}
+                  >
+                    <View
+                      style={{
+                        marginTop: -9,
+                        marginLeft: -4,
+                      }}
+                    >
+                      {children}
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          },
+        }}
+      />
 
       <Tabs.Screen
         name="chat"
