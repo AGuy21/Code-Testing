@@ -1,14 +1,20 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
+import { useColorTheme } from '../../hooks/useColorTheme';
 
 export default function Map() {
+  const backgroundColor = useColorTheme('background');
+  const textColor = useColorTheme('text');
+  const linkColor = useColorTheme('link');
+  const primary = useColorTheme('primary');
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Map</Text>
-      <Text style={styles.text}>
+    <View style={[styles.container, { backgroundColor }]}>
+      <Text style={[styles.title, { color: primary }]}>Map</Text>
+      <Text style={[styles.text, { color: textColor }]}>
         Map of all events
       </Text>
-      <Link href="/" style={styles.link}>
+      <Link href="/" style={[styles.link, { color: linkColor }]}>
         Back to Home
       </Link>
     </View>

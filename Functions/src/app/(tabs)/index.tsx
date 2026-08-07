@@ -1,12 +1,18 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
+import { useColorTheme } from '../../hooks/useColorTheme';
 
 export default function HomeScreen() {
+  const backgroundColor = useColorTheme('background');
+  const textColor = useColorTheme('text');
+  const linkColor = useColorTheme('link');
+  const primary = useColorTheme('primary');
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Events</Text>
-      <Text style={styles.text}>Events listed here</Text>
-      <Link href="/settings" style={styles.link}>
+    <View style={[styles.container, { backgroundColor }]}>
+      <Text style={[styles.title, { color: primary }]}>Events</Text>
+      <Text style={[styles.text, { color: textColor }]}>Events listed here</Text>
+      <Link href="/settings" style={[styles.link, { color: linkColor }]}>
         Go to Settings
       </Link>
     </View>
