@@ -8,8 +8,6 @@ export function useColorTheme(
 
     const theme = useColorScheme(); //checks if it is light or dark mode and sets the theme accordingly, catch all is dark
     
-    console.log("useColorTheme: theme = " + theme);
-
     const [color, setColor] = useState(Colors[theme][colorName]);
 
 

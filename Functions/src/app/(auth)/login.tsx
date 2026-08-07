@@ -1,15 +1,35 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image} from 'react-native';
 import { useRouter } from 'expo-router';
+import { useColorTheme } from '../../hooks/useColorTheme';
+
 
 export default function LoginScreen() {
   const router = useRouter();
 
+  const backgroundColor = useColorTheme('background');
+  const textColor = useColorTheme('text');
+  const primary = useColorTheme('primary');
+  const linkColor = useColorTheme('link');
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome</Text>
-      <Text style={styles.subtitle}>Tap the button to sign in and open tabs.</Text>
+    <View style={[styles.container, { backgroundColor }]}>
+
+
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+      }}>
+        <Image
+          source={require('../../../assets/BallonLogo.png')}
+          style={{ width: 60, height: 80 }}
+        />
+        <Text style={[styles.title, { color: primary }]}>Welcome</Text>
+      </View>
+      
+      <Text style={[styles.subtitle, { color: textColor }]}>Tap the button to sign in and open tabs.</Text>
       <Pressable style={styles.button} onPress={() => router.replace('(tabs)')}>
-        <Text style={styles.buttonText}>Sign In</Text>
+        <Text style={[styles.buttonText, { color: linkColor }]}>Sign In</Text>
       </Pressable>
     </View>
   );
@@ -21,7 +41,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
-    backgroundColor: '#fff',
   },
   title: {
     fontSize: 32,
@@ -30,12 +49,10 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#555',
     textAlign: 'center',
     marginBottom: 24,
   },
   button: {
-    backgroundColor: '#2563eb',
     paddingVertical: 14,
     paddingHorizontal: 28,
     borderRadius: 10,

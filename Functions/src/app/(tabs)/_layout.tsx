@@ -1,41 +1,42 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
-import { useColorTheme } from '../../hooks/useColorTheme';
+import { Ionicons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
+import { Platform, TouchableOpacity } from "react-native";
+import { useColorTheme } from "../../hooks/useColorTheme";
+import { View } from "react-native";
 
 export default function TabLayout() {
-  const primaryColor =  useColorTheme('primary');
-  const secondaryColor = useColorTheme('secondary');
-  const backgroundColor = useColorTheme('background');
+  const primaryColor = useColorTheme("primary");
+  const secondaryColor = useColorTheme("secondary");
+  const backgroundColor = useColorTheme("background");
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: primaryColor, 
-        tabBarInactiveTintColor: secondaryColor, 
+        tabBarActiveTintColor: primaryColor,
+        tabBarInactiveTintColor: secondaryColor,
         tabBarStyle: {
           backgroundColor: backgroundColor,
           borderTopWidth: 1,
-          borderTopColor: '#E5E5EA',
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          borderTopColor: secondaryColor,
+          height: Platform.OS === "ios" ? 88 : 64,
+          paddingBottom: Platform.OS === "ios" ? 28 : 10,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '500',
+          fontWeight: "500",
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Events',
+          title: "Events",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               size={24}
-              name={focused ? 'home' : 'home-outline'}
+              name={focused ? "home" : "home-outline"}
               color={color}
             />
           ),
@@ -45,37 +46,99 @@ export default function TabLayout() {
       <Tabs.Screen
         name="map"
         options={{
-          title: 'Map',
+          title: "Map",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               size={24}
-              name={focused ? 'map' : 'map-outline'}
+              name={focused ? "map" : "map-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+<Tabs.Screen
+  name="add"
+  options={{
+    tabBarLabel: () => null, 
+    tabBarButton: (props) => {
+      // EXTRACTED: accessibilityState tells us if the tab is currently active
+      const { children, style, delayLongPress, accessibilityState, ...safeProps } = props as any;
+      const isFocused = accessibilityState?.selected;
+
+      return (
+        <TouchableOpacity
+          {...safeProps}
+          style={[
+            style,
+            {
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          ]}
+        >
+          <View
+            style={{
+              width: 70,
+              height: 70,
+              borderRadius: 35, 
+              backgroundColor: '#363636',
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: -30, 
+            }}
+          >
+            <View
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 30, 
+                backgroundColor: secondaryColor, 
+                opacity: 0.8,
+                alignItems: "center",
+                justifyContent: "center",
+                elevation: 5,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+              }}
+            >
+              {/* DYNAMIC: Changes color and icon style based on focus state */}
+              <Ionicons
+                size={36}
+                name={isFocused ? "add" : "add-outline"}
+                color={isFocused ? primaryColor : "#fff"} 
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+  }}
+/>
+
+
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: "Chat",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              size={24}
+              name={focused ? "chatbubbles" : "chatbubbles-outline"}
               color={color}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="chat"
-        options={{
-          title: 'Chat',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              size={24}
-              name={focused ? 'chatbubbles' : 'chatbubbles-outline'}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen  
         name="profile"
         options={{
-          title: 'Profile',
+          title: "Profile",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               size={24}
-              name={focused ? 'person' : 'person-outline'}
+              name={focused ? "person" : "person-outline"}
               color={color}
             />
           ),
