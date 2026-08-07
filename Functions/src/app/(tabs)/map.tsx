@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 
-export default function Settings() {
+export default function Map() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
+      <Text style={styles.title}>Map</Text>
       <Text style={styles.text}>
-        Use this tab for app preferences, account options, and navigation settings.
+        Map of all events
       </Text>
       <Link href="/" style={styles.link}>
         Back to Home

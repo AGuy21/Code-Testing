@@ -1,0 +1,44 @@
+import { View, Text, StyleSheet } from 'react-native';
+import { Link } from 'expo-router';
+import { useColorTheme } from '../../hooks/useColorTheme';
+
+export default function Chat() {
+    const backgroundColor = useColorTheme('background');
+    const textColor = useColorTheme('text');
+    const linkColor = useColorTheme('link');
+    const primary = useColorTheme('primary');
+    
+  return (
+    <View style={[styles.container, { backgroundColor: backgroundColor }]}>
+      <Text style={[styles.title, { color: primary }]}>Chat</Text>
+      <Text style={[styles.text, { color: textColor }]}>
+        Check and use Chat
+      </Text>
+      <Link href="/" style={[styles.link, { color: linkColor }]}>
+        Back to Home
+      </Link>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  link: {
+    fontSize: 16,
+  },
+});

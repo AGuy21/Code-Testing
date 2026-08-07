@@ -5,7 +5,7 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
-      <Text style={styles.text}>Manage your account, preferences, and app profile details here.</Text>
+      <Text style={styles.text}>Manage your profile here</Text>
       <Link href="/" style={styles.link}>
         Go Home
       </Link>

@@ -4,8 +4,8 @@ import { Link } from 'expo-router';
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <Text style={styles.text}>Welcome to your Functions app.</Text>
+      <Text style={styles.title}>Events</Text>
+      <Text style={styles.text}>Events listed here</Text>
       <Link href="/settings" style={styles.link}>
         Go to Settings
       </Link>
