@@ -1,7 +1,10 @@
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import { View, Text, StyleSheet, Pressable, Image, ActivityIndicator } from "react-native";
+import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { useColorTheme } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
+import { useAuth } from "@clerk/expo";
+import { useHostedAuth } from '@clerk/expo/hosted-auth'
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -10,6 +13,33 @@ export default function LoginScreen() {
   const textColor = useColorTheme("text");
   const primary = useColorTheme("primary");
   const linkColor = useColorTheme("link");
+
+  const { isLoaded, isSignedIn } = useAuth();
+  const { startHostedAuth } = useHostedAuth();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      router.replace("/(tabs)/home");
+    }
+  }, [isSignedIn]);
+
+  const handleSignUp = async () => {
+    try {
+      await startHostedAuth({ mode: 'sign-up' })
+    } catch (error) {
+      throw new Error("Failed to start hosted auth");
+    }
+  }
+
+  if (!isLoaded) {
+    return (
+      <View style={[styles.container, { backgroundColor }]}>
+        <ActivityIndicator size="large" color={primary}   />
+      </View>
+    )
+  }
+
+
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -30,7 +60,8 @@ export default function LoginScreen() {
       <Text style={[styles.subtitle, { color: textColor }]}>
         Tap the button to sign in and open tabs.
       </Text>
-      <Pressable style={styles.button} onPress={() => router.replace("(tabs)")}>
+
+      <Pressable style={styles.button} onPress={handleSignUp}>
         <Text style={[styles.buttonText, { color: linkColor }]}>Sign In</Text>
       </Pressable>
     </View>
