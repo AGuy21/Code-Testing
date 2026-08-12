@@ -37,7 +37,8 @@
             "./assets/Manrope/Manrope-SemiBold.ttf"
           ]
         }
-      ]
+      ],
+      "expo-router"
     ]
   }
 }
