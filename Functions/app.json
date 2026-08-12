@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "functions", 
     "name": "Functions",
     "slug": "Functions",
     "version": "1.0.0",
@@ -38,7 +39,10 @@
           ]
         }
       ],
-      "expo-router"
+      "expo-router",
+      "@clerk/expo",
+      "expo-secure-store",
+      "expo-web-browser"
     ]
   }
 }

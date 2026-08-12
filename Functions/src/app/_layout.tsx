@@ -1,6 +1,14 @@
 import { Stack } from "expo-router";
 import * as Font from "expo-font";
 import { useEffect, useState } from "react";
+import { ClerkProvider } from "@clerk/expo";
+import { tokenCache } from "@clerk/expo/token-cache";
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+if (!publishableKey) {
+  throw new Error("Missing CLERK_PUBLISHABLE_KEY environment variable");
+}
 
 export default function Layout() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -31,9 +39,11 @@ export default function Layout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
-    </Stack>
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+    </ClerkProvider>
   );
 }

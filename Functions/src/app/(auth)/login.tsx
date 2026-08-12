@@ -22,14 +22,9 @@ export default function LoginScreen() {
         }}
       >
         <Image
-          source={require("../../../assets/BallonLogo.png")}
-          style={{ width: 60, height: 80 }}
+          source={require("../../../assets/TextLogo.png")}
+          style={{ width: 180, height: 80 }}
         />
-        <Text
-          style={[styles.title, { color: primary, fontFamily: Fonts.Bold }]}
-        >
-          Welcome
-        </Text>
       </View>
 
       <Text style={[styles.subtitle, { color: textColor }]}>
