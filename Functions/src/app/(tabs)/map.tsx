@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import { useColorTheme } from '../../hooks/useColorTheme';
+import { Fonts } from '../../constants/Fonts';
 
 export default function Map() {
   const backgroundColor = useColorTheme('background');
@@ -32,12 +33,14 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     marginBottom: 10,
+    fontFamily: Fonts.Bold,
   },
   text: {
     fontSize: 16,
     color: '#444',
     textAlign: 'center',
     marginBottom: 16,
+    fontFamily: Fonts.Medium,
   },
   link: {
     color: '#1e90ff',
