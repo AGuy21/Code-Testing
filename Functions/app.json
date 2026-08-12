@@ -23,7 +23,21 @@
     },
     "plugins": [
       "@react-native-vector-icons/ionicons",
-      "@react-native-vector-icons/material-design-icons"
+      "@react-native-vector-icons/material-design-icons",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/Manrope/Manrope-Bold.ttf",
+            "./assets/Manrope/Manrope-ExtraBold.ttf",
+            "./assets/Manrope/Manrope-ExtraLight.ttf",
+            "./assets/Manrope/Manrope-Light.ttf",
+            "./assets/Manrope/Manrope-Medium.ttf",
+            "./assets/Manrope/Manrope-Regular.ttf",
+            "./assets/Manrope/Manrope-SemiBold.ttf"
+          ]
+        }
+      ]
     ]
   }
 }

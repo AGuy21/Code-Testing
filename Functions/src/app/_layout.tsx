@@ -1,10 +1,39 @@
-import { Stack } from 'expo-router';
+import { Stack } from "expo-router";
+import * as Font from "expo-font";
+import { useEffect, useState } from "react";
 
 export default function Layout() {
-    return (
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(auth)" />
-            <Stack.Screen name="(tabs)" />
-        </Stack>
-    );
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadFonts() {
+      try {
+        await Font.loadAsync({
+          "Manrope-Bold": require("../../assets/Manrope/Manrope-Bold.ttf"),
+          "Manrope-ExtraBold": require("../../assets/Manrope/Manrope-ExtraBold.ttf"),
+          "Manrope-ExtraLight": require("../../assets/Manrope/Manrope-ExtraLight.ttf"),
+          "Manrope-Light": require("../../assets/Manrope/Manrope-Light.ttf"),
+          "Manrope-Medium": require("../../assets/Manrope/Manrope-Medium.ttf"),
+          "Manrope-Regular": require("../../assets/Manrope/Manrope-Regular.ttf"),
+          "Manrope-SemiBold": require("../../assets/Manrope/Manrope-SemiBold.ttf"),
+        });
+        setFontsLoaded(true);
+      } catch (error) {
+        console.error("Error loading fonts:", error);
+        setFontsLoaded(true);
+      }
+    }
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="(tabs)" />
+    </Stack>
+  );
 }
