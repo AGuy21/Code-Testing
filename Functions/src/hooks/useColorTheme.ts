@@ -2,18 +2,15 @@ import { useColorScheme } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Colors } from '../constants/Colors';
 
-export function useColorTheme(
-    colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
+export function useColorTheme(colorName: keyof typeof Colors.light): string {
+  const scheme = useColorScheme();
+  const theme = scheme === 'light' || scheme === 'dark' ? scheme : 'dark';
 
-    const theme = useColorScheme(); //checks if it is light or dark mode and sets the theme accordingly, catch all is dark
-    
-    const [color, setColor] = useState(Colors[theme][colorName]);
+  const [color, setColor] = useState<string>(Colors[theme][colorName]);
 
+  useEffect(() => {
+    setColor(Colors[theme][colorName]);
+  }, [theme, colorName]);
 
-    useEffect(() => {
-        setColor(Colors[theme][colorName]);
-    }, [theme, colorName]);
-
-    return color;
+  return color;
 }

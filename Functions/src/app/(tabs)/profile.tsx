@@ -3,6 +3,7 @@ import { Link } from "expo-router";
 import { useColorTheme } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
 import { useAuth, useUser } from "@clerk/expo";
+import { useRouter } from "expo-router";
 
 export default function Profile() {
   const backgroundColor = useColorTheme("background");
@@ -10,9 +11,10 @@ export default function Profile() {
   const linkColor = useColorTheme("link");
   const primary = useColorTheme("primary");
 
-  const { userId, sessionId, getToken, isLoaded, isSignedIn } = useAuth();
+  const { userId, sessionId, getToken, isLoaded, signOut } = useAuth();
   const { user } = useUser();
-
+  const router = useRouter();
+  
   const fetchExternalData = async () => {
     const token = await getToken();
 
@@ -26,17 +28,21 @@ export default function Profile() {
     return response.json();
   };
 
-  // Handle loading state
-  if (!isLoaded) return <Text>Loading...</Text>;
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.replace("/(auth)/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
-  // Protect the page from unauthenticated users
-  if (!isSignedIn) return <Text>Sign in to view this page</Text>;
+  if (!isLoaded) return <Text>Loading...</Text>;
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
-
       <Text style={[styles.title, { color: primary }]}>Profile</Text>
-      
+
       <Text style={[styles.text, { color: textColor }]}>
         Manage your profile here
       </Text>
@@ -57,6 +63,14 @@ export default function Profile() {
       <Link href="/" style={[styles.link, { color: linkColor }]}>
         Go Home
       </Link>
+      <TouchableOpacity
+        onPress={handleSignOut}
+        style={[styles.button, { backgroundColor: primary }]}
+      >
+        <Text style={[styles.buttonText, { color: backgroundColor }]}>
+          Sign Out
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -79,6 +93,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
     fontFamily: Fonts.Medium,
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+    fontFamily: Fonts.SemiBold,
   },
   link: {
     fontSize: 16,
