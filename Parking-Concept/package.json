@@ -1,7 +1,7 @@
 {
   "name": "parking-concept",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "app/index.ts",
   "dependencies": {
     "expo": "~57.0.16",
     "expo-status-bar": "~57.0.1",
