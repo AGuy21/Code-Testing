@@ -9,7 +9,12 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "associatedDomains": ["applinks:yourdomain.com"]
+      "associatedDomains": [
+        "applinks:parkingapp.com"
+      ]
+    },
+    "expo": {
+      "plugins": ["expo-router"]
     },
     "android": {
       "adaptiveIcon": {
@@ -23,11 +28,19 @@
         {
           "action": "VIEW",
           "data": [
-            { "scheme": "https", "host": "yourdomain.com", "pathPrefix": "/park" }
+            {
+              "scheme": "https",
+              "host": "parkingapp.com",
+              "pathPrefix": "/park"
+            }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
-      ]
+      ],
+      "package": "com.anonymous.ParkingConcept"
     },
     "web": {
       "favicon": "./assets/favicon.png"
