@@ -1,27 +1,90 @@
-import { StyleSheet, View, Text } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import {
+  AppText,
+  AppTextInput,
+  Card,
+  PrimaryButton,
+  Screen,
+} from "../../componenets/ui";
+import { theme } from "../../constants/theme";
 
-export default function login() {
+export default function LoginScreen() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const canSubmit = email.trim().length > 0 && password.length > 0;
+
+  const handleSignIn = () => {
+    if (!canSubmit) return;
+    router.replace("/employee/dashboard");
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>login</Text>
+    <Screen scroll>
+      <View style={styles.header}>
+        <View style={styles.brandMark}>
+          <Text style={styles.brandMarkText}>P</Text>
+        </View>
+        <AppText variant="title">Employee sign in</AppText>
+        <AppText variant="caption" style={styles.caption}>
+          Staff access only. Contact your lot manager for credentials.
+        </AppText>
+      </View>
 
-      <Link href="/employee/dashboard" style={styles.link}>
-        Go to Employee Dashboard
-      </Link>
-    </View>
+      <Card>
+        <AppTextInput
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="you@parkingapp.com"
+          autoCapitalize="none"
+          autoComplete="email"
+          keyboardType="email-address"
+        />
+        <AppTextInput
+          label="Password"
+          value={password}
+          onChangeText={setPassword}
+          placeholder="••••••••"
+          secureTextEntry
+        />
+        <PrimaryButton
+          label="Sign in"
+          onPress={handleSignIn}
+          disabled={!canSubmit}
+        />
+      </Card>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
+  header: {
     alignItems: "center",
-    justifyContent: "center",
+    marginBottom: theme.spacing.lg,
+    marginTop: theme.spacing.md,
   },
-  link: {
-    color: "blue",
-    textDecorationLine: "underline",
+  brandMark: {
+    alignItems: "center",
+    backgroundColor: theme.colors.accent,
+    borderColor: theme.colors.borderStrong,
+    borderRadius: theme.radii.md,
+    borderWidth: 1,
+    height: 56,
+    justifyContent: "center",
+    marginBottom: theme.spacing.md,
+    width: 56,
+  },
+  brandMarkText: {
+    color: theme.colors.white,
+    fontSize: 26,
+    fontWeight: "800",
+  },
+  caption: {
+    marginTop: theme.spacing.xs,
+    textAlign: "center",
   },
 });
