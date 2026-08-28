@@ -22,6 +22,8 @@ export interface Hangout {
   /** ISO 8601 timestamp. */
   startsAt: string;
   hostName: string;
+  /** Clerk user id of whoever pinned the hangout (omitted for seeds). */
+  hostId?: string;
   /** Base head count before the current user's RSVP is applied. */
   goingCount: number;
 }

@@ -1,6 +1,7 @@
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { useUser } from "@clerk/expo";
 import {
   Alert,
   Pressable,
@@ -43,6 +44,7 @@ const toStartsAt = (chip: TimeChip): string => {
 export default function Add() {
   const router = useRouter();
   const palette = useThemePalette();
+  const { user } = useUser();
   const { addHangout, focusHangout } = useHangouts();
 
   const [title, setTitle] = useState("");
@@ -91,6 +93,7 @@ export default function Add() {
       location,
       placeLabel: placeLabel.trim() || "Shared pin",
       startsAt: toStartsAt(TIME_CHIPS[timeIndex]),
+      hostName: user?.firstName ?? user?.username ?? "You",
     });
     focusHangout(created.id);
     router.push("/(tabs)/map");

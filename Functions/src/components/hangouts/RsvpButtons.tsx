@@ -12,7 +12,7 @@ export interface RsvpButtonsProps {
  * Tapping the active answer again undoes the RSVP.
  */
 export function RsvpButtons({ hangoutId }: RsvpButtonsProps) {
-  const { rsvps, join, pass, clearRsvp } = useHangouts();
+  const { rsvps, join, pass, clearRsvp, canRsvp } = useHangouts();
   const status = rsvps[hangoutId];
 
   return (
@@ -22,13 +22,14 @@ export function RsvpButtons({ hangoutId }: RsvpButtonsProps) {
           label="Going ✓"
           variant="outline"
           onPress={() => clearRsvp(hangoutId)}
+          disabled={!canRsvp}
           style={styles.button}
         />
       ) : (
         <PrimaryButton
           label="Join"
           onPress={() => join(hangoutId)}
-          disabled={status === "passed"}
+          disabled={status === "passed" || !canRsvp}
           style={styles.button}
         />
       )}
@@ -37,6 +38,7 @@ export function RsvpButtons({ hangoutId }: RsvpButtonsProps) {
           label="Passed"
           variant="ghost"
           onPress={() => clearRsvp(hangoutId)}
+          disabled={!canRsvp}
           style={styles.button}
         />
       ) : (
@@ -44,7 +46,7 @@ export function RsvpButtons({ hangoutId }: RsvpButtonsProps) {
           label="Pass"
           variant="outline"
           onPress={() => pass(hangoutId)}
-          disabled={status === "going"}
+          disabled={status === "going" || !canRsvp}
           style={styles.button}
         />
       )}

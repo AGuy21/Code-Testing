@@ -1,8 +1,12 @@
-// Import the functions you need from the SDKs you need
+// Firebase initialization for the Functions app.
+// Uses the Firebase JS SDK (modular API). Note:
+// - firebase/analytics is intentionally NOT used — it depends on browser
+//   APIs and crashes in React Native.
+// - Firestore is initialized with long-polling auto-detection because the
+//   default WebChannel transport is unreliable inside React Native.
+
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -18,4 +22,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Firestore instance, shared app-wide.
+export const db = initializeFirestore(app, {
+  experimentalAutoDetectLongPolling: true,
+});

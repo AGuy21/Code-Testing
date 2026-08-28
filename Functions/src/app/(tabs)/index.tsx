@@ -8,13 +8,15 @@ function ListSeparator() {
 }
 
 export default function HomeScreen() {
-  const { hangouts } = useHangouts();
+  const { hangouts, isLoading } = useHangouts();
 
   return (
     <Screen scroll>
       <AppText variant="hero">Events</AppText>
       <AppText variant="caption" style={styles.subtitle}>
-        {hangouts.length} hangouts happening around you — say if you're in
+        {isLoading
+          ? "Syncing hangouts…"
+          : `${hangouts.length} hangouts happening around you — say if you're in`}
       </AppText>
 
       <FlatList
