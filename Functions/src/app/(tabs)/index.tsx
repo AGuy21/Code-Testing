@@ -1,47 +1,39 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
-import { useColorTheme } from '../../hooks/useColorTheme';
-import { Fonts } from '../../constants/Fonts';
+import { FlatList, StyleSheet, View } from "react-native";
+import { AppText, Screen } from "../../components/ui";
+import { HangoutCard } from "../../components/hangouts/HangoutCard";
+import { useHangouts } from "../../hooks/useHangouts";
+
+function ListSeparator() {
+  return <View style={styles.separator} />;
+}
 
 export default function HomeScreen() {
-  const backgroundColor = useColorTheme('background');
-  const textColor = useColorTheme('text');
-  const linkColor = useColorTheme('link');
-  const primary = useColorTheme('primary');
+  const { hangouts } = useHangouts();
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <Text style={[styles.title, { color: primary }]}>Events</Text>
-      <Text style={[styles.text, { color: textColor }]}>Events listed here</Text>
-      <Link href="/settings" style={[styles.link, { color: linkColor }]}>
-        Go to Settings
-      </Link>
-    </View>
+    <Screen scroll>
+      <AppText variant="hero">Events</AppText>
+      <AppText variant="caption" style={styles.subtitle}>
+        {hangouts.length} hangouts happening around you — say if you're in
+      </AppText>
+
+      <FlatList
+        data={hangouts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <HangoutCard hangout={item} />}
+        ItemSeparatorComponent={ListSeparator}
+        scrollEnabled={false}
+      />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+  subtitle: {
+    marginBottom: 20,
+    marginTop: 6,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    fontFamily: Fonts.Bold,
-  },
-  text: {
-    fontSize: 16,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 16,
-    fontFamily: Fonts.Medium,
-  },
-  link: {
-    color: '#1e90ff',
-    fontSize: 16,
+  separator: {
+    height: 14,
   },
 });
