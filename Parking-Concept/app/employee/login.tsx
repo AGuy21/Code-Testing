@@ -10,16 +10,42 @@ import {
 } from "../../componenets/ui";
 import { theme } from "../../constants/theme";
 
+import { useSignIn } from "@clerk/expo";
+
 export default function LoginScreen() {
   const router = useRouter();
+  const { signIn } = useSignIn();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const canSubmit = email.trim().length > 0 && password.length > 0;
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     if (!canSubmit) return;
-    router.replace("/employee/dashboard");
+    if (!signIn) return;
+
+    try {
+      const signInAttempt = await signIn.password({
+        emailAddress: email,
+        password: password,
+      });
+
+      if (signInAttempt.error) {
+        setError(signInAttempt.error.message);
+        return;
+      }
+      
+      if (signIn.status === "complete") {
+        await signIn.finalize({
+          navigate: () => router.replace("/employee/dashboard"),
+        })
+      }
+
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -35,6 +61,7 @@ export default function LoginScreen() {
       </View>
 
       <Card>
+        {error && <AppText variant="error">{error}</AppText>}
         <AppTextInput
           label="Email"
           value={email}

@@ -8,7 +8,8 @@ export type AppTextVariant =
   | "body"
   | "caption"
   | "muted"
-  | "label";
+  | "label"
+  | "error";
 
 export interface AppTextProps extends TextProps {
   variant?: AppTextVariant;
@@ -22,6 +23,7 @@ const VARIANT_STYLES: Record<AppTextVariant, TextStyle> = {
   caption: { ...theme.typography.caption, color: theme.colors.textSecondary },
   muted: { ...theme.typography.caption, color: theme.colors.textMuted },
   label: { ...theme.typography.label, color: theme.colors.accent },
+  error: { ...theme.typography.caption, color: theme.colors.error },
 };
 
 export function AppText({ variant = "body", style, ...rest }: AppTextProps) {

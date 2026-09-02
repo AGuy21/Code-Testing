@@ -14,6 +14,7 @@ export const colors = {
   accentSoft: "rgba(139, 92, 246, 0.16)",
   white: "#FFFFFF",
   black: "#050508",
+  error: "#EF4444",
 } as const;
 
 export const spacing = {

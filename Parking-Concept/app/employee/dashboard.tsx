@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { AppText, Card, Screen } from "../../componenets/ui";
 import { theme } from "../../constants/theme";
-
+import { Show } from "@clerk/expo";
 interface DashboardStat {
   label: string;
   value: string;
@@ -17,21 +17,30 @@ const DASHBOARD_STATS: readonly DashboardStat[] = [
 export default function DashboardScreen() {
   return (
     <Screen scroll>
-      <AppText variant="title">Dashboard</AppText>
-      <AppText variant="caption" style={styles.subtitle}>
-        Welcome back — here's today at a glance.
-      </AppText>
+      <Show when="signed-in">
+        <AppText variant="title">Dashboard</AppText>
+        <AppText variant="caption" style={styles.subtitle}>
+          Welcome back — here's today at a glance.
+        </AppText>
 
-      <View style={styles.grid}>
-        {DASHBOARD_STATS.map((stat) => (
-          <Card key={stat.label} style={styles.tile}>
-            <AppText variant="title" style={styles.tileValue}>
-              {stat.value}
-            </AppText>
-            <AppText variant="caption">{stat.label}</AppText>
-          </Card>
-        ))}
-      </View>
+        <View style={styles.grid}>
+          {DASHBOARD_STATS.map((stat) => (
+            <Card key={stat.label} style={styles.tile}>
+              <AppText variant="title" style={styles.tileValue}>
+                {stat.value}
+              </AppText>
+              <AppText variant="caption">{stat.label}</AppText>
+            </Card>
+          ))}
+        </View>
+      </Show>
+          {/* fallback incase a non signed in user (customer) gets on dashboard page they must be signed in*/}
+      <Show when="signed-out">
+        <AppText variant="title">Not signed in</AppText>
+        <AppText variant="caption" style={styles.subtitle}>
+          Please sign in to view your dashboard.
+        </AppText>
+      </Show>
     </Screen>
   );
 }
