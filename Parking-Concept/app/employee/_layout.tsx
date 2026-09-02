@@ -1,22 +1,35 @@
-import { Stack } from "expo-router";
+import { router, Stack, useRouter } from "expo-router";
 import { stackScreenOptions } from "../../constants/theme";
-import { ClerkProvider } from "@clerk/expo";
-import { tokenCache } from "@clerk/expo/token-cache";
+import { useAuth } from "@clerk/expo";
+import { useEffect } from "react";
 
-const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-if (!publishableKey) {
-  console.log(publishableKey)
-  throw new Error("Publishable key not found, check .env file or clerk API dashboard")
-}
 
 export default function EmployeeLayout() {
+  const { isLoaded, isSignedIn } = useAuth();
+  const router = useRouter();
+  
+  if (!isLoaded) {
+    console.log("Auth state is not loaded yet. Waiting for it to load...");
+    return null; // TODO: loading indicator
+  }
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+
+    if (isSignedIn) {
+      console.log("User is signed in");
+      router.replace("/employee/dashboard");
+    } else {
+      console.log("User is not signed in");
+      router.replace("/employee/login");
+    }
+  }, [isSignedIn, isLoaded]);
+
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <Stack screenOptions={{ ...stackScreenOptions }}>
         <Stack.Screen name="dashboard" options={{ title: "Dashboard" }} />
         <Stack.Screen name="login" options={{ title: "Login" }} />
       </Stack>
-    </ClerkProvider>
   );
 }

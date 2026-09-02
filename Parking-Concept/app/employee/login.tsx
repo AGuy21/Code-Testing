@@ -45,8 +45,11 @@ export default function LoginScreen() {
     }
 
     if (signIn.status === "complete") {
+      console.log("Sign-in successful. Current status:", signIn.status);
       await signIn.finalize({
-        navigate: () => router.replace("/employee/dashboard"),
+        navigate: () => {
+          router.replace("/employee/dashboard");
+        },
       });
     } else {
       console.log("Additional steps required. Current status:", signIn.status);

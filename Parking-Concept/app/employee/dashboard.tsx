@@ -17,7 +17,7 @@ const DASHBOARD_STATS: readonly DashboardStat[] = [
 export default function DashboardScreen() {
   return (
     <Screen scroll>
-      <Show when="signed-in">
+      {/* <Show when="signed-in"> */}
         <AppText variant="title">Dashboard</AppText>
         <AppText variant="caption" style={styles.subtitle}>
           Welcome back — here's today at a glance.
@@ -33,14 +33,14 @@ export default function DashboardScreen() {
             </Card>
           ))}
         </View>
-      </Show>
+      {/* </Show> */}
           {/* fallback incase a non signed in user (customer) gets on dashboard page they must be signed in*/}
-      <Show when="signed-out">
+      {/* <Show when="signed-out">
         <AppText variant="title">Not signed in</AppText>
         <AppText variant="caption" style={styles.subtitle}>
           Please sign in to view your dashboard.
         </AppText>
-      </Show>
+      </Show> */}
     </Screen>
   );
 }
