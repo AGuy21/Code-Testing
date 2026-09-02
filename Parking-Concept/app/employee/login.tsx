@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import {
   AppText,
   AppTextInput,
@@ -14,40 +14,55 @@ import { useSignIn } from "@clerk/expo";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { signIn } = useSignIn();
+  const { signIn, errors } = useSignIn();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(true);
+  const [mfaCode, setMfaCode] = useState("");
 
   const canSubmit = email.trim().length > 0 && password.length > 0;
 
   const handleSignIn = async () => {
-    if (!canSubmit) return;
-    if (!signIn) return;
+    if (!canSubmit || !signIn) return;
 
-    try {
-      const signInAttempt = await signIn.password({
-        emailAddress: email,
-        password: password,
-      });
+    const { error } = await signIn.password({
+      emailAddress: email,
+      password: password,
+    });
 
-      if (signInAttempt.error) {
-        setError(signInAttempt.error.message);
-        return;
-      }
-      
-      if (signIn.status === "complete") {
-        await signIn.finalize({
-          navigate: () => router.replace("/employee/dashboard"),
-        })
-      }
+    if (error) {
+      console.error("Sign-in failed:", error);
+      return;
+    }
 
-    } catch (err: any) {
-      setError(err.message);
+    if (signIn.status === "needs_client_trust") {
+      await signIn.mfa.sendEmailCode();
+      return;
+    }
+
+    if (signIn.status === "complete") {
+      await signIn.finalize({
+        navigate: () => router.replace("/employee/dashboard"),
+      })
+    } else {
+      console.log("Additional steps required. Current status:", signIn.status);
     }
   };
 
+  const handleMFA = async () => {
+    await signIn.mfa.verifyEmailCode({ code: mfaCode });
+
+    if (signIn.status === "complete") {
+      await signIn.finalize({
+        navigate: () => router.replace("/employee/dashboard"),
+      })
+    } else {
+      console.log("MFA verification failed. Current status:", signIn.status);
+    }
+  };
+
+  
   return (
     <Screen scroll>
       <View style={styles.header}>
@@ -61,7 +76,6 @@ export default function LoginScreen() {
       </View>
 
       <Card>
-        {error && <AppText variant="error">{error}</AppText>}
         <AppTextInput
           label="Email"
           value={email}
@@ -71,13 +85,44 @@ export default function LoginScreen() {
           autoComplete="email"
           keyboardType="email-address"
         />
+        {errors?.fields?.identifier ? (
+          <AppText variant="error">{errors.fields.identifier.message}</AppText>
+        ) : null}
         <AppTextInput
           label="Password"
           value={password}
           onChangeText={setPassword}
           placeholder="••••••••"
-          secureTextEntry
+          secureTextEntry={showPassword}
         />
+
+        {signIn?.status === "needs_client_trust" && (
+          <>
+            <AppTextInput
+              value={mfaCode}
+              onChangeText={setMfaCode}
+              placeholder="Enter MFA code"
+            />
+            {errors?.fields?.code ? (
+              <AppText variant="error">{errors.fields.code.message}</AppText>
+            ) : null}
+            <PrimaryButton
+              label="Submit MFA Code"
+              onPress={handleMFA}
+              disabled={!canSubmit}
+            />
+          </>
+        )}
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <AppText variant="caption" style={{ marginBottom: theme.spacing.md }}>
+            {showPassword ? "Hide password" : "Show password"}
+          </AppText>
+        </TouchableOpacity>
+
+        {errors?.fields?.password ? (
+          <AppText variant="error">{errors.fields.password.message}</AppText>
+        ) : null}
+
         <PrimaryButton
           label="Sign in"
           onPress={handleSignIn}
