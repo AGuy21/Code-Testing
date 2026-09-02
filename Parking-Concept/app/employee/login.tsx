@@ -18,6 +18,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otherError, setOtherError] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [mfaCode, setMfaCode] = useState("");
 
@@ -33,10 +34,12 @@ export default function LoginScreen() {
 
     if (error) {
       console.error("Sign-in failed:", error);
+      setOtherError(error.message);
       return;
     }
 
     if (signIn.status === "needs_client_trust") {
+      console.log("Additional steps required. Current status:", signIn.status);
       await signIn.mfa.sendEmailCode();
       return;
     }
@@ -44,7 +47,7 @@ export default function LoginScreen() {
     if (signIn.status === "complete") {
       await signIn.finalize({
         navigate: () => router.replace("/employee/dashboard"),
-      })
+      });
     } else {
       console.log("Additional steps required. Current status:", signIn.status);
     }
@@ -54,15 +57,18 @@ export default function LoginScreen() {
     await signIn.mfa.verifyEmailCode({ code: mfaCode });
 
     if (signIn.status === "complete") {
+      console.log(
+        "MFA verification successful. Current status:",
+        signIn.status,
+      );
       await signIn.finalize({
         navigate: () => router.replace("/employee/dashboard"),
-      })
+      });
     } else {
       console.log("MFA verification failed. Current status:", signIn.status);
     }
   };
 
-  
   return (
     <Screen scroll>
       <View style={styles.header}>
@@ -73,30 +79,15 @@ export default function LoginScreen() {
         <AppText variant="caption" style={styles.caption}>
           Staff access only. Contact your lot manager for credentials.
         </AppText>
+        {otherError ? (
+          <AppText variant="error" style={{ marginTop: theme.spacing.md }}>
+            {otherError}
+          </AppText>
+        ) : null}
       </View>
 
       <Card>
-        <AppTextInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          placeholder="you@parkingapp.com"
-          autoCapitalize="none"
-          autoComplete="email"
-          keyboardType="email-address"
-        />
-        {errors?.fields?.identifier ? (
-          <AppText variant="error">{errors.fields.identifier.message}</AppText>
-        ) : null}
-        <AppTextInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          placeholder="••••••••"
-          secureTextEntry={showPassword}
-        />
-
-        {signIn?.status === "needs_client_trust" && (
+        {signIn?.status === "needs_client_trust" ? (
           <>
             <AppTextInput
               value={mfaCode}
@@ -112,22 +103,51 @@ export default function LoginScreen() {
               disabled={!canSubmit}
             />
           </>
+        ) : (
+          <>
+            <AppTextInput
+              label="Email"
+              value={email}
+              onChangeText={setEmail}
+              placeholder="you@parkingapp.com"
+              autoCapitalize="none"
+              autoComplete="email"
+              keyboardType="email-address"
+            />
+            {errors?.fields?.identifier ? (
+              <AppText variant="error">
+                {errors.fields.identifier.message}
+              </AppText>
+            ) : null}
+            <AppTextInput
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              placeholder="••••••••"
+              secureTextEntry={showPassword}
+            />
+
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <AppText
+                variant="caption"
+                style={{ marginBottom: theme.spacing.md }}
+              >
+                {showPassword ? "Show password" : "Hide password"}
+              </AppText>
+            </TouchableOpacity>
+            {errors?.fields?.password ? (
+              <AppText variant="error">
+                {errors.fields.password.message}
+              </AppText>
+            ) : null}
+
+            <PrimaryButton
+              label="Sign in"
+              onPress={handleSignIn}
+              disabled={!canSubmit}
+            />
+          </>
         )}
-        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-          <AppText variant="caption" style={{ marginBottom: theme.spacing.md }}>
-            {showPassword ? "Hide password" : "Show password"}
-          </AppText>
-        </TouchableOpacity>
-
-        {errors?.fields?.password ? (
-          <AppText variant="error">{errors.fields.password.message}</AppText>
-        ) : null}
-
-        <PrimaryButton
-          label="Sign in"
-          onPress={handleSignIn}
-          disabled={!canSubmit}
-        />
       </Card>
     </Screen>
   );
