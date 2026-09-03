@@ -9,22 +9,19 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "associatedDomains": [
-        "applinks:parkingapp.com"
-      ]
+      "associatedDomains": ["applinks:parkingapp.com"]
     },
-    "plugins": [
-      "expo-secure-store",
-      "expo-router",
-      "@clerk/expo"
-    ]
-  },
-  "android": {
-    "adaptiveIcon": {
-      "backgroundColor": "#E6F4FE",
-      "foregroundImage": "./assets/android-icon-foreground.png",
-      "backgroundImage": "./assets/android-icon-background.png",
-      "monochromeImage": "./assets/android-icon-monochrome.png"
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "plugins": ["expo-secure-store", "expo-router", "@clerk/expo"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
     "predictiveBackGestureEnabled": false,
     "intentFilters": [
@@ -37,19 +34,9 @@
             "pathPrefix": "/park"
           }
         ],
-        "category": [
-          "BROWSABLE",
-          "DEFAULT"
-        ]
+        "category": ["BROWSABLE", "DEFAULT"]
       }
     ],
     "package": "com.anonymous.ParkingConcept"
-  },
-  "web": {
-    "favicon": "./assets/favicon.png"
-  },
-  "plugins": [
-    "@clerk/expo",
-    "expo-secure-store"
-  ]
+  }
 }

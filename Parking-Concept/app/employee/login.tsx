@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import {
   AppText,
@@ -11,10 +11,12 @@ import {
 import { theme } from "../../constants/theme";
 
 import { useSignIn } from "@clerk/expo";
+import { useAuth } from "@clerk/expo";
 
 export default function LoginScreen() {
-  const router = useRouter();
   const { signIn, errors } = useSignIn();
+  const { isLoaded, signOut } = useAuth();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,54 +26,97 @@ export default function LoginScreen() {
 
   const canSubmit = email.trim().length > 0 && password.length > 0;
 
+  if (!isLoaded) {
+    return null; // Optionally return a loading spinner here
+  }
+
   const handleSignIn = async () => {
-    if (!canSubmit || !signIn) return;
+    if (!canSubmit) return;
 
     const { error } = await signIn.password({
       emailAddress: email,
-      password: password,
+      password,
     });
 
     if (error) {
-      console.error("Sign-in failed:", error);
-      setOtherError(error.message);
-      return;
-    }
+      console.error(JSON.stringify(error, null, 2));
 
-    if (signIn.status === "needs_client_trust") {
-      console.log("Additional steps required. Current status:", signIn.status);
-      await signIn.mfa.sendEmailCode();
+      if (error?.errors?.[0]?.code === "session_exists") {
+        await signOut();
+        setOtherError("Stale session cleared. Please click Sign in again.");
+        return;
+      }
+
+      setOtherError("An error occurred during sign-in.");
       return;
     }
 
     if (signIn.status === "complete") {
       console.log("Sign-in successful. Current status:", signIn.status);
       await signIn.finalize({
-        navigate: () => {
-          router.replace("/employee/dashboard");
-        },
+        status: "complete",
+        navigate: ({ session }) => {
+          // If Clerk identifies an incomplete requirement, intercept it here
+          if (session?.currentTask) {
+            router.push('/employee/dashboard');
+            return;
+          }
+          // Otherwise, push to dashboard
+          router.push('/employee/dashboard');
+        }
+
+        
       });
+    } else if (signIn.status === "needs_client_trust") {
+      const emailCodeFactor = signIn.supportedSecondFactors.find(
+        (factor) => factor.strategy === "email_code",
+      );
+
+      if (emailCodeFactor) {
+        await signIn.mfa.sendEmailCode();
+      }
     } else {
-      console.log("Additional steps required. Current status:", signIn.status);
+      console.log("Additional steps required.:", signIn);
     }
   };
 
   const handleMFA = async () => {
-    await signIn.mfa.verifyEmailCode({ code: mfaCode });
+    await signIn.mfa.verifyEmailCode({ mfaCode });
 
     if (signIn.status === "complete") {
-      console.log(
-        "MFA verification successful. Current status:",
-        signIn.status,
-      );
       await signIn.finalize({
         navigate: () => router.replace("/employee/dashboard"),
       });
     } else {
-      console.log("MFA verification failed. Current status:", signIn.status);
+      console.error("Sign-in attempt not complete:", signIn);
     }
   };
 
+  if (signIn.status === "needs_client_trust") {
+    return (
+      <Screen scroll>
+        <AppText variant="title">Multi-Factor Authentication</AppText>
+        <AppText variant="caption" style={styles.caption}>
+          Please enter the MFA code sent to your email.
+        </AppText>
+        <Card style={{ marginBottom: theme.spacing.md }}>
+          <AppTextInput
+            value={mfaCode}
+            onChangeText={setMfaCode}
+            placeholder="Enter MFA code"
+          />
+          {errors?.fields?.code ? (
+            <AppText variant="error">{errors.fields.code.message}</AppText>
+          ) : null}
+          <PrimaryButton
+            label="Submit MFA Code"
+            onPress={handleMFA}
+            disabled={!canSubmit}
+          />
+        </Card>
+      </Screen>
+    );
+  }
   return (
     <Screen scroll>
       <View style={styles.header}>
@@ -90,67 +135,47 @@ export default function LoginScreen() {
       </View>
 
       <Card>
-        {signIn?.status === "needs_client_trust" ? (
-          <>
-            <AppTextInput
-              value={mfaCode}
-              onChangeText={setMfaCode}
-              placeholder="Enter MFA code"
-            />
-            {errors?.fields?.code ? (
-              <AppText variant="error">{errors.fields.code.message}</AppText>
-            ) : null}
-            <PrimaryButton
-              label="Submit MFA Code"
-              onPress={handleMFA}
-              disabled={!canSubmit}
-            />
-          </>
-        ) : (
-          <>
-            <AppTextInput
-              label="Email"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="you@parkingapp.com"
-              autoCapitalize="none"
-              autoComplete="email"
-              keyboardType="email-address"
-            />
-            {errors?.fields?.identifier ? (
-              <AppText variant="error">
-                {errors.fields.identifier.message}
-              </AppText>
-            ) : null}
-            <AppTextInput
-              label="Password"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="••••••••"
-              secureTextEntry={showPassword}
-            />
+        <>
+          <AppTextInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="you@parkingapp.com"
+            autoCapitalize="none"
+            autoComplete="email"
+            keyboardType="email-address"
+          />
+          {errors.fields.identifier ? (
+            <AppText variant="error">
+              {errors.fields.identifier.message}
+            </AppText>
+          ) : null}
+          <AppTextInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+            secureTextEntry={showPassword}
+          />
 
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              <AppText
-                variant="caption"
-                style={{ marginBottom: theme.spacing.md }}
-              >
-                {showPassword ? "Show password" : "Hide password"}
-              </AppText>
-            </TouchableOpacity>
-            {errors?.fields?.password ? (
-              <AppText variant="error">
-                {errors.fields.password.message}
-              </AppText>
-            ) : null}
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <AppText
+              variant="caption"
+              style={{ marginBottom: theme.spacing.md }}
+            >
+              {showPassword ? "Show password" : "Hide password"}
+            </AppText>
+          </TouchableOpacity>
+          {errors.fields.password ? (
+            <AppText variant="error">{errors.fields.password.message}</AppText>
+          ) : null}
 
-            <PrimaryButton
-              label="Sign in"
-              onPress={handleSignIn}
-              disabled={!canSubmit}
-            />
-          </>
-        )}
+          <PrimaryButton
+            label="Sign in"
+            onPress={handleSignIn}
+            disabled={!canSubmit}
+          />
+        </>
       </Card>
     </Screen>
   );

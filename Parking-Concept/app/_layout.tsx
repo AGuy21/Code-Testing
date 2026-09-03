@@ -3,7 +3,6 @@ import { stackScreenOptions } from "../constants/theme";
 import { ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 
-
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 if (!publishableKey) {
@@ -11,6 +10,9 @@ if (!publishableKey) {
     "Publishable key not found, check .env file or clerk API dashboard",
   );
 }
+
+
+
 
 export default function Layout() {
   return (
@@ -23,5 +25,6 @@ export default function Layout() {
         <Stack.Screen name="park/[lotId]" options={{ title: "Parking Lot" }} />
       </Stack>
     </ClerkProvider>
+
   );
 }
