@@ -40,16 +40,19 @@ export default function LoginScreen() {
     if (!canSubmit) return;
 
     const { error } = await signIn.password({
-      emailAddress: email,
+      identifier: email,
       password,
     });
 
     if (error) {
       console.error(JSON.stringify(error, null, 2));
 
+      // INTERCEPT CRITICAL FIX: If session exists, bypass and route directly!
       if (error?.errors?.[0]?.code === "session_exists") {
-        await signOut();
-        setOtherError("Stale session cleared. Please click Sign in again.");
+        console.log(
+          "User is already logged in natively. Forcing route to dashboard...",
+        );
+        router.replace("/employee/dashboard");
         return;
       }
 
@@ -59,16 +62,16 @@ export default function LoginScreen() {
 
     if (signIn.status === "complete") {
       console.log("Sign-in successful. Current status:", signIn.status);
+
       await signIn.finalize({
-        status: "complete",
-        navigate: ({ session }) => {
-          // If Clerk identifies an incomplete requirement, intercept it here
-          if (session?.currentTask) {
-            router.push("/employee/dashboard");
-            return;
-          }
-          // Otherwise, push to dashboard
-          router.push("/employee/dashboard");
+        navigate: ({ session, decorateUrl }) => {
+          console.log("Sign-in finalized. Navigating to dashboard... 1/2");
+          if (session?.currentTask) return; // let session tasks layer handle it
+
+          // Use decorateUrl and replace instead of push to prevent back-button trace bugs
+          console.log("Sign-in finalized. Navigating to dashboard... 2/2");
+          const targetPath = decorateUrl("/employee/dashboard");
+          router.replace(targetPath as any);
         },
       });
     } else if (signIn.status === "needs_client_trust") {

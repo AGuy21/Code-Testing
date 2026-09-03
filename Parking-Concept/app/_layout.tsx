@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { stackScreenOptions } from "../constants/theme";
-import { ClerkProvider } from "@clerk/expo";
+import { ClerkLoaded, ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -14,14 +14,18 @@ if (!publishableKey) {
 export default function Layout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <Stack screenOptions={{ ...stackScreenOptions }}>
-        <Stack.Screen
-          name="index"
-          options={{ title: "Home", headerShown: false }}
-        />
-        <Stack.Screen name="park/[lotId]" options={{ title: "Parking Lot" }} />
-      </Stack>
+      <ClerkLoaded>
+        <Stack screenOptions={{ ...stackScreenOptions }}>
+          <Stack.Screen
+            name="index"
+            options={{ title: "Home", headerShown: false }}
+          />
+          <Stack.Screen
+            name="park/[lotId]"
+            options={{ title: "Parking Lot" }}
+          />
+        </Stack>
+      </ClerkLoaded>
     </ClerkProvider>
-
   );
 }

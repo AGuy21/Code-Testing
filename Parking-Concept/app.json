@@ -12,31 +12,31 @@
       "associatedDomains": ["applinks:parkingapp.com"]
     },
     "android": {
+      "package": "com.anonymous.ParkingConcept",
+      "predictiveBackGestureEnabled": false,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "plugins": ["expo-secure-store", "expo-router", "@clerk/expo"]
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "parkingapp.com",
+              "pathPrefix": "/park"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
+    "plugins": ["expo-secure-store", "expo-router", "@clerk/expo"],
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "predictiveBackGestureEnabled": false,
-    "intentFilters": [
-      {
-        "action": "VIEW",
-        "data": [
-          {
-            "scheme": "https",
-            "host": "parkingapp.com",
-            "pathPrefix": "/park"
-          }
-        ],
-        "category": ["BROWSABLE", "DEFAULT"]
-      }
-    ],
-    "package": "com.anonymous.ParkingConcept"
+    }
   }
 }

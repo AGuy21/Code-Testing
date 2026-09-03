@@ -2,6 +2,10 @@ import { StyleSheet, View } from "react-native";
 import { AppText, Card, Screen } from "../../componenets/ui";
 import { theme } from "../../constants/theme";
 import { Show } from "@clerk/expo";
+
+import { useAuth } from "@clerk/expo";
+import { useEffect } from "react";
+
 interface DashboardStat {
   label: string;
   value: string;
@@ -15,12 +19,22 @@ const DASHBOARD_STATS: readonly DashboardStat[] = [
 ];
 
 export default function DashboardScreen() {
+
+  const { isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
+
+  useEffect(() => {
+    console.log("isSignedIn:", isSignedIn);
+  }, []);
+
   return (
     <Screen scroll>
       {/* <Show when="signed-in"> */}
       <AppText variant="title">Dashboard</AppText>
       <AppText variant="caption" style={styles.subtitle}>
         Welcome back — here's today at a glance.
+      </AppText>
+      <AppText>
+        {isSignedIn ? "You are signed in." : "You are not signed in."}
       </AppText>
 
       <View style={styles.grid}>
@@ -32,6 +46,7 @@ export default function DashboardScreen() {
             <AppText variant="caption">{stat.label}</AppText>
           </Card>
         ))}
+
       </View>
       {/* </Show> */}
       {/* fallback incase a non signed in user (customer) gets on dashboard page they must be signed in*/}
