@@ -1,6 +1,6 @@
 import { Stack, useRouter } from "expo-router";
 import { stackScreenOptions } from "../../constants/theme";
-import { useAuth } from "@clerk/expo";
+import { ClerkLoading, useAuth } from "@clerk/expo";
 import { useEffect } from "react";
 
 export default function EmployeeLayout() {
@@ -8,13 +8,16 @@ export default function EmployeeLayout() {
   const router = useRouter();
 
   useEffect(() => {
-    // if (!isLoaded) return;
+    if (!isLoaded) {
+      console.log("Loading...")
+      return;
+    }
 
     if (isSignedIn) {
-      console.log("User signed in... routing to dashboard")
+      console.log("User signed in... routing to dashboard");
       router.replace("/employee/dashboard");
     } else if (!isSignedIn) {
-      console.log("User not signed in... routing to login")
+      console.log("User not signed in... routing to login");
       router.replace("/employee/login");
     }
 
