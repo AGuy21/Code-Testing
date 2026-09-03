@@ -9,6 +9,7 @@ import {
   Screen,
 } from "../../componenets/ui";
 import { theme } from "../../constants/theme";
+import { ActivityIndicator } from "react-native";
 
 import { useSignIn } from "@clerk/expo";
 import { useAuth } from "@clerk/expo";
@@ -27,7 +28,12 @@ export default function LoginScreen() {
   const canSubmit = email.trim().length > 0 && password.length > 0;
 
   if (!isLoaded) {
-    return null; // Optionally return a loading spinner here
+    return (
+      <Screen>
+        <AppText variant="title">Loading...</AppText>
+        <ActivityIndicator size="large" color={theme.colors.accent} />
+      </Screen>
+    );
   }
 
   const handleSignIn = async () => {
@@ -58,14 +64,12 @@ export default function LoginScreen() {
         navigate: ({ session }) => {
           // If Clerk identifies an incomplete requirement, intercept it here
           if (session?.currentTask) {
-            router.push('/employee/dashboard');
+            router.push("/employee/dashboard");
             return;
           }
           // Otherwise, push to dashboard
-          router.push('/employee/dashboard');
-        }
-
-        
+          router.push("/employee/dashboard");
+        },
       });
     } else if (signIn.status === "needs_client_trust") {
       const emailCodeFactor = signIn.supportedSecondFactors.find(

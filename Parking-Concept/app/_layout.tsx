@@ -11,9 +11,6 @@ if (!publishableKey) {
   );
 }
 
-
-
-
 export default function Layout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
