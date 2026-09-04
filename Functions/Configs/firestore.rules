@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// Firestore security rules for the Functions app.
+//
+// Apply them either by pasting into:
+//   Firebase console → Firestore Database → Rules
+// or by deploying with the Firebase CLI:
+//   firebase deploy --only firestore:rules
+//
+// Model (see README.md → Data model):
+// - `hangouts` docs are world-readable so the feed/map work for everyone.
+// - `create` requires a signed-in request and validates the essential fields
+//   (the client seeds starter docs on first sync while signed in).
+// - `update` may only touch the RSVP participant arrays.
+// - `delete` is closed — retire hangouts in the console or via an admin
+//   backend instead.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /hangouts/{hangoutId} {
+
+      // Anyone (signed in or not) can browse the feed and the map.
+      allow read: if true;
+
+      // Hosting a hangout requires being signed in. The client writes:
+      // title, description, category, emoji, location, placeLabel, startsAt,
+      // hostName, hostId, baseGoingCount, goingUserIds, passedUserIds,
+      // createdAt.
+      allow create: if request.auth != null
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 500
+        && request.resource.data.location.latitude is number
+        && request.resource.data.location.longitude is number
+        && request.resource.data.placeLabel is string
+        && request.resource.data.startsAt is timestamp
+        && request.resource.data.goingUserIds is list
+        && request.resource.data.goingUserIds.size() == 0
+        && request.resource.data.passedUserIds is list
+        && request.resource.data.passedUserIds.size() == 0;
+
+      // RSVPs (Join / Pass / undo) may only modify the participant arrays.
+      // The client writes the Clerk user id via arrayUnion/arrayRemove.
+      allow update: if request.auth != null
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['goingUserIds', 'passedUserIds'])
+        && request.resource.data.goingUserIds is list
+        && request.resource.data.passedUserIds is list
+        && request.resource.data.goingUserIds.size() <= 1000
+        && request.resource.data.passedUserIds.size() <= 1000;
+
+      allow delete: if false;
+    }
+  }
+}
