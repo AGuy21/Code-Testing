@@ -83,6 +83,7 @@ const config: ExpoConfig = {
     "@clerk/expo",
     "expo-secure-store",
     "expo-web-browser",
+    "@react-native-community/datetimepicker",
     [
       "expo-location",
       {

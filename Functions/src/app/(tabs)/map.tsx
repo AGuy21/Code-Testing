@@ -1,4 +1,4 @@
-import * as Location from "expo-location";
+import { getCurrentFix } from "../../utils/location";
 import { StatusBar } from "expo-status-bar";
 import MapView from "react-native-maps";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -57,24 +57,16 @@ export default function Map() {
     if (locating) return;
     setLocating(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") return;
+      const fix = await getCurrentFix();
+      if (!fix) return;
       setShowsUserLocation(true);
-      const position = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
       mapRef.current?.animateCamera(
         {
-          center: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          },
+          center: { latitude: fix.latitude, longitude: fix.longitude },
           zoom: 15,
         },
         { duration: 500 },
       );
-    } catch (error) {
-      console.warn("Failed to get location:", error);
     } finally {
       setLocating(false);
     }

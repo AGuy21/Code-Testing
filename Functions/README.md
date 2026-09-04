@@ -30,7 +30,7 @@ This README serves two audiences:
 - **Live events feed** — hangouts stream in real time from Firestore snapshots; no pull-to-refresh needed.
 - **Interactive map** — custom emoji pins with live head counts, tap-to-open detail card, "locate me" FAB and auto-fit camera.
 - **One-tap RSVPs** — Join / Pass / undo, persisted per signed-in Clerk user.
-- **10-second host flow** — category + time chip + GPS pin, and the map flies to your new hangout.
+- **10-second host flow** — category, quick chips or a full date & time picker, GPS pin (with Settings guidance when permission/GPS is off), and the map flies to your new hangout.
 - **Self-seeding data** — five starter hangouts are batch-written on first sync when the collection is empty.
 - **Theming** — emerald/slate palette, light & dark, Manrope type ramp, reusable UI kit.
 
@@ -206,7 +206,7 @@ Everything the app calls outside its own code — and exactly where it is wired.
 ### 4. expo-location
 
 - Permission strings are configured in `app.config.ts` (`locationWhenInUsePermission`); the Android manifest requests `ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION`.
-- Used by the locate-me FAB (map camera) and the host flow's "Use my location" pin. Both degrade gracefully when the user denies access.
+- Used by the locate-me FAB (map camera) and the host flow's "Use my location" pin via the shared resolver `src/utils/location.ts`: it checks that location **services** are on, asks for permission once, detects permanent denial and deep-links to app Settings, and retries at low accuracy when the provider hiccups (common on emulators).
 
 ### 5. Outside information & assets used by the corporation
 

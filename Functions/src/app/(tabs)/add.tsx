@@ -1,9 +1,9 @@
-import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useAuth, useUser } from "@clerk/expo";
 import {
   Alert,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -20,25 +20,40 @@ import { useThemePalette } from "../../hooks/useColorTheme";
 import { CATEGORY_META, CATEGORY_ORDER } from "../../constants/Categories";
 import { Fonts } from "../../constants/Fonts";
 import type { HangoutCategory, LatLng } from "../../constants/types/hangout";
+import DateTimePicker, {
+  type DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { formatStartsAt } from "../../utils/hangouts";
+import { getCurrentFix } from "../../utils/location";
 
-interface TimeChip {
-  label: string;
-  dayOffset: number;
-  hour: number;
-  minute?: number;
-}
+type PickerMode = "date" | "time";
 
-const TIME_CHIPS: readonly TimeChip[] = [
-  { label: "Tonight 8 PM", dayOffset: 0, hour: 20 },
-  { label: "Tomorrow noon", dayOffset: 1, hour: 12 },
-  { label: "This weekend", dayOffset: 5, hour: 15 },
+const makeDate = (dayOffset: number, hour: number, minute = 0): Date => {
+  const value = new Date();
+  value.setDate(value.getDate() + dayOffset);
+  value.setHours(hour, minute, 0, 0);
+  return value;
+};
+
+/** Quick-start options; anything else goes through the native picker. */
+const QUICK_TIMES: readonly { label: string; value: () => Date }[] = [
+  { label: "Tonight 8 PM", value: () => makeDate(0, 20) },
+  { label: "Tomorrow noon", value: () => makeDate(1, 12) },
+  { label: "This weekend", value: () => makeDate(5, 15) },
 ];
 
-const toStartsAt = (chip: TimeChip): string => {
-  const date = new Date();
-  date.setDate(date.getDate() + chip.dayOffset);
-  date.setHours(chip.hour, chip.minute ?? 0, 0, 0);
-  return date.toISOString();
+/** Keeps the chosen time of day, swaps in a new calendar date. */
+const mergeDateKeepTime = (source: Date, base: Date): Date => {
+  const next = new Date(base);
+  next.setFullYear(source.getFullYear(), source.getMonth(), source.getDate());
+  return next;
+};
+
+/** Keeps the chosen calendar date, swaps in a new time of day. */
+const mergeTimeKeepDate = (source: Date, base: Date): Date => {
+  const next = new Date(base);
+  next.setHours(source.getHours(), source.getMinutes(), 0, 0);
+  return next;
 };
 
 export default function Add() {
@@ -52,7 +67,10 @@ export default function Add() {
   const [description, setDescription] = useState("");
   const [placeLabel, setPlaceLabel] = useState("");
   const [category, setCategory] = useState<HangoutCategory>("chill");
-  const [timeIndex, setTimeIndex] = useState(0);
+  const [date, setDate] = useState(() => makeDate(0, 20));
+  const [draft, setDraft] = useState<Date>(() => makeDate(0, 20));
+  const [activeQuick, setActiveQuick] = useState<number | null>(0);
+  const [showPicker, setShowPicker] = useState<PickerMode | null>(null);
   const [location, setLocation] = useState<LatLng | null>(null);
   const [locating, setLocating] = useState(false);
 
@@ -63,26 +81,42 @@ export default function Add() {
     if (locating) return;
     setLocating(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          "Location needed",
-          "Allow location access so your hangout can be pinned on the map.",
-        );
-        return;
-      }
-      const position = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-      });
-      setLocation({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      });
-    } catch (error) {
-      console.warn("Failed to get location:", error);
+      const fix = await getCurrentFix();
+      if (fix) setLocation(fix);
     } finally {
       setLocating(false);
     }
+  };
+
+  const openPicker = (mode: PickerMode) => {
+    setDraft(date);
+    setShowPicker(mode);
+  };
+
+  const confirmIosPicker = () => {
+    if (!showPicker) return;
+    if (showPicker === "date") {
+      // Chain date → time so both parts are always chosen.
+      setShowPicker("time");
+      return;
+    }
+    setDate(draft);
+    setActiveQuick(null);
+    setShowPicker(null);
+  };
+
+  const handlePickerChange = (event: DateTimePickerEvent, selected?: Date) => {
+    setShowPicker(null); // Android dialogs close themselves.
+    if (event.type !== "set" || !selected) return;
+    if (showPicker === "date") {
+      setDraft(mergeDateKeepTime(selected, draft));
+      setShowPicker("time");
+      return;
+    }
+    const next = mergeTimeKeepDate(selected, draft);
+    setDraft(next);
+    setDate(next);
+    setActiveQuick(null);
   };
 
   const handleSubmit = async () => {
@@ -95,7 +129,7 @@ export default function Add() {
         emoji: CATEGORY_META[category].emoji,
         location,
         placeLabel: placeLabel.trim() || "Shared pin",
-        startsAt: toStartsAt(TIME_CHIPS[timeIndex]),
+        startsAt: date.toISOString(),
         hostName: user?.firstName ?? user?.username ?? "You",
       });
       focusHangout(created.id);
@@ -164,12 +198,15 @@ export default function Add() {
 
       <Text style={[styles.fieldLabel, { color: palette.textMuted }]}>When</Text>
       <View style={styles.chipRow}>
-        {TIME_CHIPS.map((chip, index) => {
-          const isSelected = index === timeIndex;
+        {QUICK_TIMES.map((option, index) => {
+          const isSelected = activeQuick === index;
           return (
             <Pressable
-              key={chip.label}
-              onPress={() => setTimeIndex(index)}
+              key={option.label}
+              onPress={() => {
+                setActiveQuick(index);
+                setDate(option.value());
+              }}
               style={[
                 styles.chip,
                 {
@@ -184,12 +221,71 @@ export default function Add() {
                   { color: isSelected ? "#0E1713" : palette.text },
                 ]}
               >
-                {chip.label}
+                {option.label}
               </Text>
             </Pressable>
           );
         })}
+        <Pressable
+          onPress={() => openPicker("date")}
+          style={[
+            styles.chip,
+            {
+              backgroundColor: activeQuick === null ? palette.primary : palette.surfaceElevated,
+              borderColor: activeQuick === null ? palette.borderStrong : palette.border,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.chipText,
+              { color: activeQuick === null ? "#0E1713" : palette.text },
+            ]}
+          >
+            📅 Pick date & time
+          </Text>
+        </Pressable>
       </View>
+      <Text style={[styles.selectedTime, { color: palette.textMuted }]}>
+        🕒 Starts {formatStartsAt(date.toISOString())}
+      </Text>
+
+      {showPicker !== null && Platform.OS === "android" ? (
+        <DateTimePicker
+          value={draft}
+          mode={showPicker}
+          is24Hour={false}
+          onChange={handlePickerChange}
+        />
+      ) : null}
+      {showPicker !== null && Platform.OS === "ios" ? (
+        <View
+          style={[
+            styles.pickerSheet,
+            { backgroundColor: palette.surface, borderColor: palette.border },
+          ]}
+        >
+          <DateTimePicker
+            value={draft}
+            mode={showPicker}
+            display="spinner"
+            is24Hour={false}
+            minimumDate={showPicker === "date" ? new Date() : undefined}
+            onChange={(_event, selected) => {
+              if (selected) setDraft(selected);
+            }}
+          />
+          <View style={styles.pickerActions}>
+            <PrimaryButton
+              label="Cancel"
+              variant="ghost"
+              onPress={() => setShowPicker(null)}
+              style={styles.pickerButton}
+            />
+            <PrimaryButton label="Set" onPress={confirmIosPicker} style={styles.pickerButton} />
+          </View>
+        </View>
+      ) : null}
 
       <Text style={[styles.fieldLabel, { color: palette.textMuted }]}>Where</Text>
       <View style={styles.locationRow}>
@@ -269,6 +365,26 @@ const styles = StyleSheet.create({
   chipText: {
     fontFamily: Fonts.SemiBold,
     fontSize: 13,
+  },
+  selectedTime: {
+    fontFamily: Fonts.Medium,
+    fontSize: 13,
+    marginBottom: 18,
+    marginTop: -10,
+  },
+  pickerSheet: {
+    borderRadius: 20,
+    borderWidth: 1,
+    marginBottom: 18,
+    padding: 8,
+  },
+  pickerActions: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 4,
+  },
+  pickerButton: {
+    flex: 1,
   },
   locationRow: {
     alignItems: "center",
