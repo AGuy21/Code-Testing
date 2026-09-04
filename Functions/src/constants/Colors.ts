@@ -3,7 +3,7 @@
 // Keeps the original green identity (primary + secondary) and adds
 // surface / border / accent tokens for the modular UI kit.
 
-import { ColorsType } from "./Functions/src/constants/types/ColorsTypes";
+import { ColorsType } from "./types/ColorsTypes";
 
 export const Colors: ColorsType = {
     light: {

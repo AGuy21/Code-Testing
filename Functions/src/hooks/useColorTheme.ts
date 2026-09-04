@@ -1,6 +1,6 @@
 import { useColorScheme } from 'react-native';
 import { useState, useEffect } from 'react';
-import { Colors } from "../constants/";
+import { Colors } from "../constants/Colors";
 import type { ThemePalette } from '../constants/types/ColorsTypes';
 
 type SchemeName = 'light' | 'dark';
