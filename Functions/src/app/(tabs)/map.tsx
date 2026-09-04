@@ -31,6 +31,7 @@ export default function Map() {
     goingCount,
     focusedHangoutId,
     clearFocus,
+    syncError,
   } = useHangouts();
 
   const [selectedId, setSelectedId] = useState<HangoutId | null>(null);
@@ -102,7 +103,9 @@ export default function Map() {
       <View style={[styles.headerOverlay, { top: insets.top + 8 }]}>
         <Card variant="accent" style={styles.headerCard}>
           <AppText variant="subtitle">{hangouts.length} hangouts nearby</AppText>
-          <AppText variant="caption">Tap a pin to see details and RSVP</AppText>
+          <AppText variant="caption">
+            {syncError ? `⚠️ ${syncError}` : "Tap a pin to see details and RSVP"}
+          </AppText>
         </Card>
       </View>
 

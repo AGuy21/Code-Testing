@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, View } from "react-native";
-import { AppText, Screen } from "../../components/ui";
+import { AppText, Card, Screen } from "../../components/ui";
 import { HangoutCard } from "../../components/hangouts/HangoutCard";
 import { useHangouts } from "../../hooks/useHangouts";
 
@@ -8,7 +8,7 @@ function ListSeparator() {
 }
 
 export default function HomeScreen() {
-  const { hangouts, isLoading } = useHangouts();
+  const { hangouts, isLoading, syncError } = useHangouts();
 
   return (
     <Screen scroll>
@@ -18,6 +18,12 @@ export default function HomeScreen() {
           ? "Syncing hangouts…"
           : `${hangouts.length} hangouts happening around you — say if you're in`}
       </AppText>
+
+      {syncError ? (
+        <Card variant="accent" style={styles.syncBanner}>
+          <AppText variant="caption">⚠️ {syncError}</AppText>
+        </Card>
+      ) : null}
 
       <FlatList
         data={hangouts}
@@ -31,6 +37,9 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  syncBanner: {
+    marginBottom: 16,
+  },
   subtitle: {
     marginBottom: 20,
     marginTop: 6,

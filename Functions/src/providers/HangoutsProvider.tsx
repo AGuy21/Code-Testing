@@ -51,10 +51,15 @@ export interface HangoutsContextValue {
   canRsvp: boolean;
   /** True until the first Firestore snapshot arrives. */
   isLoading: boolean;
+  /** Human-readable message when the live Firestore sync fails (null when healthy). */
+  syncError: string | null;
+  /** True while a newly created hangout is being written to Firestore. */
+  isSubmitting: boolean;
   join: (id: HangoutId) => void;
   pass: (id: HangoutId) => void;
   clearRsvp: (id: HangoutId) => void;
-  addHangout: (input: NewHangoutInput) => Hangout;
+  /** Writes the hangout to Firestore; resolves once the write succeeds. */
+  addHangout: (input: NewHangoutInput) => Promise<Hangout>;
   /** Head count including the current user's "going" RSVP. */
   goingCount: (id: HangoutId) => number;
   /** Set from the Events list so the map tab can focus a marker. */
@@ -118,12 +123,33 @@ function mapDocToEntry(id: string, data: HangoutDoc): HangoutEntry {
   };
 }
 
+/** Sort key for a hangout: epoch ms of startsAt; unknown times sort last. */
+function startTime(iso: string): number {
+  const time = Date.parse(iso);
+  return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
+}
+
+/** Turns a Firestore error into a short, actionable message for the UI. */
+function describeFirestoreError(error: unknown): string {
+  const code = (error as { code?: string } | null)?.code ?? "";
+  if (code.includes("permission-denied")) {
+    return "Firestore permissions blocked the sync — publish Configs/firestore.rules.";
+  }
+  if (code.includes("unavailable") || code.includes("failed-precondition")) {
+    return "Can't reach Firestore right now — showing the last known hangouts.";
+  }
+  return "Live sync failed — check your connection and Firebase setup.";
+}
+
 // PROVIDER_BELOW
 
 export function HangoutsProvider({ children }: { children: ReactNode }) {
   const { userId } = useAuth();
-  const [entries, setEntries] = useState<HangoutEntry[]>([]);
+  const [snapshotEntries, setSnapshotEntries] = useState<HangoutEntry[]>([]);
+  const [pendingEntries, setPendingEntries] = useState<HangoutEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [focusedHangoutId, setFocusedHangoutId] = useState<HangoutId | null>(null);
 
   const canRsvp = Boolean(userId);
@@ -137,20 +163,44 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onSnapshot(
       hangoutsQuery,
       (snapshot) => {
-        setEntries(
-          snapshot.docs.map((docSnap) =>
-            mapDocToEntry(docSnap.id, docSnap.data() as HangoutDoc),
-          ),
+        const docs = snapshot.docs.map((docSnap) =>
+          mapDocToEntry(docSnap.id, docSnap.data() as HangoutDoc),
+        );
+        setSnapshotEntries(docs);
+        // Retire optimistic copies the server has now confirmed.
+        const confirmed = new Set(docs.map((entry) => entry.hangout.id));
+        setPendingEntries((prev) =>
+          prev.length === 0
+            ? prev
+            : prev.filter((entry) => !confirmed.has(entry.hangout.id)),
         );
         setIsLoading(false);
+        setSyncError(null);
       },
       (error) => {
         console.warn("Failed to load hangouts:", error);
+        setSyncError(describeFirestoreError(error));
         setIsLoading(false);
       },
     );
     return unsubscribe;
   }, []);
+
+  // Merged view: server docs plus optimistic writes the server has not
+  // confirmed yet, re-sorted by start time so the feed/map stay ordered.
+  const entries = useMemo(() => {
+    if (pendingEntries.length === 0) return snapshotEntries;
+    const confirmed = new Set(
+      snapshotEntries.map((entry) => entry.hangout.id),
+    );
+    const merged = [
+      ...snapshotEntries,
+      ...pendingEntries.filter((entry) => !confirmed.has(entry.hangout.id)),
+    ];
+    return merged.sort(
+      (a, b) => startTime(a.hangout.startsAt) - startTime(b.hangout.startsAt),
+    );
+  }, [snapshotEntries, pendingEntries]);
 
   // Seed starter hangouts once, when the collection is still empty.
   const hasSeededRef = useRef(false);
@@ -208,7 +258,10 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
   const clearRsvp = useCallback((id: HangoutId) => setRsvp(id, null), [setRsvp]);
 
   const addHangout = useCallback(
-    (input: NewHangoutInput): Hangout => {
+    async (input: NewHangoutInput): Promise<Hangout> => {
+      if (!userId) {
+        throw new Error("Sign in to host a hangout.");
+      }
       const id = `hangout-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       const hangout: Hangout = {
         id,
@@ -220,26 +273,47 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         placeLabel: input.placeLabel,
         startsAt: input.startsAt,
         hostName: input.hostName ?? "You",
-        hostId: userId ?? undefined,
+        hostId: userId,
         goingCount: 1,
       };
-      // The real-time snapshot picks this up once written.
-      setDoc(doc(db, "hangouts", id), {
-        title: input.title,
-        description: input.description,
-        category: input.category,
-        emoji: input.emoji,
-        location: input.location,
-        placeLabel: input.placeLabel,
-        startsAt: Timestamp.fromDate(new Date(input.startsAt)),
-        hostName: input.hostName ?? "You",
-        hostId: userId ?? null,
+      const entry: HangoutEntry = {
+        hangout,
         baseGoingCount: 1,
         goingUserIds: [],
         passedUserIds: [],
-        createdAt: serverTimestamp(),
-      }).catch((error) => console.warn("Failed to save hangout:", error));
-      return hangout;
+      };
+      // Show the pin immediately; the snapshot confirms it (or we roll back).
+      setPendingEntries((prev) => [...prev, entry]);
+      setIsSubmitting(true);
+      try {
+        await setDoc(doc(db, "hangouts", id), {
+          title: input.title,
+          description: input.description,
+          category: input.category,
+          emoji: input.emoji,
+          location: input.location,
+          placeLabel: input.placeLabel,
+          startsAt: Timestamp.fromDate(new Date(input.startsAt)),
+          hostName: input.hostName ?? "You",
+          hostId: userId,
+          baseGoingCount: 1,
+          goingUserIds: [],
+          passedUserIds: [],
+          createdAt: serverTimestamp(),
+        });
+        return hangout;
+      } catch (error) {
+        // Roll back the optimistic entry so the UI never shows a ghost pin.
+        setPendingEntries((prev) =>
+          prev.filter((item) => item.hangout.id !== id),
+        );
+        console.warn("Failed to save hangout:", error);
+        throw error instanceof Error
+          ? error
+          : new Error("Could not publish your hangout. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
     },
     [userId],
   );
@@ -278,6 +352,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       rsvps,
       canRsvp,
       isLoading,
+      syncError,
+      isSubmitting,
       join,
       pass,
       clearRsvp,
@@ -292,6 +368,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       rsvps,
       canRsvp,
       isLoading,
+      syncError,
+      isSubmitting,
       join,
       pass,
       clearRsvp,

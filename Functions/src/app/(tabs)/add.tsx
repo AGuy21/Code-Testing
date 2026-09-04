@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { useUser } from "@clerk/expo";
+import { useAuth, useUser } from "@clerk/expo";
 import {
   Alert,
   Pressable,
@@ -45,7 +45,8 @@ export default function Add() {
   const router = useRouter();
   const palette = useThemePalette();
   const { user } = useUser();
-  const { addHangout, focusHangout } = useHangouts();
+  const { isSignedIn } = useAuth();
+  const { addHangout, focusHangout, isSubmitting } = useHangouts();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -55,7 +56,8 @@ export default function Add() {
   const [location, setLocation] = useState<LatLng | null>(null);
   const [locating, setLocating] = useState(false);
 
-  const canSubmit = title.trim().length > 0 && location !== null;
+  const canSubmit =
+    title.trim().length > 0 && location !== null && !isSubmitting;
 
   const handleUseLocation = async () => {
     if (locating) return;
@@ -83,20 +85,28 @@ export default function Add() {
     }
   };
 
-  const handleSubmit = () => {
-    if (!canSubmit || !location) return;
-    const created = addHangout({
-      title: title.trim(),
-      description: description.trim() || "No details yet — just show up!",
-      category,
-      emoji: CATEGORY_META[category].emoji,
-      location,
-      placeLabel: placeLabel.trim() || "Shared pin",
-      startsAt: toStartsAt(TIME_CHIPS[timeIndex]),
-      hostName: user?.firstName ?? user?.username ?? "You",
-    });
-    focusHangout(created.id);
-    router.push("/(tabs)/map");
+  const handleSubmit = async () => {
+    if (!canSubmit || !location || isSubmitting) return;
+    try {
+      const created = await addHangout({
+        title: title.trim(),
+        description: description.trim() || "No details yet — just show up!",
+        category,
+        emoji: CATEGORY_META[category].emoji,
+        location,
+        placeLabel: placeLabel.trim() || "Shared pin",
+        startsAt: toStartsAt(TIME_CHIPS[timeIndex]),
+        hostName: user?.firstName ?? user?.username ?? "You",
+      });
+      focusHangout(created.id);
+      router.push("/(tabs)/map");
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message.length > 0
+          ? error.message
+          : "Something went wrong — please try again.";
+      Alert.alert("Couldn't publish your hangout", message);
+    }
   };
 
   return (
@@ -208,11 +218,16 @@ export default function Add() {
       />
 
       <PrimaryButton
-        label="Pin it on the map"
-        onPress={handleSubmit}
+        label={isSubmitting ? "Pinning…" : "Pin it on the map"}
+        onPress={() => void handleSubmit()}
         disabled={!canSubmit}
         style={styles.submit}
       />
+      {isSignedIn ? null : (
+        <Text style={[styles.hint, { color: palette.textMuted }]}>
+          You're signed out — sign in to publish your hangout
+        </Text>
+      )}
       {!location ? (
         <Text style={[styles.hint, { color: palette.textMuted }]}>
           Add a location pin to publish your hangout

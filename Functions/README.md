@@ -111,8 +111,10 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
   `SEED_HANGOUTS` once (guarded by a ref so it never re-runs).
 - **RSVPs** — the Clerk `userId` is unioned/removed from `goingUserIds` /
   `passedUserIds`; the visible head count is `baseGoingCount + (my RSVP)`.
-- **Hosting** — `addHangout` writes a doc with `Timestamp.fromDate(startsAt)`
-  and `serverTimestamp()` for `createdAt`; the snapshot loop picks it up.
+- **Hosting** — `addHangout` shows the new pin optimistically, writes the doc
+  (`Timestamp.fromDate(startsAt)`, `serverTimestamp()` for `createdAt`), then
+  reconciles with the snapshot and rolls back if the write fails. Sync and
+  write failures surface in the UI (`syncError` banner, submit alert).
 
 ### Data model — collection `hangouts`
 
