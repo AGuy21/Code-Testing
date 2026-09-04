@@ -70,7 +70,7 @@ Functions/
     │   └── useColorTheme.ts   #   palette per scheme (+ useThemePalette)
     ├── components/
     │   ├── ui/                #   AppText · AppTextInput · Badge · Card · PrimaryButton · Screen
-    │   ├── hangouts/          #   HangoutCard · RsvpButtons
+    │   ├── hangouts/          #   HangoutCard (ticket card) · RsvpButtons (segmented pill)
     │   └── map/               #   HangoutMap · HangoutMarker
     ├── constants/             #   Colors · Fonts · Categories · types/
     ├── data/hangouts.ts       #   seed hangouts + initial map region
@@ -257,6 +257,8 @@ npm start          # Metro dev server
 
 **UI kit** — always import from `components/ui`: `AppText` · `AppTextInput` · `Badge` · `Card` (incl. `accent` variant) · `PrimaryButton` (`primary` / `outline` / `ghost`) · `Screen` (scrollable wrapper).
 
+**Feed card anatomy** — time eyebrow (emerald when "Today", muted otherwise) → title → one-line context (category · place · host) → clamped description → hairline footer with a going-count dot and the segmented RSVP pill. The whole card is pressable and opens the hangout on the map; the Profile tab reuses the same emoji-tile rows for RSVPs and hosting.
+
 **Category system** — the emoji is the brand device: chill 🛋️ · food 🍜 · sports 🏀 · party 🎉 · study 📚. The same glyph appears in cards, chips and map pins.
 
 **Voice** — short, warm, lowercase-friendly: "Pin it, and others can say if they want to join".
@@ -290,6 +292,8 @@ npm start          # Metro dev server
 ## Roadmap
 
 - Chat tab — Firestore subcollection per hangout
+- Private Functions - Local sending of location for hangouts privately
+Add a privacy field to each event. Private events should support three access types: Invite Only, Request to Join, and Friends Only. Users without access can either not see the event at all, or only see limited information such as the event name, general neighborhood, category, and number attending. The exact location should only become visible after the user is approved. Hosts should be able to invite users directly, approve/deny join requests, remove guests, allow or disable +1s, and optionally generate a private invite link/code.
 - Places search — Google **Places API** in the host flow (beyond GPS-only pins)
 - Push notifications (FCM) when someone joins your hangout
 - Cloud Functions for counters, moderation and auto-expiry of past hangouts

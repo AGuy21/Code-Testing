@@ -126,9 +126,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: "700",
     textAlign: "center",
-    fontFamily: Fonts.Bold,
+    fontFamily: Fonts.Regular,
     marginBottom: 10,
   },
   subtitle: {
