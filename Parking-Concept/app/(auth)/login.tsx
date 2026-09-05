@@ -95,6 +95,12 @@ export default function LoginScreen() {
           onPress={handleSignIn} 
           disabled={!canSubmit} 
         />
+        <PrimaryButton 
+          label="Go to Home" 
+          onPress={() => router.replace("/")} 
+          variant="outline" 
+          style={{ marginTop: theme.spacing.sm }} 
+        />
       </Card>
     </Screen>
   );
