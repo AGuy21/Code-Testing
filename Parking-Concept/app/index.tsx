@@ -63,7 +63,7 @@ export default function HomeScreen() {
         <NavTile
           title="Employee Login"
           subtitle="Staff dashboard and lot management"
-          href="/employee/login"
+          href="/login"
         />
 
         <Divider />

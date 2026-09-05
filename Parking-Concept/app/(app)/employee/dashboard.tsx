@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { AppText, Card, Screen } from "../../componenets/ui";
-import { theme } from "../../constants/theme";
+import { AppText, Card, PrimaryButton, Screen } from "../../../componenets/ui";
+import { theme } from "../../../constants/theme";
 import { Show } from "@clerk/expo";
 
 import { useAuth } from "@clerk/expo";
@@ -20,7 +20,7 @@ const DASHBOARD_STATS: readonly DashboardStat[] = [
 
 export default function DashboardScreen() {
 
-  const { isSignedIn } = useAuth({ treatPendingAsSignedOut: false });
+  const { isSignedIn, signOut } = useAuth({ treatPendingAsSignedOut: false });
 
   useEffect(() => {
     console.log("isSignedIn:", isSignedIn);
@@ -50,12 +50,19 @@ export default function DashboardScreen() {
       </View>
       {/* </Show> */}
       {/* fallback incase a non signed in user (customer) gets on dashboard page they must be signed in*/}
-      <Show when="signed-in">
-        <AppText variant="title">Not signed in</AppText>
-        <AppText variant="caption" style={styles.subtitle}>
-          Please sign in to view your dashboard.
-        </AppText>
-      </Show>
+      {!isSignedIn && (
+        <View style={{ marginTop: theme.spacing.lg }}>
+          <AppText variant="title">Not signed in</AppText>
+          <AppText variant="caption" style={styles.subtitle}>
+            Please sign in to view your dashboard.
+          </AppText>
+        </View>
+      )}
+
+      <PrimaryButton
+        label="Sign Out"
+        onPress={signOut}
+      />
     </Screen>
   );
 }
