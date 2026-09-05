@@ -1,4 +1,4 @@
-import MapView, { type Region } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, type Region } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import type { RefObject } from "react";
 import type { Hangout, HangoutId } from "../../constants/types/hangout";
@@ -26,6 +26,7 @@ export function HangoutMap({
 }: HangoutMapProps) {
   return (
     <MapView
+      provider={PROVIDER_GOOGLE}
       ref={mapRef}
       style={StyleSheet.absoluteFill}
       initialRegion={initialRegion}

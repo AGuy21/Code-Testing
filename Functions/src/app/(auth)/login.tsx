@@ -5,6 +5,7 @@ import {
   Pressable,
   Image,
   ActivityIndicator,
+  ImageBackground,
 } from "react-native";
 import { useEffect } from "react";
 import { useRouter } from "expo-router";
@@ -47,8 +48,20 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <View style={[styles.card, { borderColor: secondary }]}>
+    <ImageBackground
+      source={require("../../../assets/background.png")}
+      style={[styles.container, { backgroundColor }]}
+    >
+      <View
+        style={[
+          styles.card,
+          {
+            borderColor: secondary,
+            backgroundColor: backgroundColor,
+            opacity: 0.9,
+          },
+        ]}
+      >
         <View style={styles.logoWrap}>
           <Image
             source={require("../../../assets/TextLogo.png")}
@@ -56,33 +69,37 @@ export default function LoginScreen() {
             resizeMode="contain"
           />
         </View>
+        <View style={[ styles.card, { borderColor: secondary, margin: 0, padding: 0, backgroundColor: "transparent" } ]}>
+          <Text style={[styles.eyebrow, { color: primary }]}>Welcome!</Text>
+          <Text style={[styles.title, { color: textColor }]}>
+            Let’s get you into your next hangout!
+          </Text>
+          <Text style={[styles.subtitle, { color: textColor }]}>
+            Sign in to enjoy the most convenient and secure experience finding
+            hangouts near you!
+          </Text>
 
-        <Text style={[styles.eyebrow, { color: primary }]}>Welcome!</Text>
-        <Text style={[styles.title, { color: textColor }]}>
-          Let’s get you into your next hangout!
-        </Text>
-        <Text style={[styles.subtitle, { color: textColor }]}>
-          Sign in to enjoy the most convenient and secure experience finding hangouts near you!
-        </Text>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            {
-              backgroundColor: primary,
-              opacity: pressed ? 0.9 : 1,
-            },
-          ]}
-          onPress={handleSignIn}
-        >
-          <Text style={[styles.buttonText, { color: "#121212" }]}>Sign In</Text>
-        </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              {
+                backgroundColor: primary,
+                opacity: pressed ? 0.9 : 1,
+              },
+            ]}
+            onPress={handleSignIn}
+          >
+            <Text style={[styles.buttonText, { color: "#121212" }]}>
+              Sign In
+            </Text>
+          </Pressable>
+        </View>
 
         <Text style={[styles.meta, { color: secondary }]}>
           Secure access powered by Clerk
         </Text>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 

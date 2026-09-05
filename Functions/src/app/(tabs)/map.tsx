@@ -37,7 +37,7 @@ export default function Map() {
   const [selectedId, setSelectedId] = useState<HangoutId | null>(null);
   const [showsUserLocation, setShowsUserLocation] = useState(false);
   const [locating, setLocating] = useState(false);
-  const mapRef = useRef<MapView | null>(null);
+  const mapRef = useRef<MapView>(null);
 
   // Focus a marker requested from another tab (e.g. "View on map").
   useEffect(() => {
