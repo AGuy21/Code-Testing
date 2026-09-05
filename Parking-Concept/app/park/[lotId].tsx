@@ -8,11 +8,6 @@ interface LotStat {
   value: string;
 }
 
-const LOT_STATS: readonly LotStat[] = [
-  { label: "Hourly rate", value: "$3.50" },
-  { label: "Open spots", value: "24" },
-  { label: "Type", value: "Compact" },
-];
 
 export default function ParkingLotScreen() {
   const { lotId } = useLocalSearchParams<{ lotId: string }>();
@@ -21,6 +16,8 @@ export default function ParkingLotScreen() {
   const handlePay = () => {
     Alert.alert("Payment", `Starting payment for lot ${displayLotId}…`);
   };
+
+  // const LOT_STATS
 
   return (
     <Screen scroll>
@@ -35,14 +32,14 @@ export default function ParkingLotScreen() {
       </Card>
 
       <View style={styles.statsRow}>
-        {LOT_STATS.map((stat) => (
+        {/* {LOT_STATS.map((stat) => (
           <Card key={stat.label} style={styles.statCard}>
             <AppText variant="subtitle" style={styles.statValue}>
               {stat.value}
             </AppText>
             <AppText variant="caption">{stat.label}</AppText>
           </Card>
-        ))}
+        ))} */}
       </View>
 
       <PrimaryButton label="Pay now" onPress={handlePay} />
