@@ -2,9 +2,9 @@ import { db } from "../../Configs/FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { LotDataType } from "../../constants/types/LotDataTypes";
 
-export default async function getLotData(lotId: string) {
+export default async function getLotData(lotId: string): Promise<LotDataType | null> {
   try {
-    const lotRef = doc(db, "lots", lotId);
+    const lotRef = doc(db, "Lots", lotId);
     const lotSnap = await getDoc(lotRef);
 
     if (lotSnap.exists()) {
