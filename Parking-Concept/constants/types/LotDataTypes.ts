@@ -1,7 +1,8 @@
-
+import { Timestamp } from "firebase/firestore";
 export interface Car {
     Plate: string;
-    Time: string;
+    Start: Timestamp;
+    Password: string;
 }
 export interface LotDataType {
     Cars: Car[]

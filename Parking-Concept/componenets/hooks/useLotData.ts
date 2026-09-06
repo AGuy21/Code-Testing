@@ -21,13 +21,16 @@ export default function useLotData(lotId: string) {
             collection(db, "Lots", lotId, "Cars"),
           );
 
+          let count = 0;
           const fetchedCars: Car[] = [];
           collectionSnap.forEach((doc) => {
+            count += 1
             fetchedCars.push(doc.data() as Car);
           });
 
           setLotData({
             ...mainData,
+            TakenSpots: count,
             Cars: fetchedCars,
           } as LotDataType);
         } else {

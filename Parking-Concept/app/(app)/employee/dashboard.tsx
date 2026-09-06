@@ -1,10 +1,13 @@
-import { StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { AppText, Card, PrimaryButton, Screen } from "../../../componenets/ui";
 import { theme } from "../../../constants/theme";
 
 import { useAuth } from "@clerk/expo";
-import  LoadingScreen  from "../../../componenets/ui/LoadingScreen"
+import LoadingScreen from "../../../componenets/ui/LoadingScreen";
 import useLotData from "../../../componenets/hooks/useLotData";
+import CarListItem from "../../../componenets/ui/CarListItem";
+import { Car } from "../../../constants/types/LotDataTypes";
+import { SafeAreaView } from "react-native-safe-area-context";
 interface DashboardStat {
   label: string;
   value: number | string;
@@ -12,10 +15,10 @@ interface DashboardStat {
 
 export default function DashboardScreen() {
   const { isSignedIn, signOut } = useAuth({ treatPendingAsSignedOut: false });
-  const { loading, lotData } = useLotData("Lot1")
-  console.log(loading, lotData)
+  const { loading, lotData } = useLotData("Lot1");
+  console.log(loading, lotData);
   if (loading) {
-    return <LoadingScreen/>
+    return <LoadingScreen />;
   }
 
   const DASHBOARD_STATS: readonly DashboardStat[] = [
@@ -25,15 +28,14 @@ export default function DashboardScreen() {
     { label: "Open tickets", value: "3" },
   ];
 
+  const renderItem = ({ item }: { item: Car }) => <CarListItem car={item} />;
+
   return (
     <Screen scroll>
       {/* <Show when="signed-in"> */}
       <AppText variant="title">Dashboard</AppText>
       <AppText variant="caption" style={styles.subtitle}>
         Welcome back — here's today at a glance.
-      </AppText>
-      <AppText>
-        {isSignedIn ? "You are signed in." : "You are not signed in."}
       </AppText>
 
       <View style={styles.grid}>
@@ -46,16 +48,14 @@ export default function DashboardScreen() {
           </Card>
         ))}
       </View>
-      {/* </Show> */}
-      {/* fallback incase a non signed in user (customer) gets on dashboard page they must be signed in*/}
-      {!isSignedIn && (
-        <View style={{ marginTop: theme.spacing.lg }}>
-          <AppText variant="title">Not signed in</AppText>
-          <AppText variant="caption" style={styles.subtitle}>
-            Please sign in to view your dashboard.
-          </AppText>
-        </View>
-      )}
+
+      <SafeAreaView>
+        <FlatList
+          data={lotData.Cars}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.Plate}
+        />
+      </SafeAreaView>
 
       <PrimaryButton label="Sign Out" onPress={signOut} />
     </Screen>
