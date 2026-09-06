@@ -1,30 +1,42 @@
 import { StyleSheet, View } from "react-native";
 import { AppText, Card, PrimaryButton, Screen } from "../../../componenets/ui";
 import { theme } from "../../../constants/theme";
-import { Show } from "@clerk/expo";
 
 import { useAuth } from "@clerk/expo";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import getLotData from "../../../componenets/functions/getLotData";
+import { LotDataType } from "../../../constants/types/LotDataTypes";
+import { LotDummyData } from "../../../constants/data/LotDummyData";
+import  LoadingScreen  from "../../../componenets/ui/LoadingScreen"
 interface DashboardStat {
   label: string;
-  value: string;
+  value: number | string;
 }
 
-const DASHBOARD_STATS: readonly DashboardStat[] = [
-  { label: "Active lots", value: "6" },
-  { label: "Free spots", value: "41" },
-  { label: "Revenue today", value: "$862" },
-  { label: "Open tickets", value: "3" },
-];
-
 export default function DashboardScreen() {
-
   const { isSignedIn, signOut } = useAuth({ treatPendingAsSignedOut: false });
+  const [lotData, setLotData] = useState<LotDataType | null>(LotDummyData);
 
   useEffect(() => {
-    console.log("isSignedIn:", isSignedIn);
+    const fetchLotData = async () => {
+      const data = await getLotData("Lot1");
+      console.log("Fetched lot data:", data);
+      setLotData(data);
+    };
+
+    fetchLotData();
   }, []);
+
+  if (!lotData) {
+    return <LoadingScreen/>
+  }
+
+  const DASHBOARD_STATS: readonly DashboardStat[] = [
+    { label: "Total spots", value: lotData?.TotalSpots },
+    { label: "Taken spots", value: lotData.TakenSpots },
+    { label: "Free spots", value: lotData?.TotalSpots - lotData?.TakenSpots },
+    { label: "Open tickets", value: "3" },
+  ];
 
   return (
     <Screen scroll>
@@ -46,7 +58,6 @@ export default function DashboardScreen() {
             <AppText variant="caption">{stat.label}</AppText>
           </Card>
         ))}
-
       </View>
       {/* </Show> */}
       {/* fallback incase a non signed in user (customer) gets on dashboard page they must be signed in*/}
@@ -59,10 +70,7 @@ export default function DashboardScreen() {
         </View>
       )}
 
-      <PrimaryButton
-        label="Sign Out"
-        onPress={signOut}
-      />
+      <PrimaryButton label="Sign Out" onPress={signOut} />
     </Screen>
   );
 }
