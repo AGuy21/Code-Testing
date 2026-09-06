@@ -1,9 +1,10 @@
 
+export interface Car {
+    Plate: string;
+    Time: string;
+}
 export interface LotDataType {
-    Cars: {
-        Plate: string;
-        Time: string;
-    }
+    Cars: Car[]
     HourlyRate: number;
     TakenSpots: number;
     TotalSpots: number;

@@ -3,11 +3,8 @@ import { AppText, Card, PrimaryButton, Screen } from "../../../componenets/ui";
 import { theme } from "../../../constants/theme";
 
 import { useAuth } from "@clerk/expo";
-import { useEffect, useState } from "react";
-import getLotData from "../../../componenets/functions/getLotData";
-import { LotDataType } from "../../../constants/types/LotDataTypes";
-import { LotDummyData } from "../../../constants/data/LotDummyData";
 import  LoadingScreen  from "../../../componenets/ui/LoadingScreen"
+import useLotData from "../../../componenets/hooks/useLotData";
 interface DashboardStat {
   label: string;
   value: number | string;
@@ -15,19 +12,9 @@ interface DashboardStat {
 
 export default function DashboardScreen() {
   const { isSignedIn, signOut } = useAuth({ treatPendingAsSignedOut: false });
-  const [lotData, setLotData] = useState<LotDataType | null>(LotDummyData);
-
-  useEffect(() => {
-    const fetchLotData = async () => {
-      const data = await getLotData("Lot1");
-      console.log("Fetched lot data:", data);
-      setLotData(data);
-    };
-
-    fetchLotData();
-  }, []);
-
-  if (!lotData) {
+  const { loading, lotData } = useLotData("Lot1")
+  console.log(loading, lotData)
+  if (loading) {
     return <LoadingScreen/>
   }
 
