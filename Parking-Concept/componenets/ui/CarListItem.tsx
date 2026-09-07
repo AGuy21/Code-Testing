@@ -19,7 +19,7 @@ export default function CarListItem({car}: CarListItemProps) {
             borderColor: theme.colors.border,
             borderRadius: theme.radii.md,
             padding: theme.spacing.lg,
-            borderWidth: 2,
+            borderWidth: 1,
         }}>
             <AppText variant="caption">
                 Plate: {car.Plate}

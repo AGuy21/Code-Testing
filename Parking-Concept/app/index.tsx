@@ -20,8 +20,8 @@ export default function HomeScreen() {
 
   const goToLot = () => {
     if (!lotReady) return;
-    console.log(`Navigating to lot ${lotId.trim()}...`);
-    router.push(`/park/${lotId.trim()}`);
+    console.log(`Navigating to Lot ${lotId.trim()}...`);
+    router.push(`/park/${"Lot" + lotId.trim()}`);
   };
 
   return (

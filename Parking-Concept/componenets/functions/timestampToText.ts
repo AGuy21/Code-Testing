@@ -1,6 +1,4 @@
-import { Timestamp } from "firebase/firestore";
-
-export default function timestampToText(timestamp: Timestamp) {
+export default function timestampToText(timestamp: any ) {
   if (!timestamp) return "";
   return timestamp.toDate().toLocaleString();
 }

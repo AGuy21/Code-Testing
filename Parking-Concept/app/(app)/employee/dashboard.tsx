@@ -8,6 +8,8 @@ import useLotData from "../../../componenets/hooks/useLotData";
 import CarListItem from "../../../componenets/ui/CarListItem";
 import { Car } from "../../../constants/types/LotDataTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import Divider from "../../../componenets/ui/Divider";
 interface DashboardStat {
   label: string;
   value: number | string;
@@ -16,6 +18,7 @@ interface DashboardStat {
 export default function DashboardScreen() {
   const { isSignedIn, signOut } = useAuth({ treatPendingAsSignedOut: false });
   const { loading, lotData } = useLotData("Lot1");
+
   console.log(loading, lotData);
   if (loading) {
     return <LoadingScreen />;
@@ -28,7 +31,11 @@ export default function DashboardScreen() {
     { label: "Open tickets", value: "3" },
   ];
 
-  const renderItem = ({ item }: { item: Car }) => <CarListItem car={item} />;
+  const renderItem = ({ item }: { item: Car }) => (
+    <View style={{marginBottom: theme.spacing.md}}>
+      <CarListItem car={item} />
+    </View>
+  );
 
   return (
     <Screen scroll>
@@ -58,6 +65,8 @@ export default function DashboardScreen() {
       </SafeAreaView>
 
       <PrimaryButton label="Sign Out" onPress={signOut} />
+      <Divider />
+      <PrimaryButton variant="outline" label="Go Back" onPress={() => router.replace("/")} />
     </Screen>
   );
 }

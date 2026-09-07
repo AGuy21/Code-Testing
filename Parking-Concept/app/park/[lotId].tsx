@@ -1,30 +1,66 @@
 import { useLocalSearchParams } from "expo-router";
 import { Alert, StyleSheet, View } from "react-native";
-import { AppText, Card, PrimaryButton, Screen } from "../../componenets/ui";
+import {
+  AppText,
+  AppTextInput,
+  Card,
+  PrimaryButton,
+  Screen,
+} from "../../componenets/ui";
 import { theme } from "../../constants/theme";
-
-interface LotStat {
+import useLotData from "../../componenets/hooks/useLotData";
+import { useState } from "react";
+import { Timestamp } from "firebase/firestore";
+import Divider from "../../componenets/ui/Divider";
+import LoadingScreen from "../../componenets/ui/LoadingScreen";
+import addCar from "../../componenets/functions/addCar";
+interface LotStats {
   label: string;
-  value: string;
+  value: number;
 }
-
 
 export default function ParkingLotScreen() {
   const { lotId } = useLocalSearchParams<{ lotId: string }>();
-  const displayLotId = Array.isArray(lotId) ? (lotId[0] ?? "Unknown lot") : lotId;
+  const lotIdNumber = lotId.split("Lot");
+  const { loading, lotData } = useLotData(lotId);
+
+  const [plate, setPlate] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>();
+  const [isEnding, setIsEnding] = useState<boolean>(false);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  const LOT_STATS: readonly LotStats[] = [
+    { label: "Free spots", value: lotData?.TotalSpots - lotData?.TakenSpots },
+    { label: "Hourly Rate", value: lotData.HourlyRate },
+  ];
+
+  const acceptablePlate = plate.trim().length >= 5;
+  const acceptablePassword = password.trim().length >= 4;
 
   const handlePay = () => {
-    Alert.alert("Payment", `Starting payment for lot ${displayLotId}…`);
+    if (!acceptablePlate) {
+      setError("Plate length too small")
+      return;
+    }
+    if (!acceptablePassword) {
+      setError("Password must be 4 or more characters")
+      return;
+    }
+    addCar(lotId, plate, password);
   };
 
-  // const LOT_STATS
+  function handleEnd() {}
 
   return (
     <Screen scroll>
       <Card variant="accent" style={styles.lotCard}>
         <AppText variant="label">Now parking</AppText>
         <AppText variant="hero" style={styles.lotId}>
-          {displayLotId}
+          Lot: {lotIdNumber}
         </AppText>
         <AppText variant="body" style={styles.lotCaption}>
           You are paying for parking at this lot.
@@ -32,19 +68,42 @@ export default function ParkingLotScreen() {
       </Card>
 
       <View style={styles.statsRow}>
-        {/* {LOT_STATS.map((stat) => (
+        {LOT_STATS.map((stat) => (
           <Card key={stat.label} style={styles.statCard}>
             <AppText variant="subtitle" style={styles.statValue}>
               {stat.value}
             </AppText>
             <AppText variant="caption">{stat.label}</AppText>
           </Card>
-        ))} */}
+        ))}
       </View>
+      {error && <AppText variant="error">{error}</AppText>}
+      <AppTextInput
+        label="Input Lisence Plate"
+        value={plate}
+        onChangeText={setPlate}
+        autoCapitalize="characters"
+      />
+
+      <AppTextInput
+        label="Input Password"
+        value={password}
+        onChangeText={setPassword}
+        autoCapitalize="characters"
+      />
 
       <PrimaryButton label="Pay now" onPress={handlePay} />
+      <Divider />
+
+      <PrimaryButton
+        variant="outline"
+        label="End Parking"
+        onPress={handleEnd}
+      />
       <AppText variant="muted" style={styles.disclaimer}>
-        Payments open in the checkout flow once enabled.
+        Please input lisence plate and password you want saved for ending
+        parking later, then pay. If ending your parking re-enter the plate and
+        passowrd for authentication and press "End Parking"
       </AppText>
     </Screen>
   );

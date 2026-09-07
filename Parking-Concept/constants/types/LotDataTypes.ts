@@ -1,7 +1,7 @@
-import { Timestamp } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 export interface Car {
     Plate: string;
-    Start: Timestamp;
+    Start: Timestamp | FieldValue;
     Password: string;
 }
 export interface LotDataType {
