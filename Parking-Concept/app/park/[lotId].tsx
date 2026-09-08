@@ -14,6 +14,7 @@ import { Timestamp } from "firebase/firestore";
 import Divider from "../../componenets/ui/Divider";
 import LoadingScreen from "../../componenets/ui/LoadingScreen";
 import addCar from "../../componenets/functions/addCar";
+import removeCar from "../../componenets/functions/removeCar";
 interface LotStats {
   label: string;
   value: number;
@@ -21,13 +22,15 @@ interface LotStats {
 
 export default function ParkingLotScreen() {
   const { lotId } = useLocalSearchParams<{ lotId: string }>();
+  console.log("LotID: ", lotId);
   const lotIdNumber = lotId.split("Lot");
+  console.log("LotIDNumber: ", lotIdNumber);
+
   const { loading, lotData } = useLotData(lotId);
 
   const [plate, setPlate] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>();
-  const [isEnding, setIsEnding] = useState<boolean>(false);
 
   if (loading) {
     return <LoadingScreen />;
@@ -50,10 +53,29 @@ export default function ParkingLotScreen() {
       setError("Password must be 4 or more characters")
       return;
     }
+    console.log("Adding New Car: ")
+    console.log("LotId:", lotId)
+    console.log("Plate:", plate)
+    console.log("Password:", password)
+    
     addCar(lotId, plate, password);
   };
 
-  function handleEnd() {}
+  function handleEnd() {
+    if (!acceptablePlate) {
+      setError("Plate length too small")
+      return;
+    }
+    if (!acceptablePassword) {
+      setError("Password must be 4 or more characters")
+      return;
+    }
+    console.log("Removing Car: ")
+    console.log("LotId:", lotId)
+    console.log("Plate:", plate)
+    console.log("Password:", password)
+    removeCar(lotId, plate, password)
+  }
 
   return (
     <Screen scroll>

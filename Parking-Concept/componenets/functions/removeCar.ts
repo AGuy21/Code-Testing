@@ -2,35 +2,31 @@ import { router } from "expo-router";
 import { Car } from "../../constants/types/LotDataTypes";
 import {
   getFirestore,
+  collection,
+  addDoc,
   serverTimestamp,
-  doc,
-  setDoc,
+  getDoc,
 } from "firebase/firestore";
-import getDocId from "./getDocId";
 
 const db = getFirestore();
 
-export default async function addCar(
+export default async function removeCar(
   lot: string,
   plate: string,
   password: string,
 ) {
   try {
-    const docId = getDocId(lot,plate,password)
-    const docRef = doc(db, "Lots", lot, "Cars", docId);
-
+    const collectionRef = collection(db, "Lots", lot, "Cars", );
+    // const docRef
     const docData: Car = {
       Plate: plate,
       Password: password,
       Start: serverTimestamp(),
     };
 
-    console.log("Writing Doc: ", docId)
-    console.log("Data: ", docData)
-    
-    await setDoc(docRef,docData)
-
+    // const docSnap = await getDoc(collectionRef, docData);
     router.replace("/")
+    // console.log("Document written with ID: ", docRef.id);
   } catch (error) {
     console.error("Error adding document: ", error);
   }
