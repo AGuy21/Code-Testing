@@ -6,7 +6,10 @@ import {
   addDoc,
   serverTimestamp,
   getDoc,
+  doc,
 } from "firebase/firestore";
+import getDocId from "./getDocId";
+import getTimeTotal from "./getTimeTotal";
 
 const db = getFirestore();
 
@@ -16,17 +19,20 @@ export default async function removeCar(
   password: string,
 ) {
   try {
-    const collectionRef = collection(db, "Lots", lot, "Cars", );
-    // const docRef
-    const docData: Car = {
-      Plate: plate,
-      Password: password,
-      Start: serverTimestamp(),
-    };
+    const docId = getDocId(lot, plate, password);
+    const docRef = doc(db, "Lots", lot, "Cars", docId );
 
-    // const docSnap = await getDoc(collectionRef, docData);
-    router.replace("/")
-    // console.log("Document written with ID: ", docRef.id);
+    const docSnap = await getDoc(docRef);
+    const docData = docSnap.data() as Car;
+
+    if (docData.Password == password) {
+        console.log("Authentication successful for:", plate)
+        const elapsedTime = getTimeTotal(docData)
+        
+    } else {
+        console.log("Authentication failed for:", plate)
+    }
+
   } catch (error) {
     console.error("Error adding document: ", error);
   }
