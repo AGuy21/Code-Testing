@@ -40,6 +40,7 @@ export default async function removeCar(
       Alert.alert("Authentication Failed");
     }
   } catch (error) {
-    console.error("Error adding document: ", error);
+    console.error("Error removing document: ", error);
+    Alert.alert("Error, Plate Not Found")
   }
 }

@@ -16,7 +16,7 @@ interface DashboardStat {
 }
 
 export default function DashboardScreen() {
-  const { isSignedIn, signOut } = useAuth({ treatPendingAsSignedOut: false });
+  const { signOut } = useAuth({ treatPendingAsSignedOut: false });
   const { loading, lotData } = useLotData("Lot1");
 
   console.log(loading, lotData);
@@ -32,7 +32,7 @@ export default function DashboardScreen() {
   ];
 
   const renderItem = ({ item }: { item: Car }) => (
-    <View style={{marginBottom: theme.spacing.md}}>
+    <View style={{ marginBottom: theme.spacing.md }}>
       <CarListItem car={item} />
     </View>
   );
@@ -57,16 +57,22 @@ export default function DashboardScreen() {
       </View>
 
       <SafeAreaView>
-        <FlatList
-          data={lotData.Cars}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.Plate}
-        />
+        <View>
+          {lotData.Cars.map((item) => (
+            <View key={item.Plate} style={{ marginBottom: theme.spacing.md }}>
+              <CarListItem car={item} />
+            </View>
+          ))}
+        </View>
       </SafeAreaView>
 
       <PrimaryButton label="Sign Out" onPress={signOut} />
       <Divider />
-      <PrimaryButton variant="outline" label="Go Back" onPress={() => router.replace("/")} />
+      <PrimaryButton
+        variant="outline"
+        label="Go Back"
+        onPress={() => router.replace("/")}
+      />
     </Screen>
   );
 }
