@@ -6,7 +6,6 @@ import { useAuth } from "@clerk/expo";
 import LoadingScreen from "../../../componenets/ui/LoadingScreen";
 import useLotData from "../../../componenets/hooks/useLotData";
 import CarListItem from "../../../componenets/ui/CarListItem";
-import { Car } from "../../../constants/types/LotDataTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Divider from "../../../componenets/ui/Divider";
@@ -30,12 +29,6 @@ export default function DashboardScreen() {
     { label: "Free spots", value: lotData?.TotalSpots - lotData?.TakenSpots },
     { label: "Open tickets", value: "3" },
   ];
-
-  const renderItem = ({ item }: { item: Car }) => (
-    <View style={{ marginBottom: theme.spacing.md }}>
-      <CarListItem car={item} />
-    </View>
-  );
 
   return (
     <Screen scroll>
