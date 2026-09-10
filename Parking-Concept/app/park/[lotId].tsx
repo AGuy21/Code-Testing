@@ -1,5 +1,5 @@
-import { useLocalSearchParams } from "expo-router";
-import { Alert, StyleSheet, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
 import {
   AppText,
   AppTextInput,
@@ -46,35 +46,35 @@ export default function ParkingLotScreen() {
 
   const handlePay = () => {
     if (!acceptablePlate) {
-      setError("Plate length too small")
+      setError("Plate length too small");
       return;
     }
     if (!acceptablePassword) {
-      setError("Password must be 4 or more characters")
+      setError("Password must be 4 or more characters");
       return;
     }
-    console.log("Adding New Car: ")
-    console.log("LotId:", lotId)
-    console.log("Plate:", plate)
-    console.log("Password:", password)
-    
+    console.log("Adding New Car: ");
+    console.log("LotId:", lotId);
+    console.log("Plate:", plate);
+    console.log("Password:", password);
+
     addCar(lotId, plate, password);
   };
 
   function handleEnd() {
     if (!acceptablePlate) {
-      setError("Plate length too small")
+      setError("Plate length too small");
       return;
     }
     if (!acceptablePassword) {
-      setError("Password must be 4 or more characters")
+      setError("Password must be 4 or more characters");
       return;
     }
-    console.log("Removing Car: ")
-    console.log("LotId:", lotId)
-    console.log("Plate:", plate)
-    console.log("Password:", password)
-    removeCar(lotId, plate, password)
+    console.log("Removing Car: ");
+    console.log("LotId:", lotId);
+    console.log("Plate:", plate);
+    console.log("Password:", password);
+    removeCar(lotId, plate, password);
   }
 
   return (
@@ -122,6 +122,18 @@ export default function ParkingLotScreen() {
         label="End Parking"
         onPress={handleEnd}
       />
+      <Pressable
+        onPress={() => router.back()}
+        style={{
+          width: "100%",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: theme.spacing.md
+        }}
+      >
+        <AppText variant="label">Go Back</AppText>
+      </Pressable>
       <AppText variant="muted" style={styles.disclaimer}>
         Please input lisence plate and password you want saved for ending
         parking later, then pay. If ending your parking re-enter the plate and
