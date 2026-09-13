@@ -21,12 +21,12 @@
 
 import type { ExpoConfig } from "expo/config";
 
-const envMapsKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY?.trim();
+const envMapsKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
 
 // Development fallback so the map renders out of the box on fresh clones.
 // For production builds, set EXPO_PUBLIC_GOOGLE_MAPS_API_KEY in `.env.local`
 // and restrict the key in Google Cloud Console (see README.md → Google Maps).
-const androidMapsApiKey = envMapsKey ?? "AIzaSyCTNjI2zqNX78MaqYNjU1L9_0chT_QAuHQ";
+const androidMapsApiKey = envMapsKey;
 
 const config: ExpoConfig = {
   scheme: "functions",
