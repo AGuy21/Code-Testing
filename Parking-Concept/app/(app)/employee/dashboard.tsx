@@ -26,7 +26,7 @@ export default function DashboardScreen() {
   const { signOut } = useAuth({ treatPendingAsSignedOut: false });
   const [inputLotId, setInputLotId] = useState("1");
   const [activeLotId, setActiveLotId] = useState("1");
-  const { error, refetch, loading, lotData } = useLotData("Lot" + activeLotId);
+  const { refetch, loading, lotData } = useLotData("Lot" + activeLotId);
 
   console.log(loading, lotData);
 
