@@ -18,26 +18,25 @@ const db = getFirestore();
 export default async function removeCar(
   lot: string,
   plate: string,
-  password: string,
+  prepay: number,
 ) {
   try {
-    const docId = getDocId(lot, plate, password);
+    const docId = getDocId(lot, plate, prepay);
     const docRef = doc(db, "Lots", lot, "Cars", docId);
 
     const docSnap = await getDoc(docRef);
     const docData = docSnap.data() as Car;
 
-    if (docData.Password == password) {
-      console.log("Authentication successful for:", plate);
+    if (docSnap.exists()) {
+      console.log("Doc Exist");
       const elapsedTime = await getTimeTotal(docData);
       const timeString = elapsedTime?.toString();
       console.log("Deleting Doc...");
       deleteDoc(docRef);
-      Alert.alert("Billed for total time: ", timeString) + " Minutes";
-      router.replace("/");
+      Alert.alert("Stayed for total time: ", timeString) + " Minutes";
     } else {
-      console.log("Authentication failed for:", plate);
-      Alert.alert("Authentication Failed");
+      console.error("Document does not exist")
+      Alert.alert("Doc not found")
     }
   } catch (error) {
     console.error("Error removing document: ", error);
