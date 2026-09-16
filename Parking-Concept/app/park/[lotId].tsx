@@ -10,7 +10,6 @@ import {
 import { theme } from "../../constants/theme";
 import useLotData from "../../componenets/hooks/useLotData";
 import { useState } from "react";
-import { Timestamp } from "firebase/firestore";
 import Divider from "../../componenets/ui/Divider";
 import LoadingScreen from "../../componenets/ui/LoadingScreen";
 import addCar from "../../componenets/functions/addCar";
@@ -29,7 +28,8 @@ export default function ParkingLotScreen() {
   const { loading, lotData } = useLotData(lotId);
 
   const [plate, setPlate] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [prepaymentText, setPrepaymentText] = useState<string>("1");
+
   const [error, setError] = useState<string>();
 
   if (loading) {
@@ -42,40 +42,44 @@ export default function ParkingLotScreen() {
   ];
 
   const acceptablePlate = plate.trim().length >= 5;
-  const acceptablePassword = password.trim().length >= 4;
 
   const handlePay = () => {
     if (!acceptablePlate) {
       setError("Plate length too small");
       return;
     }
-    if (!acceptablePassword) {
-      setError("Password must be 4 or more characters");
+    if (!(Number(prepaymentText) >= 1)) {
+      setError("Minimum prepayment is 1 hour");
       return;
     }
     console.log("Adding New Car: ");
     console.log("LotId:", lotId);
     console.log("Plate:", plate);
-    console.log("Password:", password);
-
-    addCar(lotId, plate, password);
+    console.log("Prepayment:", prepaymentText + "Hrs")
+    
+    Alert.prompt("")
+    addCar(lotId, plate, Number(prepaymentText));
   };
 
-  function handleEnd() {
-    if (!acceptablePlate) {
-      setError("Plate length too small");
-      return;
-    }
-    if (!acceptablePassword) {
-      setError("Password must be 4 or more characters");
-      return;
-    }
-    console.log("Removing Car: ");
-    console.log("LotId:", lotId);
-    console.log("Plate:", plate);
-    console.log("Password:", password);
-    removeCar(lotId, plate, password);
-  }
+  /**
+   * Depracted Function:
+   * Used to end payment of a car automatically by the user and get hours returned for payment
+   */
+  // function handleEnd() {
+  //   if (!acceptablePlate) {
+  //     setError("Plate length too small");
+  //     return;
+  //   }
+  //   if (!acceptablePassword) {
+  //     setError("Password must be 4 or more characters");
+  //     return;
+  //   }
+  //   console.log("Removing Car: ");
+  //   console.log("LotId:", lotId);
+  //   console.log("Plate:", plate);
+  //   console.log("Password:", password);
+  //   removeCar(lotId, plate, password);
+  // }
 
   return (
     <Screen scroll>
@@ -108,20 +112,19 @@ export default function ParkingLotScreen() {
       />
 
       <AppTextInput
-        label="Input Password"
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize="characters"
+        label="Hours Pre-Paid"
+        value={prepaymentText}
+        onChangeText={setPrepaymentText}
+        keyboardType="number-pad"
       />
-
+      
       <PrimaryButton label="Pay now" onPress={handlePay} />
       <Divider />
-
-      <PrimaryButton
+      {/* <PrimaryButton
         variant="outline"
         label="End Parking"
         onPress={handleEnd}
-      />
+      /> */}
       <Pressable
         onPress={() => router.back()}
         style={{
@@ -136,7 +139,7 @@ export default function ParkingLotScreen() {
       </Pressable>
       <AppText variant="muted" style={styles.disclaimer}>
         Please input lisence plate and password you want saved for ending
-        parking later, then pay. If ending your parking re-enter the plate and
+        parking later, then pre-pay for hours. If ending your parking re-enter the plate and
         passowrd for authentication and press "End Parking"
       </AppText>
     </Screen>

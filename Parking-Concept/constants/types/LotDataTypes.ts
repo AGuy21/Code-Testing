@@ -2,7 +2,7 @@ import { FieldValue, Timestamp } from "firebase/firestore";
 export interface Car {
     Plate: string;
     Start: Timestamp | FieldValue;
-    Password: string;
+    Prepayment: number;
 }
 export interface LotDataType {
     Cars: Car[]

@@ -13,16 +13,16 @@ const db = getFirestore();
 export default async function addCar(
   lot: string,
   plate: string,
-  password: string,
+  prepay: number,
 ) {
   try {
-    const docId = getDocId(lot,plate,password)
+    const docId = getDocId(lot,plate,prepay)
     const docRef = doc(db, "Lots", lot, "Cars", docId);
 
     const docData: Car = {
       Plate: plate,
-      Password: password,
       Start: serverTimestamp(),
+      Prepayment: prepay,
     };
 
     console.log("Writing Doc: ", docId)

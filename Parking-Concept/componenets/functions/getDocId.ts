@@ -1,5 +1,5 @@
-export default function getDocId(lot: string, plate: string, password: string) {
-  const dirtyString = `${lot}"-"${plate}"-"${password.substring(0, 2)}`;
+export default function getDocId(lot: string, plate: string, prepay: number) {
+  const dirtyString = `${lot}"-"${plate}-${prepay}`;
   const cleanString = dirtyString.replace(/"/g, "");
   return cleanString;
 }
