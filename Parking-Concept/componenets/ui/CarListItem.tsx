@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
 import { Car } from "../../constants/types/LotDataTypes";
 import { AppText } from "./AppText";
@@ -18,6 +18,8 @@ export default function CarListItem({ car }: CarListItemProps) {
 
   let baseMillis: number | null = null;
 
+  const localTimeMs = Date.now();
+
   if (typeof (startTime as any)?.toDate === "function") {
     baseMillis = (startTime as any).toDate().getTime();
   } else if (startTime instanceof Date) {
@@ -32,7 +34,14 @@ export default function CarListItem({ car }: CarListItemProps) {
   }
 
   const prepayMins = (car.Prepayment || 0) * 60;
+  const allowedUntilMs = baseMillis + prepayMins * 60 * 1000;
   const allowedUntilDate = new Date(baseMillis + prepayMins * 60 * 1000);
+
+  const context = globalThis as any;
+  const firebaseClockOffset = context._firestoreServerTimeOffset || 0;
+  const secureCurrentTimeMs = localTimeMs + firebaseClockOffset;
+
+  const isOvertime = allowedUntilMs < secureCurrentTimeMs;
 
   return (
     <View
@@ -40,7 +49,7 @@ export default function CarListItem({ car }: CarListItemProps) {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        backgroundColor: theme.colors.surface,
+        backgroundColor: isOvertime ? theme.colors.error : theme.colors.surface,
         borderColor: theme.colors.border,
         borderRadius: theme.radii.md,
         padding: theme.spacing.lg,
