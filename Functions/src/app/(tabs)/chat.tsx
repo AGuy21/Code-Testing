@@ -1,213 +1,241 @@
-import Ionicons from "@react-native-vector-icons/ionicons";
-import { useState } from "react";
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { useEffect } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useAuth } from "@clerk/expo";
 import { AppText, Card, Screen } from "../../components/ui";
+import { useChat } from "../../hooks/useChat";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
+import type { Conversation } from "../../constants/types/chat";
 
-/**
- * UI-only chat skeleton. Messages live in local state for now — the plan is
- * to back each hangout with a Firestore subcollection (see README roadmap),
- * at which point this screen just swaps the local list for a snapshot.
- */
-interface ChatMessage {
-  id: string;
-  text: string;
-  mine: boolean;
+/** "9:41 PM" today, "Mon" this week, "Aug 3" otherwise. */
+function relativeTime(iso: string | null): string {
+  if (!iso) return "";
+  const date = new Date(iso);
+  const now = new Date();
+  if (date.toDateString() === now.toDateString()) {
+    return date.toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+  const days = (now.getTime() - date.getTime()) / 86_400_000;
+  if (days < 7) {
+    return date.toLocaleDateString(undefined, { weekday: "short" });
+  }
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
 export default function Chat() {
+  const router = useRouter();
   const palette = useThemePalette();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [draft, setDraft] = useState("");
+  const { userId } = useAuth();
+  const { conversations, isLoading, ensurePushReady } = useChat();
 
-  const send = () => {
-    const text = draft.trim();
-    if (!text) return;
-    // Newest first: the list is inverted, so index 0 renders at the bottom.
-    setMessages((prev) => [
-      { id: `local-${Date.now()}-${prev.length}`, text, mine: true },
-      ...prev,
-    ]);
-    setDraft("");
+  // Register the FCM token (asks permission once, on the first chat visit).
+  useEffect(() => {
+    if (userId) ensurePushReady();
+  }, [userId, ensurePushReady]);
+
+  const titleOf = (conversation: Conversation): string => {
+    if (conversation.type === "group") {
+      return conversation.hangoutTitle ?? "Hangout";
+    }
+    const other = conversation.participantUserIds.find((id) => id !== userId);
+    return (
+      conversation.participantNames?.[other ?? ""] ?? other ?? "Direct message"
+    );
+  };
+
+  const snippetOf = (conversation: Conversation): string => {
+    const last = conversation.lastMessage;
+    if (!last) {
+      return conversation.type === "group"
+        ? "No messages yet — say hi 👋"
+        : "Say hello";
+    }
+    const who = last.senderId === userId ? "You" : last.senderName;
+    return `${who}: ${last.text}`;
+  };
+
+  const isUnread = (conversation: Conversation): boolean => {
+    const last = conversation.lastMessage;
+    if (!last || !last.sentAt || last.senderId === userId) return false;
+    const readAt = conversation.lastReadAt[userId ?? ""];
+    return !readAt || Date.parse(readAt) < Date.parse(last.sentAt);
   };
 
   return (
     <Screen>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        <View style={styles.header}>
-          <AppText variant="hero">Chat</AppText>
-          <AppText variant="caption" style={styles.headerCaption}>
-            Group chats per hangout are coming soon — here's a preview.
+      <View style={styles.header}>
+        <AppText variant="hero">Chat</AppText>
+        <AppText variant="caption" style={styles.headerCaption}>
+          Hangout groups and direct messages — all in one place
+        </AppText>
+      </View>
+
+      {isLoading ? (
+        <Card variant="accent">
+          <AppText variant="caption" style={styles.emptyText}>
+            Loading chats…
           </AppText>
-        </View>
+        </Card>
+      ) : conversations.length === 0 ? (
+        <Card variant="accent">
+          <AppText variant="caption" style={styles.emptyText}>
+            No chats yet. Tap "Join" on a hangout to enter its group chat, or
+            message someone from a hangout you're part of.
+          </AppText>
+        </Card>
+      ) : (
+        <FlatList
+          data={conversations}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => router.push(`/chat/${item.id}`)}
+              style={({ pressed }) => [
+                styles.row,
+                pressed && styles.rowPressed,
+              ]}
+            >
+              {item.type === "group" ? (
+                <View
+                  style={[
+                    styles.avatar,
+                    {
+                      backgroundColor: palette.accentSoft,
+                      borderColor: palette.border,
+                    },
+                  ]}
+                >
+                  <Text style={styles.avatarEmoji}>{item.emoji ?? "💬"}</Text>
+                </View>
+              ) : (
+                <View style={[styles.avatar, styles.avatarDm]}>
+                  <Text style={styles.avatarInitial}>
+                    {titleOf(item).charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+              <View style={styles.rowText}>
+                <Text
+                  style={[styles.rowTitle, { color: palette.text }]}
+                  numberOfLines={1}
+                >
+                  {titleOf(item)}
+                </Text>
+                <Text
+                  style={[
+                    styles.rowSnippet,
+                    {
+                      color: isUnread(item) ? palette.text : palette.textMuted,
+                    },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {snippetOf(item)}
+                </Text>
+              </View>
+              <View style={styles.rowMeta}>
+                <Text style={[styles.rowTime, { color: palette.textMuted }]}>
+                  {relativeTime(item.lastMessage?.sentAt ?? null)}
+                </Text>
+                {isUnread(item) ? (
+                  <View
+                    style={[styles.unreadDot, { backgroundColor: palette.primary }]}
+                  />
+                ) : null}
+              </View>
+            </Pressable>
+          )}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
 
-        {messages.length === 0 ? (
-          <View style={styles.emptyWrap}>
-            <Card variant="accent">
-              <AppText variant="caption" style={styles.emptyText}>
-                No messages yet. Say something to try the layout — live hangout
-                chats land here.
-              </AppText>
-            </Card>
-          </View>
-        ) : (
-          <FlatList
-            data={messages}
-            inverted
-            keyExtractor={(message) => message.id}
-            renderItem={({ item }) => <MessageBubble message={item} />}
-            contentContainerStyle={styles.list}
-            showsVerticalScrollIndicator={false}
-          />
-        )}
-
-        <View style={[styles.inputRow, { borderTopColor: palette.border }]}>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                backgroundColor: palette.surfaceElevated,
-                borderColor: palette.border,
-                color: palette.text,
-              },
-            ]}
-            placeholder="Message the hangout…"
-            placeholderTextColor={palette.textMuted}
-            selectionColor={palette.primary}
-            value={draft}
-            onChangeText={setDraft}
-            multiline
-          />
-          <Pressable
-            onPress={send}
-            disabled={!draft.trim()}
-            style={({ pressed }) => [
-              styles.sendButton,
-              { backgroundColor: palette.primary },
-              pressed && styles.sendPressed,
-              !draft.trim() && styles.sendDisabled,
-            ]}
-          >
-            <Ionicons name="send" size={18} color="#0E1713" />
-          </Pressable>
-        </View>
-      </KeyboardAvoidingView>
+      {userId ? null : (
+        <Text style={[styles.hint, { color: palette.textMuted }]}>
+          Sign in to see your chats
+        </Text>
+      )}
     </Screen>
   );
 }
 
-function MessageBubble({ message }: { message: ChatMessage }) {
-  const palette = useThemePalette();
-  return (
-    <View
-      style={[
-        styles.bubbleRow,
-        message.mine ? styles.bubbleRowMine : styles.bubbleRowTheirs,
-      ]}
-    >
-      <View
-        style={[
-          styles.bubble,
-          message.mine
-            ? { backgroundColor: palette.primary }
-            : { backgroundColor: palette.surfaceElevated },
-        ]}
-      >
-        <Text
-          style={[
-            styles.bubbleText,
-            { color: message.mine ? "#0E1713" : palette.text },
-          ]}
-        >
-          {message.text}
-        </Text>
-      </View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
   header: {
     gap: 4,
-  },
-  headerCaption: {
     marginBottom: 14,
-  },
-  emptyWrap: {
-    flex: 1,
-    justifyContent: "center",
   },
   emptyText: {
     textAlign: "center",
   },
   list: {
-    paddingBottom: 12,
+    paddingBottom: 16,
   },
-  bubbleRow: {
-    flexDirection: "row",
-    marginBottom: 8,
-  },
-  bubbleRowMine: {
-    justifyContent: "flex-end",
-  },
-  bubbleRowTheirs: {
-    justifyContent: "flex-start",
-  },
-  bubble: {
-    borderRadius: 16,
-    maxWidth: "78%",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  bubbleText: {
-    fontFamily: Fonts.Medium,
-    fontSize: 14.5,
-    lineHeight: 20,
-  },
-  inputRow: {
-    alignItems: "flex-end",
-    borderTopWidth: 1,
-    flexDirection: "row",
-    gap: 10,
-    paddingTop: 12,
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 14,
-    flex: 1,
-    fontFamily: Fonts.Medium,
-    fontSize: 15,
-    maxHeight: 110,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  sendButton: {
+  row: {
     alignItems: "center",
-    borderRadius: 999,
-    height: 42,
+    borderRadius: 16,
+    flexDirection: "row",
+    gap: 12,
+    paddingVertical: 12,
+  },
+  rowPressed: {
+    opacity: 0.7,
+  },
+  avatar: {
+    alignItems: "center",
+    borderRadius: 24,
+    borderWidth: 1,
+    height: 48,
     justifyContent: "center",
-    width: 42,
+    width: 48,
   },
-  sendPressed: {
-    opacity: 0.85,
+  avatarDm: {
+    backgroundColor: "#50c878",
+    borderColor: "transparent",
   },
-  sendDisabled: {
-    opacity: 0.4,
+  avatarEmoji: {
+    fontSize: 22,
   },
+  avatarInitial: {
+    color: "#0E1713",
+    fontFamily: Fonts.Bold,
+    fontSize: 20,
+  },
+  rowText: {
+    flex: 1,
+    gap: 2,
+  },
+  rowTitle: {
+    fontFamily: Fonts.SemiBold,
+    fontSize: 15.5,
+  },
+  rowSnippet: {
+    fontFamily: Fonts.Medium,
+    fontSize: 13,
+  },
+  rowMeta: {
+    alignItems: "flex-end",
+    gap: 6,
+  },
+  rowTime: {
+    fontFamily: Fonts.Medium,
+    fontSize: 11.5,
+  },
+  unreadDot: {
+    borderRadius: 5,
+    height: 10,
+    width: 10,
+  },
+  hint: {
+    fontFamily: Fonts.Medium,
+    fontSize: 12,
+    marginTop: 12,
+    textAlign: "center",
+  },
+  headerCaption: {
+    
+  }
 });

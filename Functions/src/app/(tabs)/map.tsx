@@ -1,3 +1,5 @@
+import { useRouter } from "expo-router";
+import { useAuth } from "@clerk/expo";
 import { getCurrentFix } from "../../utils/location";
 import { StatusBar } from "expo-status-bar";
 import MapView from "react-native-maps";
@@ -15,11 +17,13 @@ import { AppText, Badge, Card } from "../../components/ui";
 import { HangoutMap } from "../../components/map/HangoutMap";
 import { RsvpButtons } from "../../components/hangouts/RsvpButtons";
 import { useHangouts } from "../../hooks/useHangouts";
+import { useChat } from "../../hooks/useChat";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { CATEGORY_META } from "../../constants/Categories";
 import { MAP_INITIAL_REGION } from "../../data/hangouts";
 import { formatStartsAt } from "../../utils/hangouts";
 import type { HangoutId } from "../../constants/types/hangout";
+import { PrimaryButton } from "../../components/ui";
 
 export default function Map() {
   const palette = useThemePalette();
@@ -29,10 +33,14 @@ export default function Map() {
   const {
     hangouts,
     goingCount,
+    rsvps,
     focusedHangoutId,
     clearFocus,
     syncError,
   } = useHangouts();
+  const router = useRouter();
+  const { userId } = useAuth();
+  const { openGroupChat } = useChat();
 
   const [selectedId, setSelectedId] = useState<HangoutId | null>(null);
   const [showsUserLocation, setShowsUserLocation] = useState(false);
@@ -76,6 +84,23 @@ export default function Map() {
     ? hangouts.find((hangout) => hangout.id === selectedId) ?? null
     : null;
   const selectedMeta = selected ? CATEGORY_META[selected.category] : null;
+
+  // The group chat is visible to the host and members who said they're going.
+  const selectedIsMember = Boolean(
+    userId &&
+      selected &&
+      (rsvps[selected.id] === "going" || selected.hostId === userId),
+  );
+
+  const openSelectedChat = async () => {
+    if (!selected) return;
+    try {
+      await openGroupChat(selected);
+      router.push(`/chat/${selected.id}`);
+    } catch (error) {
+      console.warn("Failed to open chat:", error);
+    }
+  };
 
   return (
     <View style={[styles.root, { backgroundColor: palette.background }]}>
@@ -148,6 +173,14 @@ export default function Map() {
             </View>
 
             <RsvpButtons hangoutId={selected.id} />
+            {selectedIsMember ? (
+              <PrimaryButton
+                label="Open chat"
+                variant="ghost"
+                onPress={() => void openSelectedChat()}
+                style={styles.chatButton}
+              />
+            ) : null}
           </Card>
         </View>
       ) : null}
@@ -216,5 +249,8 @@ const styles = StyleSheet.create({
     gap: 16,
     marginBottom: 14,
     marginTop: 6,
+  },
+  chatButton: {
+    marginTop: 2,
   },
 });

@@ -1,8 +1,11 @@
+import Ionicons from "@react-native-vector-icons/ionicons";
 import { useRouter } from "expo-router";
+import { useAuth } from "@clerk/expo";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppText } from "../ui";
 import { RsvpButtons } from "./RsvpButtons";
 import { useHangouts } from "../../hooks/useHangouts";
+import { useChat } from "../../hooks/useChat";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { CATEGORY_META } from "../../constants/Categories";
 import { Fonts } from "../../constants/Fonts";
@@ -21,8 +24,24 @@ export interface HangoutCardProps {
 export function HangoutCard({ hangout }: HangoutCardProps) {
   const router = useRouter();
   const palette = useThemePalette();
-  const { goingCount, focusHangout } = useHangouts();
+  const { goingCount, rsvps, focusHangout } = useHangouts();
+  const { openGroupChat } = useChat();
+  const { userId } = useAuth();
   const meta = CATEGORY_META[hangout.category];
+
+  // The group chat is for the host and anyone who said they're going.
+  const isMember = Boolean(
+    userId && (rsvps[hangout.id] === "going" || hangout.hostId === userId),
+  );
+
+  const openChat = async () => {
+    try {
+      await openGroupChat(hangout);
+      router.push(`/chat/${hangout.id}`);
+    } catch (error) {
+      console.warn("Failed to open chat:", error);
+    }
+  };
 
   const startsAt = formatStartsAt(hangout.startsAt);
   const happensToday = startsAt.startsWith("Today");
@@ -81,6 +100,19 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
             {goingCount(hangout.id)} going
           </Text>
         </View>
+        {isMember ? (
+          <Pressable
+            onPress={() => void openChat()}
+            style={styles.chatIcon}
+            hitSlop={8}
+          >
+            <Ionicons
+              name="chatbubble-ellipses-outline"
+              size={18}
+              color={palette.primary}
+            />
+          </Pressable>
+        ) : null}
         <RsvpButtons hangoutId={hangout.id} style={styles.rsvp} />
       </View>
     </Pressable>
@@ -160,6 +192,12 @@ const styles = StyleSheet.create({
   goingText: {
     fontFamily: Fonts.SemiBold,
     fontSize: 13,
+  },
+  chatIcon: {
+    alignItems: "center",
+    height: 30,
+    justifyContent: "center",
+    width: 30,
   },
   rsvp: {
     width: 172,

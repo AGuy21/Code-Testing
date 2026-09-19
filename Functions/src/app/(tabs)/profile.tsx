@@ -1,6 +1,8 @@
+import Ionicons from "@react-native-vector-icons/ionicons";
 import { Fragment, useMemo } from "react";
 import { useRouter } from "expo-router";
 import { useAuth, useUser } from "@clerk/expo";
+import { useChat } from "../../hooks/useChat";
 import {
   ActivityIndicator,
   Alert,
@@ -200,11 +202,22 @@ interface EventRowProps {
 function EventRow({ hangout }: EventRowProps) {
   const router = useRouter();
   const palette = useThemePalette();
-  const { focusHangout } = useHangouts();
+  const { rsvps, focusHangout } = useHangouts();
+  const { userId } = useAuth();
+  const { openGroupChat } = useChat();
 
   const openOnMap = () => {
     focusHangout(hangout.id);
     router.push("/(tabs)/map");
+  };
+
+  const openChat = async () => {
+    try {
+      await openGroupChat(hangout);
+      router.push(`/chat/${hangout.id}`);
+    } catch (error) {
+      console.warn("Failed to open chat:", error);
+    }
   };
 
   return (
@@ -228,6 +241,19 @@ function EventRow({ hangout }: EventRowProps) {
           {formatStartsAt(hangout.startsAt)} · {hangout.placeLabel}
         </Text>
       </View>
+      {userId && (rsvps[hangout.id] === "going" || hangout.hostId === userId) ? (
+        <Pressable
+          onPress={() => void openChat()}
+          style={styles.rowChat}
+          hitSlop={8}
+        >
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={18}
+            color={palette.primary}
+          />
+        </Pressable>
+      ) : null}
       <Text style={[styles.rowChevron, { color: palette.textMuted }]}>›</Text>
     </Pressable>
   );
@@ -342,6 +368,12 @@ const styles = StyleSheet.create({
   rowMeta: {
     fontFamily: Fonts.Medium,
     fontSize: 12,
+  },
+  rowChat: {
+    alignItems: "center",
+    height: 32,
+    justifyContent: "center",
+    width: 32,
   },
   rowChevron: {
     fontFamily: Fonts.Medium,

@@ -85,6 +85,13 @@ const config: ExpoConfig = {
     "expo-web-browser",
     "@react-native-community/datetimepicker",
     [
+      "expo-notifications",
+      {
+        color: "#50c878",
+        defaultChannel: "messages",
+      },
+    ],
+    [
       "expo-location",
       {
         locationWhenInUsePermission:

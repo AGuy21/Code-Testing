@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ClerkProvider } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { HangoutsProvider } from "../providers/HangoutsProvider";
+import { ChatProvider } from "../providers/ChatProvider";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -42,10 +43,13 @@ export default function Layout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <HangoutsProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
+        <ChatProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="chat/[conversationId]" />
+          </Stack>
+        </ChatProvider>
       </HangoutsProvider>
     </ClerkProvider>
   );

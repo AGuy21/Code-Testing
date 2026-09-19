@@ -4,6 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -11,6 +12,7 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import {
   createContext,
@@ -251,8 +253,46 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       updateDoc(docRef, update).catch((error) =>
         console.warn("Failed to update RSVP:", error),
       );
+
+      // Mirror RSVPs into the hangout's group chat: "going" joins, pass or
+      // undo leaves. The host always stays a member. Legacy events get their
+      // conversation backfilled on first RSVP.
+      const entry = snapshotEntries.find((item) => item.hangout.id === id);
+      const isHost = entry?.hangout.hostId === userId;
+      void (async () => {
+        try {
+          const convRef = doc(db, "conversations", id);
+          const snap = await getDoc(convRef);
+          if (!snap.exists()) {
+            const members = new Set<string>();
+            if (entry?.hangout.hostId) members.add(entry.hangout.hostId);
+            if (status === "going" || members.size === 0) members.add(userId);
+            await setDoc(convRef, {
+              type: "group",
+              hangoutId: id,
+              hangoutTitle: entry?.hangout.title ?? "Hangout",
+              emoji: entry?.hangout.emoji ?? "💬",
+              participantUserIds: [...members],
+              lastMessage: null,
+              lastReadAt: {},
+              createdAt: serverTimestamp(),
+            });
+          }
+          if (status === "going") {
+            await updateDoc(convRef, {
+              participantUserIds: arrayUnion(userId),
+            });
+          } else if (!isHost) {
+            await updateDoc(convRef, {
+              participantUserIds: arrayRemove(userId),
+            });
+          }
+        } catch (error) {
+          console.warn("Failed to sync chat membership:", error);
+        }
+      })();
     },
-    [userId],
+    [userId, snapshotEntries],
   );
 
   const join = useCallback((id: HangoutId) => setRsvp(id, "going"), [setRsvp]);
@@ -288,7 +328,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       setPendingEntries((prev) => [...prev, entry]);
       setIsSubmitting(true);
       try {
-        await setDoc(doc(db, "hangouts", id), {
+        const batch = writeBatch(db);
+        batch.set(doc(db, "hangouts", id), {
           title: input.title,
           description: input.description,
           category: input.category,
@@ -303,6 +344,18 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
           passedUserIds: [],
           createdAt: serverTimestamp(),
         });
+        // Every hangout gets a group chat seeded with its host.
+        batch.set(doc(db, "conversations", id), {
+          type: "group",
+          hangoutId: id,
+          hangoutTitle: input.title,
+          emoji: input.emoji,
+          participantUserIds: [userId],
+          lastMessage: null,
+          lastReadAt: {},
+          createdAt: serverTimestamp(),
+        });
+        await batch.commit();
         return hangout;
       } catch (error) {
         // Roll back the optimistic entry so the UI never shows a ghost pin.

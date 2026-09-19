@@ -32,6 +32,7 @@ This README serves two audiences:
 - **One-tap RSVPs** — Join / Pass / undo, persisted per signed-in Clerk user.
 - **Host anywhere** — pin via GPS or type any address/venue (Google Places Text Search) and get a live suggestion dropdown.
 - **Auto-expiry** — hangouts whose start time has passed are deleted from Firestore and disappear from the feed, map and profile automatically.
+- **Chats** — every hangout auto-creates a group chat (host + "going" members), plus direct messages between members; new messages fire FCM pushes via a Cloud Function.
 - **Theming** — emerald/slate palette, light & dark, Manrope type ramp, reusable UI kit.
 
 ## Tech stack
@@ -56,26 +57,32 @@ Functions/
 ├── .env.local                 # Clerk + Google Maps keys (gitignored)
 ├── Configs/
 │   ├── FirebaseConfig.ts      # Firebase app + Firestore instance (db)
-│   └── firestore.rules        # Reference security rules for `hangouts`
+│   └── firestore.rules        # Security rules for hangouts/users/conversations
+├── functions/                 # Cloud Functions — FCM push on new chat messages
 └── src/
     ├── app/                   # expo-router routes
-    │   ├── _layout.tsx        #   fonts → Clerk → Hangouts → Stack
+    │   ├── _layout.tsx        #   fonts → Clerk → Hangouts → Chat → Stack
     │   ├── hosted-auth-callback.tsx
     │   ├── (auth)/login.tsx   #   Clerk hosted sign-in
-    │   └── (tabs)/            #   index (feed) · map · add · chat · profile
+    │   ├── (tabs)/            #   index (feed) · map · add · chat · profile
+    │   └── chat/              #   [conversationId].tsx — chat thread (pushed)
     ├── providers/
-    │   └── HangoutsProvider.tsx   # Firestore ⇄ app state (single source of truth)
+    │   ├── HangoutsProvider.tsx   # Firestore ⇄ app state (single source of truth)
+    │   └── ChatProvider.tsx       # conversations · messages · FCM registration
     ├── hooks/
     │   ├── useHangouts.ts     #   context accessor used by every feature
+    │   ├── useChat.ts         #   chat context accessor
     │   └── useColorTheme.ts   #   palette per scheme (+ useThemePalette)
     ├── components/
     │   ├── ui/                #   AppText · AppTextInput · Badge · Card · PrimaryButton · Screen
     │   ├── hangouts/          #   HangoutCard (ticket card) · RsvpButtons (segmented pill) · PlaceSearchInput (typed address → pin)
+    │   ├── chat/              #   MessageBubble
     │   └── map/               #   HangoutMap · HangoutMarker
     ├── constants/             #   Colors · Fonts · Categories · types/
     ├── data/hangouts.ts       #   default map region
-    └── utils/hangouts.ts      #   date formatting
-    └── utils/places.ts        #   Google Places Text Search (New) wrapper
+    ├── utils/hangouts.ts      #   date formatting
+    ├── utils/places.ts        #   Google Places Text Search (New) wrapper
+    └── utils/notifications.ts #   FCM permission/token (expo-notifications)
 ```
 
 ### Data flow
@@ -111,6 +118,10 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
 - **Auto-expiry** — the provider hides hangouts whose `startsAt` has passed
   from the UI (re-checked every 60 s) and deletes their docs from Firestore;
   every client's snapshot then reflects the removal.
+- **Chats** — `addHangout` batch-creates the hangout's group conversation;
+  RSVPs mirror membership into `conversations/{hangoutId}` (going joins,
+  pass/undo leaves, host stays); DMs use deterministic `dm-…` ids. A Cloud
+  Function sends FCM pushes on new messages (see Push notifications).
 - **RSVPs** — the Clerk `userId` is unioned/removed from `goingUserIds` /
   `passedUserIds`; the visible head count is `baseGoingCount + (my RSVP)`.
 - **Hosting** — `addHangout` shows the new pin optimistically, writes the doc
@@ -136,6 +147,28 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
 | `passedUserIds` | string[] | RSVP state |
 | `createdAt` | server Timestamp | audit |
 
+**`users/{userId}`** — created on first chat visit
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `displayName` | string | from Clerk; used by chat |
+| `imageUrl?` | string | avatar (only when set) |
+| `fcmTokens` | string[] | device FCM tokens; read by Cloud Functions |
+
+**`conversations/{id}`** — group chats (`id = hangoutId`) and DMs (`id = "dm-<uidA>-<uidB>"`, deterministic)
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `type` | `"group" \| "dm"` | |
+| `hangoutId` / `hangoutTitle` / `emoji` | string | group chats only |
+| `participantUserIds` | string[] | host + "going" members (group); both users (DM) |
+| `participantNames` | map | DM name snapshot (uid → name) |
+| `lastMessage` | map \| null | `{ text, senderId, senderName, sentAt }` |
+| `lastReadAt` | map | uid → Timestamp read receipt |
+| `createdAt` | server Timestamp | audit |
+
+Subcollection **`conversations/{id}/messages/{messageId}`**: `text` (≤1000) · `senderId` · `senderName` · `createdAt`.
+
 ### Security rules
 
 `Configs/firestore.rules` matches this write pattern exactly:
@@ -145,6 +178,10 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
 - `update` — **restricted to** `goingUserIds` / `passedUserIds` (max 1000 each); no auth gate for the same Clerk/Firebase reason.
 - `delete` — only for expired hangouts (`startsAt` in the past) or legacy
   seed docs (no `hostId`); live docs stay protected.
+- `users` — public reads; shape-validated writes (profile + FCM tokens).
+- `conversations` — create/update shape-restricted (membership, lastMessage,
+  read receipts); `messages` require the sender to be a participant and can
+  never be edited or deleted.
 
 Apply them in **Firebase console → Firestore Database → Rules**, or with the Firebase CLI:
 
@@ -164,6 +201,7 @@ Everything the app calls outside its own code — and exactly where it is wired.
 | 2 | **Firebase Firestore** | Real-time hangouts, RSVPs, seeding | `Configs/FirebaseConfig.ts` → consumed by `HangoutsProvider` | Firebase web config (public by design; protected by rules) |
 | 3 | **Clerk** | Sign-in/up, sessions, identity for RSVP ownership | `src/app/_layout.tsx`, `(auth)/login.tsx`, `profile.tsx` | `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY`; `CLERK_SECRET_KEY` is server-side only |
 | 4 | **expo-location** (device GPS) | Locate-me FAB; pin-your-hangout | `(tabs)/map.tsx`, `(tabs)/add.tsx` | OS permission strings in `app.config.ts` |
+| 5 | **Firebase Cloud Messaging** (Cloud Functions + `expo-notifications`) | Chat push notifications | `functions/src/index.ts` · `src/utils/notifications.ts` | FCM via the Firebase service account (admin SDK, server-side) |
 
 ### 1. Google Maps Platform (required for the Map tab)
 
@@ -197,7 +235,10 @@ Everything the app calls outside its own code — and exactly where it is wired.
 
 - App keys live in `.env.local`; the root layout throws at startup if the publishable key is missing.
 - Sign-in uses **Clerk hosted auth** (`useHostedAuth`) with `expo-web-browser` + `expo-secure-store`; `hosted-auth-callback.tsx` is the redirect landing pad.
-- The Clerk `userId` is the only identifier persisted to Firestore (`hostId` + RSVP arrays) — no emails or names are stored.
+- The Clerk `userId` keys all Firestore docs (`hostId`, RSVP arrays, chat
+  participants); chat additionally stores your display name (and avatar, if
+  set) in `users/{uid}` so conversations can render them. Emails are never
+  stored.
 - `CLERK_SECRET_KEY` must never ship in the app bundle; it is reserved for a future backend (Cloud Functions / corporate API).
 
 ### 3. Firebase Firestore
@@ -211,7 +252,22 @@ Everything the app calls outside its own code — and exactly where it is wired.
 - Permission strings are configured in `app.config.ts` (`locationWhenInUsePermission`); the Android manifest requests `ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION`.
 - Used by the locate-me FAB (map camera) and the host flow's "Use my location" pin via the shared resolver `src/utils/location.ts`: it checks that location **services** are on, asks for permission once, detects permanent denial and deep-links to app Settings, and retries at low accuracy when the provider hiccups (common on emulators).
 
-### 5. Outside information & assets used by the corporation
+### 5. Chat push notifications (Cloud Functions + FCM)
+
+1. Firebase console → **Project settings → Cloud Messaging** → enable
+   **Cloud Messaging API (V1)**.
+2. Download `google-services.json` for the Android app
+   (`com.anonymous.Functions`) → save it at `Functions/google-services.json`
+   (the default `android.googleServicesFile` path).
+3. Upgrade the Firebase project to **Blaze**, then
+   `npm i -g firebase-tools && firebase login`.
+4. `cd functions && npm install && npm run build`, then from the repo root:
+   `firebase deploy --only functions` (details in `functions/README.md`).
+5. **Rebuild the dev client** — `npx expo prebuild --clean && npm run
+   android`. Push needs native code; until then chat works over live
+   snapshots and the app logs a rebuild hint.
+
+### 6. Outside information & assets used by the corporation
 
 - **Typeface** — Manrope (SIL Open Font License), bundled through `expo-font` in `app.config.ts`.
 - **Icons** — Ionicons (MIT) and Material Design Icons (Apache-2.0) via `@react-native-vector-icons/*`.
@@ -294,11 +350,11 @@ npm start          # Metro dev server
 
 ## Roadmap
 
-- Chat backend — wire the chat UI (already shipped) to a Firestore subcollection per hangout
+- Chat backend — shipped: Firestore group chats per hangout + deterministic DMs with FCM pushes via Cloud Functions
 - Private Functions - Local sending of location for hangouts privately
 Add a privacy field to each event. Private events should support three access types: Invite Only, Request to Join, and Friends Only. Users without access can either not see the event at all, or only see limited information such as the event name, general neighborhood, category, and number attending. The exact location should only become visible after the user is approved. Hosts should be able to invite users directly, approve/deny join requests, remove guests, allow or disable +1s, and optionally generate a private invite link/code.
 - Places search — **shipped**: the host flow resolves typed addresses/venues via Google Places Text Search (New); autocomplete-as-you-type is the natural next step.
-- Push notifications (FCM) when someone joins your hangout
+- Push notifications when someone joins your hangout (chat message pushes ship via Cloud Functions today)
 - Cloud Functions for counters, moderation and server-side expiry sweeps
 - Edit/delete own hangouts · feed filters and distance sorting
 
