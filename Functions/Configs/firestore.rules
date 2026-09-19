@@ -12,8 +12,9 @@ rules_version = '2';
 // - `create` requires a signed-in request and validates the essential fields
 //   (the client seeds starter docs on first sync while signed in).
 // - `update` may only touch the RSVP participant arrays.
-// - `delete` is closed — retire hangouts in the console or via an admin
-//   backend instead.
+// - `delete` only succeeds for hangouts whose start time has passed (the
+//   client auto-expires them) or for legacy seed docs (no hostId). Live
+//   docs stay protected.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -52,7 +53,10 @@ service cloud.firestore {
         && request.resource.data.goingUserIds.size() <= 1000
         && request.resource.data.passedUserIds.size() <= 1000;
 
-      allow delete: if false;
+      // Auto-expiry: the client deletes hangouts once startsAt has passed.
+      // Legacy seed docs never carried a hostId, so they can be purged too.
+      allow delete: if resource.data.startsAt < request.time
+        || resource.data.hostId == null;
     }
   }
 }
