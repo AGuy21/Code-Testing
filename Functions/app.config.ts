@@ -50,7 +50,7 @@ const config: ExpoConfig = {
     predictiveBackGestureEnabled: false,
     config: {
       googleMaps: {
-        apiKey: androidMapsApiKey,
+        apiKey: "AIzaSyAbQvbeWBss38by85XQbcvQZzGf109ov1s",
       },
     },
     permissions: [

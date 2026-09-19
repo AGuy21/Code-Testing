@@ -172,7 +172,7 @@ Everything the app calls outside its own code — and exactly where it is wired.
 2. **APIs & Services → Library** → enable **Maps SDK for Android** (and **Maps SDK for iOS** if you want Google tiles on iOS too).
 3. **APIs & Services → Credentials → Create credentials → API key**.
 4. **Restrict the key**: Application restrictions → *Android apps* → add package name `com.anonymous.Functions` and your SHA-1 (`cd android && ./gradlew signingReport`, or `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android`). API restrictions → *Maps SDK for Android*.
-5. Put the key in `Functions/.env.local`:
+5. Put the key in `Functions/.env` (or `.env.local`):
    ```
    EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=AIza…
    ```
@@ -182,7 +182,7 @@ Everything the app calls outside its own code — and exactly where it is wired.
    npm run android
    ```
 
-**Blank/grey map?** Check that the GCP project has billing enabled, the SDK is enabled, and the key restriction matches this app's package + SHA-1; then inspect `adb logcat | grep -iE "maps|api"`.
+**Blank/grey map?** Check that the GCP project has billing enabled, the SDK is enabled, and the key restriction matches this app's package + SHA-1; then inspect `adb logcat | grep -iE "maps|api"`. Note: a Maps-SDK-only key will refuse web-API calls like Geocoding — that restriction is correct and doesn't affect the in-app map. After changing the key, re-run `npx expo prebuild --platform android --clean` so it lands in `AndroidManifest.xml` (verify the `com.google.android.geo.API_KEY` meta-data entry).
 
 **Platform notes:**
 

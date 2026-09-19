@@ -2,10 +2,10 @@ import type { Hangout } from "../constants/types/hangout";
 
 /** Default map framing before fit-to-markers runs. */
 export const MAP_INITIAL_REGION = {
-  latitude: 30.2672,
-  longitude: -97.7431,
-  latitudeDelta: 0.05,
-  longitudeDelta: 0.03,
+  latitude: 37.78825,
+  longitude: -122.4324,
+  latitudeDelta: 0.0922,
+  longitudeDelta: 0.0421,
 };
 
 /** ISO timestamp helper relative to "now" so seed data always looks upcoming. */
@@ -33,7 +33,8 @@ export const SEED_HANGOUTS: readonly Hangout[] = [
   {
     id: "seed-taco-run",
     title: "Late Night Taco Run",
-    description: "Food truck crawl after dark. Split a few tacos, no plans needed.",
+    description:
+      "Food truck crawl after dark. Split a few tacos, no plans needed.",
     category: "food",
     emoji: "🌮",
     location: { latitude: 30.2622, longitude: -97.7362 },
@@ -57,7 +58,8 @@ export const SEED_HANGOUTS: readonly Hangout[] = [
   {
     id: "seed-coffee-code",
     title: "Coffee & Code Jam",
-    description: "Side projects, laptops, good coffee. Quiet table reserved in the back.",
+    description:
+      "Side projects, laptops, good coffee. Quiet table reserved in the back.",
     category: "study",
     emoji: "☕",
     location: { latitude: 30.2704, longitude: -97.7455 },
@@ -69,7 +71,8 @@ export const SEED_HANGOUTS: readonly Hangout[] = [
   {
     id: "seed-park-picnic",
     title: "Park Picnic & Frisbee",
-    description: "Blankets out under the oaks. Bring snacks, we bring the frisbee.",
+    description:
+      "Blankets out under the oaks. Bring snacks, we bring the frisbee.",
     category: "chill",
     emoji: "🥏",
     location: { latitude: 30.2711, longitude: -97.7482 },
