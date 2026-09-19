@@ -31,7 +31,7 @@ This README serves two audiences:
 - **Interactive map** — custom emoji pins with live head counts, tap-to-open detail card, "locate me" FAB and auto-fit camera.
 - **One-tap RSVPs** — Join / Pass / undo, persisted per signed-in Clerk user.
 - **10-second host flow** — category, quick chips or a full date & time picker, GPS pin (with Settings guidance when permission/GPS is off), and the map flies to your new hangout.
-- **Self-seeding data** — five starter hangouts are batch-written on first sync when the collection is empty.
+- **Auto-expiry** — hangouts whose start time has passed are deleted from Firestore and disappear from the feed, map and profile automatically.
 - **Theming** — emerald/slate palette, light & dark, Manrope type ramp, reusable UI kit.
 
 ## Tech stack
@@ -73,7 +73,7 @@ Functions/
     │   ├── hangouts/          #   HangoutCard (ticket card) · RsvpButtons (segmented pill)
     │   └── map/               #   HangoutMap · HangoutMarker
     ├── constants/             #   Colors · Fonts · Categories · types/
-    ├── data/hangouts.ts       #   seed hangouts + initial map region
+    ├── data/hangouts.ts       #   default map region
     └── utils/hangouts.ts      #   date formatting
 ```
 
@@ -86,7 +86,7 @@ Functions/
           onSnapshot (real-time, ordered by startsAt)
                                ▼
          src/providers/HangoutsProvider.tsx
-         · seeds 5 starter docs via writeBatch when empty
+         · deletes hangouts once startsAt passes (auto-expiry)
          · RSVPs → arrayUnion/arrayRemove on user-id arrays
          · addHangout → setDoc (+ serverTimestamp createdAt)
                                ▼  React context
@@ -107,8 +107,9 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
   intentionally not imported (it depends on browser APIs).
 - **Sync** — one `onSnapshot` listener on `hangouts`, ordered by `startsAt`
   ascending; the first snapshot flips `isLoading` off.
-- **Seeding** — if the first snapshot is empty, a `writeBatch` writes the five
-  `SEED_HANGOUTS` once (guarded by a ref so it never re-runs).
+- **Auto-expiry** — the provider hides hangouts whose `startsAt` has passed
+  from the UI (re-checked every 60 s) and deletes their docs from Firestore;
+  every client's snapshot then reflects the removal.
 - **RSVPs** — the Clerk `userId` is unioned/removed from `goingUserIds` /
   `passedUserIds`; the visible head count is `baseGoingCount + (my RSVP)`.
 - **Hosting** — `addHangout` shows the new pin optimistically, writes the doc
@@ -128,7 +129,7 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
 | `placeLabel` | string | human-readable place name |
 | `startsAt` | Firestore Timestamp | ordering key |
 | `hostName` | string | display name |
-| `hostId` | string \| null | Clerk user id (null for seeds) |
+| `hostId` | string \| null | Clerk user id of the host (null on legacy seed docs) |
 | `baseGoingCount` | number | seed head count |
 | `goingUserIds` | string[] | RSVP state |
 | `passedUserIds` | string[] | RSVP state |
@@ -141,7 +142,8 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
 - `read` — public; the feed and map work for everyone.
 - `create` — signed-in only; validates the fields above and requires empty RSVP arrays.
 - `update` — signed-in only and **restricted to** `goingUserIds` / `passedUserIds` (max 1000 each).
-- `delete` — closed.
+- `delete` — only for expired hangouts (`startsAt` in the past) or legacy
+  seed docs (no `hostId`); live docs stay protected.
 
 Apply them in **Firebase console → Firestore Database → Rules**, or with the Firebase CLI:
 
@@ -201,7 +203,7 @@ Everything the app calls outside its own code — and exactly where it is wired.
 
 - Web config lives in `Configs/FirebaseConfig.ts` (project `functions-ce142`). A web API key is public by design — data protection comes from **security rules**, not secrecy.
 - Create the database in **Firebase console → Firestore Database**, then apply `Configs/firestore.rules` (or run test mode while prototyping, but ship the rules).
-- Recommended next step: move seeding and head-count aggregation into **Cloud Functions** and tighten `create` further.
+- Recommended next step: move expiry sweeps and head-count aggregation into **Cloud Functions** and tighten `create` further.
 
 ### 4. expo-location
 
@@ -291,12 +293,12 @@ npm start          # Metro dev server
 
 ## Roadmap
 
-- Chat tab — Firestore subcollection per hangout
+- Chat backend — wire the chat UI (already shipped) to a Firestore subcollection per hangout
 - Private Functions - Local sending of location for hangouts privately
 Add a privacy field to each event. Private events should support three access types: Invite Only, Request to Join, and Friends Only. Users without access can either not see the event at all, or only see limited information such as the event name, general neighborhood, category, and number attending. The exact location should only become visible after the user is approved. Hosts should be able to invite users directly, approve/deny join requests, remove guests, allow or disable +1s, and optionally generate a private invite link/code.
 - Places search — Google **Places API** in the host flow (beyond GPS-only pins)
 - Push notifications (FCM) when someone joins your hangout
-- Cloud Functions for counters, moderation and auto-expiry of past hangouts
+- Cloud Functions for counters, moderation and server-side expiry sweeps
 - Edit/delete own hangouts · feed filters and distance sorting
 
 ## License & attributions

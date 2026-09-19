@@ -2,6 +2,7 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   onSnapshot,
   orderBy,
@@ -10,7 +11,6 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
-  writeBatch,
 } from "firebase/firestore";
 import {
   createContext,
@@ -23,7 +23,6 @@ import {
 } from "react";
 import { useAuth } from "@clerk/expo";
 import { db } from "../../Configs/FirebaseConfig";
-import { SEED_HANGOUTS } from "../data/hangouts";
 import type {
   Hangout,
   HangoutCategory,
@@ -141,6 +140,9 @@ function describeFirestoreError(error: unknown): string {
   return "Live sync failed — check your connection and Firebase setup.";
 }
 
+/** How often the UI re-checks for hangouts that have started and passed. */
+const EXPIRY_TICK_MS = 60_000;
+
 // PROVIDER_BELOW
 
 export function HangoutsProvider({ children }: { children: ReactNode }) {
@@ -186,55 +188,55 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     return unsubscribe;
   }, []);
 
+  // Ticks every minute so hangouts whose start time has passed vanish from
+  // the UI (feed, map, profile) even when no Firestore snapshot arrives.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), EXPIRY_TICK_MS);
+    return () => clearInterval(timer);
+  }, []);
+
   // Merged view: server docs plus optimistic writes the server has not
   // confirmed yet, re-sorted by start time so the feed/map stay ordered.
+  // Hangouts that already started are dropped — only upcoming plans show.
   const entries = useMemo(() => {
-    if (pendingEntries.length === 0) return snapshotEntries;
     const confirmed = new Set(
       snapshotEntries.map((entry) => entry.hangout.id),
     );
-    const merged = [
-      ...snapshotEntries,
-      ...pendingEntries.filter((entry) => !confirmed.has(entry.hangout.id)),
-    ];
-    return merged.sort(
+    const pending = pendingEntries.filter(
+      (entry) => !confirmed.has(entry.hangout.id),
+    );
+    const upcoming = [...snapshotEntries, ...pending].filter(
+      (entry) => startTime(entry.hangout.startsAt) > now,
+    );
+    return upcoming.sort(
       (a, b) => startTime(a.hangout.startsAt) - startTime(b.hangout.startsAt),
     );
-  }, [snapshotEntries, pendingEntries]);
+  }, [snapshotEntries, pendingEntries, now]);
 
-  // Seed starter hangouts once, when the collection is still empty.
-  const hasSeededRef = useRef(false);
+  // Retire hangouts whose start time has passed: delete them from Firestore
+  // so every client's snapshot drops them, not just this device's UI. The
+  // security rules allow deleting expired docs (and legacy seed docs).
+  const deletingExpiredRef = useRef(false);
   useEffect(() => {
-    if (hasSeededRef.current || isLoading || entries.length > 0) return;
-    hasSeededRef.current = true;
-    const seed = async () => {
-      try {
-        const batch = writeBatch(db);
-        const collectionRef = collection(db, "hangouts");
-        for (const seedHangout of SEED_HANGOUTS) {
-          const docRef = doc(collectionRef);
-          batch.set(docRef, {
-            title: seedHangout.title,
-            description: seedHangout.description,
-            category: seedHangout.category,
-            emoji: seedHangout.emoji,
-            location: seedHangout.location,
-            placeLabel: seedHangout.placeLabel,
-            startsAt: Timestamp.fromDate(new Date(seedHangout.startsAt)),
-            hostName: seedHangout.hostName,
-            baseGoingCount: seedHangout.goingCount,
-            goingUserIds: [],
-            passedUserIds: [],
-            createdAt: serverTimestamp(),
-          });
-        }
-        await batch.commit();
-      } catch (error) {
-        console.warn("Failed to seed hangouts:", error);
-      }
-    };
-    void seed();
-  }, [isLoading, entries.length]);
+    if (isLoading || deletingExpiredRef.current) return;
+    const expired = snapshotEntries.filter(
+      (entry) => startTime(entry.hangout.startsAt) <= now,
+    );
+    if (expired.length === 0) return;
+    deletingExpiredRef.current = true;
+    void Promise.all(
+      expired.map((entry) =>
+        deleteDoc(doc(db, "hangouts", entry.hangout.id)),
+      ),
+    )
+      .catch((error) => {
+        console.warn("Failed to delete expired hangouts:", error);
+      })
+      .finally(() => {
+        deletingExpiredRef.current = false;
+      });
+  }, [snapshotEntries, isLoading, now]);
 
   const setRsvp = useCallback(
     (id: HangoutId, status: RsvpStatus | null) => {
