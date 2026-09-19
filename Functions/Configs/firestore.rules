@@ -9,9 +9,11 @@ rules_version = '2';
 //
 // Model (see README.md → Data model):
 // - `hangouts` docs are world-readable so the feed/map work for everyone.
-// - `create` requires a signed-in request and validates the essential fields
-//   (the client seeds starter docs on first sync while signed in).
-// - `update` may only touch the RSVP participant arrays.
+// - `create` validates the essential fields. There is NO signed-in check:
+//   the app authenticates with Clerk, which cannot mint Firebase Auth
+//   tokens, so request.auth is always null for this client.
+// - `update` may only touch the RSVP participant arrays (no auth gate for
+//   the same Clerk/Firebase reason).
 // - `delete` only succeeds for hangouts whose start time has passed (the
 //   client auto-expires them) or for legacy seed docs (no hostId). Live
 //   docs stay protected.
@@ -24,12 +26,16 @@ service cloud.firestore {
       // Anyone (signed in or not) can browse the feed and the map.
       allow read: if true;
 
-      // Hosting a hangout requires being signed in. The client writes:
-      // title, description, category, emoji, location, placeLabel, startsAt,
-      // hostName, hostId, baseGoingCount, goingUserIds, passedUserIds,
-      // createdAt.
-      allow create: if request.auth != null
-        && request.resource.data.title is string
+      // Hosting a hangout. The client writes: title, description, category,
+      // emoji, location, placeLabel, startsAt, hostName, hostId,
+      // baseGoingCount, goingUserIds, passedUserIds, createdAt.
+      //
+      // NOTE — no `request.auth` check: the app authenticates with Clerk,
+      // which cannot mint Firebase Auth tokens, so request.auth is always
+      // null here. Field validation is the guard; a real signed-in gate
+      // needs a backend that exchanges Clerk sessions for Firebase custom
+      // tokens (future Cloud Functions work).
+      allow create: if request.resource.data.title is string
         && request.resource.data.title.size() >= 1
         && request.resource.data.title.size() <= 120
         && request.resource.data.description is string
@@ -44,10 +50,11 @@ service cloud.firestore {
         && request.resource.data.passedUserIds.size() == 0;
 
       // RSVPs (Join / Pass / undo) may only modify the participant arrays.
-      // The client writes the Clerk user id via arrayUnion/arrayRemove.
-      allow update: if request.auth != null
-        && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['goingUserIds', 'passedUserIds'])
+      // As with create, request.auth is always null (Clerk ≠ Firebase Auth)
+      // — the field restriction is the guard. The client writes the Clerk
+      // user id via arrayUnion/arrayRemove.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['goingUserIds', 'passedUserIds'])
         && request.resource.data.goingUserIds is list
         && request.resource.data.passedUserIds is list
         && request.resource.data.goingUserIds.size() <= 1000

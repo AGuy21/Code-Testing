@@ -141,8 +141,8 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
 `Configs/firestore.rules` matches this write pattern exactly:
 
 - `read` — public; the feed and map work for everyone.
-- `create` — signed-in only; validates the fields above and requires empty RSVP arrays.
-- `update` — signed-in only and **restricted to** `goingUserIds` / `passedUserIds` (max 1000 each).
+- `create` — validates the fields above and requires empty RSVP arrays. There is **no signed-in check**: the app authenticates with Clerk, which cannot mint Firebase Auth tokens, so `request.auth` is always null. A signed-in gate needs a backend that exchanges Clerk sessions for Firebase custom tokens (roadmap).
+- `update` — **restricted to** `goingUserIds` / `passedUserIds` (max 1000 each); no auth gate for the same Clerk/Firebase reason.
 - `delete` — only for expired hangouts (`startsAt` in the past) or legacy
   seed docs (no `hostId`); live docs stay protected.
 
@@ -172,9 +172,9 @@ Everything the app calls outside its own code — and exactly where it is wired.
 **Setup (one time):**
 
 1. Open <https://console.cloud.google.com> → create or select a project.
-2. **APIs & Services → Library** → enable **Maps SDK for Android** (and **Maps SDK for iOS** if you want Google tiles on iOS too).
+2. **APIs & Services → Library** → enable **Maps SDK for Android** (and **Maps SDK for iOS** if you want Google tiles on iOS too). Also enable **Places API (New)** — the host flow's typed-address search uses it; without it you'll see `Places API request failed — enable 'Places API (New)'…` (HTTP 403).
 3. **APIs & Services → Credentials → Create credentials → API key**.
-4. **Restrict the key**: Application restrictions → *Android apps* → add package name `com.anonymous.Functions` and your SHA-1 (`cd android && ./gradlew signingReport`, or `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android`). API restrictions → *Maps SDK for Android*.
+4. **Restrict the key**: Application restrictions → *Android apps* → add package name `com.anonymous.Functions` and your SHA-1 (`cd android && ./gradlew signingReport`, or `keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android`). API restrictions → *Maps SDK for Android* **+ Places API (New)**. Note: an *Android app* application restriction blocks Places **REST** calls — if Places search returns 403 with restrictions on, create a second key (API restriction: *Places API (New)* only, application restriction: *None* for dev) and swap it into `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY`, or keep the map key and Places key separate.
 5. Put the key in `Functions/.env` (or `.env.local`):
    ```
    EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=AIza…

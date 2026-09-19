@@ -20,8 +20,8 @@ export interface RsvpButtonsProps {
 
 /**
  * Segmented Join/Pass control — one pill, two halves. The active half fills
- * (solid emerald for going, soft emerald for passed); tapping the active half
- * again undoes the RSVP.
+ * (solid emerald for going, soft emerald for passed). Tapping the active half
+ * again undoes the RSVP; tapping the other half switches the answer.
  */
 export function RsvpButtons({ hangoutId, style }: RsvpButtonsProps) {
   const { rsvps, join, pass, clearRsvp, canRsvp } = useHangouts();
@@ -54,14 +54,14 @@ export function RsvpButtons({ hangoutId, style }: RsvpButtonsProps) {
       <Segment
         label={status === "going" ? "Going ✓" : "Join"}
         tone={status === "going" ? "solid" : "idle"}
-        disabled={!canRsvp || status === "passed"}
+        disabled={!canRsvp}
         onPress={() => choose("going")}
         palette={palette}
       />
       <Segment
         label={status === "passed" ? "Passed" : "Pass"}
         tone={status === "passed" ? "soft" : "idle"}
-        disabled={!canRsvp || status === "going"}
+        disabled={!canRsvp}
         onPress={() => choose("passed")}
         palette={palette}
       />

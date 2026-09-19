@@ -21,46 +21,47 @@ interface PlacesApiResponse {
   }>;
 }
 
-/** Resolve a typed address / place name into up to `max` coordinate results. */
+/** Resolve a typed address / place name into up to `max` coordinate results.
+ * Throws on API errors (e.g. 403 when Places API (New) isn't enabled for the
+ * key) so callers can surface a hint instead of showing an empty list. */
 export async function searchPlaces(query: string, max = 5): Promise<PlaceResult[]> {
   const trimmed = query.trim();
   if (trimmed.length < 3) return [];
 
-  try {
-    const response = await fetch(
-      "https://places.googleapis.com/v1/places:searchText",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
-          // Field mask limits the response (and billing) to what we render.
-          "X-Goog-FieldMask":
-            "places.displayName,places.formattedAddress,places.location",
-        },
-        body: JSON.stringify({ textQuery: trimmed, pageSize: max }),
+  const response = await fetch(
+    "https://places.googleapis.com/v1/places:searchText",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+        // Field mask limits the response (and billing) to what we render.
+        "X-Goog-FieldMask":
+          "places.displayName,places.formattedAddress,places.location",
       },
-    );
-    if (!response.ok) {
-      throw new Error(`Places API responded ${response.status}`);
-    }
-    const data = (await response.json()) as PlacesApiResponse;
-    const places = data.places ?? [];
-    const results: PlaceResult[] = [];
-    for (const place of places) {
-      const latitude = place.location?.latitude;
-      const longitude = place.location?.longitude;
-      if (typeof latitude !== "number" || typeof longitude !== "number") {
-        continue;
-      }
-      results.push({
-        label: place.formattedAddress ?? place.displayName?.text ?? "Unnamed place",
-        location: { latitude, longitude },
-      });
-    }
-    return results;
-  } catch (error) {
-    console.warn("Places search failed:", error);
-    return [];
+      body: JSON.stringify({ textQuery: trimmed, pageSize: max }),
+    },
+  );
+  if (!response.ok) {
+    const hint =
+      response.status === 403
+        ? "enable 'Places API (New)' for this key in Google Cloud Console"
+        : `HTTP ${response.status}`;
+    throw new Error(`Places API request failed — ${hint}`);
   }
+  const data = (await response.json()) as PlacesApiResponse;
+  const places = data.places ?? [];
+  const results: PlaceResult[] = [];
+  for (const place of places) {
+    const latitude = place.location?.latitude;
+    const longitude = place.location?.longitude;
+    if (typeof latitude !== "number" || typeof longitude !== "number") {
+      continue;
+    }
+    results.push({
+      label: place.formattedAddress ?? place.displayName?.text ?? "Unnamed place",
+      location: { latitude, longitude },
+    });
+  }
+  return results;
 }

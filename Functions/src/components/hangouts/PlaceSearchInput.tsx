@@ -33,6 +33,7 @@ export function PlaceSearchInput({
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PlaceResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Increasing token: only the latest response may render its results.
   const requestRef = useRef(0);
@@ -41,17 +42,27 @@ export function PlaceSearchInput({
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (query.trim().length < 3) {
       setResults([]);
+      setHasError(false);
       setIsSearching(false);
       return;
     }
     setIsSearching(true);
     const request = ++requestRef.current;
     debounceRef.current = setTimeout(() => {
-      void searchPlaces(query).then((places) => {
-        if (request !== requestRef.current) return; // stale response
-        setResults(places);
-        setIsSearching(false);
-      });
+      searchPlaces(query)
+        .then((places) => {
+          if (request !== requestRef.current) return; // stale response
+          setResults(places);
+          setHasError(false);
+          setIsSearching(false);
+        })
+        .catch((error) => {
+          console.warn("Places search failed:", error);
+          if (request !== requestRef.current) return;
+          setResults([]);
+          setHasError(true);
+          setIsSearching(false);
+        });
     }, SEARCH_DEBOUNCE_MS);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -61,6 +72,7 @@ export function PlaceSearchInput({
   const choose = (place: PlaceResult) => {
     setQuery("");
     setResults([]);
+    setHasError(false);
     setIsSearching(false);
     onPlaceSelected(place);
   };
@@ -75,7 +87,7 @@ export function PlaceSearchInput({
         returnKeyType="search"
       />
 
-      {isSearching || results.length > 0 ? (
+      {isSearching || hasError || results.length > 0 ? (
         <View
           style={[
             styles.dropdown,
@@ -90,6 +102,23 @@ export function PlaceSearchInput({
               <ActivityIndicator size="small" color={palette.primary} />
               <Text style={[styles.statusText, { color: palette.textMuted }]}>
                 Searching places…
+              </Text>
+            </View>
+          ) : hasError ? (
+            <View style={styles.statusRow}>
+              <Text style={styles.statusIcon}>⚠️</Text>
+              <Text
+                style={[styles.statusText, { color: palette.textMuted }]}
+                numberOfLines={2}
+              >
+                Places search failed — enable "Places API (New)" for your key
+                in Google Cloud Console.
+              </Text>
+            </View>
+          ) : results.length === 0 ? (
+            <View style={styles.statusRow}>
+              <Text style={[styles.statusText, { color: palette.textMuted }]}>
+                No matches found — try a fuller address.
               </Text>
             </View>
           ) : (
@@ -146,8 +175,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   statusText: {
+    flex: 1,
     fontFamily: Fonts.Medium,
     fontSize: 13,
+  },
+  statusIcon: {
+    fontSize: 14,
   },
   suggestion: {
     alignItems: "center",

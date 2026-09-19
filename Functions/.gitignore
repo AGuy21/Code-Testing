@@ -3,6 +3,7 @@
 # dependencies
 node_modules/
 app.json
+app.config.ts
 # Expo
 .expo/
 dist/
