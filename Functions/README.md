@@ -30,7 +30,7 @@ This README serves two audiences:
 - **Live events feed** — hangouts stream in real time from Firestore snapshots; no pull-to-refresh needed.
 - **Interactive map** — custom emoji pins with live head counts, tap-to-open detail card, "locate me" FAB and auto-fit camera.
 - **One-tap RSVPs** — Join / Pass / undo, persisted per signed-in Clerk user.
-- **10-second host flow** — category, quick chips or a full date & time picker, GPS pin (with Settings guidance when permission/GPS is off), and the map flies to your new hangout.
+- **Host anywhere** — pin via GPS or type any address/venue (Google Places Text Search) and get a live suggestion dropdown.
 - **Auto-expiry** — hangouts whose start time has passed are deleted from Firestore and disappear from the feed, map and profile automatically.
 - **Theming** — emerald/slate palette, light & dark, Manrope type ramp, reusable UI kit.
 
@@ -70,11 +70,12 @@ Functions/
     │   └── useColorTheme.ts   #   palette per scheme (+ useThemePalette)
     ├── components/
     │   ├── ui/                #   AppText · AppTextInput · Badge · Card · PrimaryButton · Screen
-    │   ├── hangouts/          #   HangoutCard (ticket card) · RsvpButtons (segmented pill)
+    │   ├── hangouts/          #   HangoutCard (ticket card) · RsvpButtons (segmented pill) · PlaceSearchInput (typed address → pin)
     │   └── map/               #   HangoutMap · HangoutMarker
     ├── constants/             #   Colors · Fonts · Categories · types/
     ├── data/hangouts.ts       #   default map region
     └── utils/hangouts.ts      #   date formatting
+    └── utils/places.ts        #   Google Places Text Search (New) wrapper
 ```
 
 ### Data flow
@@ -296,7 +297,7 @@ npm start          # Metro dev server
 - Chat backend — wire the chat UI (already shipped) to a Firestore subcollection per hangout
 - Private Functions - Local sending of location for hangouts privately
 Add a privacy field to each event. Private events should support three access types: Invite Only, Request to Join, and Friends Only. Users without access can either not see the event at all, or only see limited information such as the event name, general neighborhood, category, and number attending. The exact location should only become visible after the user is approved. Hosts should be able to invite users directly, approve/deny join requests, remove guests, allow or disable +1s, and optionally generate a private invite link/code.
-- Places search — Google **Places API** in the host flow (beyond GPS-only pins)
+- Places search — **shipped**: the host flow resolves typed addresses/venues via Google Places Text Search (New); autocomplete-as-you-type is the natural next step.
 - Push notifications (FCM) when someone joins your hangout
 - Cloud Functions for counters, moderation and server-side expiry sweeps
 - Edit/delete own hangouts · feed filters and distance sorting

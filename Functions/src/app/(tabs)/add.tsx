@@ -25,6 +25,8 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { formatStartsAt } from "../../utils/hangouts";
 import { getCurrentFix } from "../../utils/location";
+import { PlaceSearchInput } from "../../components/hangouts/PlaceSearchInput";
+import type { PlaceResult } from "../../utils/places";
 
 type PickerMode = "date" | "time";
 
@@ -72,6 +74,7 @@ export default function Add() {
   const [activeQuick, setActiveQuick] = useState<number | null>(0);
   const [showPicker, setShowPicker] = useState<PickerMode | null>(null);
   const [location, setLocation] = useState<LatLng | null>(null);
+  const [placeName, setPlaceName] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
 
   const canSubmit =
@@ -82,9 +85,21 @@ export default function Add() {
     setLocating(true);
     try {
       const fix = await getCurrentFix();
-      if (fix) setLocation(fix);
+      if (fix) {
+        setLocation(fix);
+        setPlaceName("My current location");
+      }
     } finally {
       setLocating(false);
+    }
+  };
+
+  /** Sets the pin from a typed address; auto-fills the place name if empty. */
+  const handlePlaceSelected = (place: PlaceResult) => {
+    setLocation(place.location);
+    setPlaceName(place.label);
+    if (!placeLabel.trim()) {
+      setPlaceLabel(place.label);
     }
   };
 
@@ -297,13 +312,14 @@ export default function Add() {
           style={styles.locationButton}
         />
         <Text style={[styles.locationStatus, { color: palette.textMuted }]}>
-          {locating
-            ? "Locating…"
-            : location
-              ? `📍 ${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`
-              : "No pin yet"}
+          {locating ? "Locating…" : "or type an address below"}
         </Text>
       </View>
+
+      <PlaceSearchInput
+        onPlaceSelected={handlePlaceSelected}
+        selectedLabel={placeName}
+      />
 
       <AppTextInput
         label="Place name (optional)"
