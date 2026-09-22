@@ -27,7 +27,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (isSignedIn) {
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/profile");
     }
   }, [isSignedIn, router]);
 
