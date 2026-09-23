@@ -1,20 +1,20 @@
 
 
 export const colors = {
-  background: "#0B0B10",
-  surface: "#141019",
-  surfaceElevated: "#1D1529",
-  border: "rgba(167, 139, 250, 0.16)",
-  borderStrong: "rgba(167, 139, 250, 0.38)",
+  background: "#002657",
+  surface: "#00307C",
+  surfaceElevated: "#0021A5",
+  border: "rgba(250, 70, 22, 0.22)",
+  borderStrong: "rgba(250, 70, 22, 0.55)",
   textPrimary: "#FFFFFF",
-  textSecondary: "#B9AFCB",
-  textMuted: "#8E83A3",
-  accent: "#8B5CF6",
-  accentStrong: "#7C3AED",
-  accentSoft: "rgba(139, 92, 246, 0.16)",
+  textSecondary: "#C7D5EE",
+  textMuted: "#8DA2C6",
+  accent: "#FA4616",
+  accentStrong: "#C9370F",
+  accentSoft: "rgba(250, 70, 22, 0.16)",
   white: "#FFFFFF",
-  black: "#050508",
-  error: "#EF4444",
+  black: "#00122B",
+  error: "#FF6B6B",
 } as const;
 
 export const spacing = {
