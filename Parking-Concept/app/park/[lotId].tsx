@@ -137,10 +137,8 @@ export default function ParkingLotScreen() {
       >
         <AppText variant="label">Go Back</AppText>
       </Pressable>
-      <AppText variant="muted" style={styles.disclaimer}>
-        Please input lisence plate and password you want saved for ending
-        parking later, then pre-pay for hours. If ending your parking re-enter the plate and
-        passowrd for authentication and press "End Parking"
+      <AppText variant="muted" style={styles.disclaimer}> 
+        Please input lisence plate then the number of pre-pay hours. After, press 'Pay Now' to complete purchase
       </AppText>
     </Screen>
   );
