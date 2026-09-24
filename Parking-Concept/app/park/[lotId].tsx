@@ -21,9 +21,7 @@ interface LotStats {
 
 export default function ParkingLotScreen() {
   const { lotId } = useLocalSearchParams<{ lotId: string }>();
-  console.log("LotID: ", lotId);
   const lotIdNumber = lotId.split("Lot");
-  console.log("LotIDNumber: ", lotIdNumber);
 
   const { loading, lotData } = useLotData(lotId);
 

@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Alert, Pressable, View } from "react-native";
 import { Car } from "../../constants/types/LotDataTypes";
 import { AppText } from "./AppText";
 import timestampToText from "../functions/timestampToText";
 import { theme } from "../../constants/theme";
+import removeCar from "../functions/removeCar";
 
 interface CarListItemProps {
   car: Car;
+  lot: string;
+  onRefreshParent: () => void;
 }
 
-export default function CarListItem({ car }: CarListItemProps) {
+export default function CarListItem({ car, lot, onRefreshParent }: CarListItemProps) {
   const startTime = car.Start;
 
   if (!startTime) {
@@ -43,23 +46,46 @@ export default function CarListItem({ car }: CarListItemProps) {
 
   const isOvertime = allowedUntilMs < secureCurrentTimeMs;
 
+  function handleDeleteCar() {
+    console.log(lot, car.Plate, car.Prepayment)
+    Alert.alert(
+      "Confirm Deletion?",
+      "Press OK to confirm deletion of car on dashboard and database",
+      [
+        {
+          text: "cancel",
+          onPress: () => console.log("Cancelled Deletion:", car.Plate),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => removeCar(lot, car.Plate, car.Prepayment),
+        },
+      ],
+    );
+  }
+
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        backgroundColor: isOvertime ? theme.colors.error : theme.colors.surface,
-        borderColor: theme.colors.border,
-        borderRadius: theme.radii.md,
-        padding: theme.spacing.lg,
-        borderWidth: 1,
-      }}
-    >
-      <AppText variant="caption">Plate: {car.Plate}</AppText>
-      <AppText variant="caption">
-        Allowed Until: {timestampToText(allowedUntilDate)}
-      </AppText>
-    </View>
+    <Pressable onPress={() => handleDeleteCar()}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          backgroundColor: isOvertime
+            ? theme.colors.error
+            : theme.colors.surface,
+          borderColor: theme.colors.border,
+          borderRadius: theme.radii.md,
+          padding: theme.spacing.lg,
+          borderWidth: 1,
+        }}
+      >
+        <AppText variant="caption">Plate: {car.Plate}</AppText>
+        <AppText variant="caption">
+          Allowed Until: {timestampToText(allowedUntilDate)}
+        </AppText>
+      </View>
+    </Pressable>
   );
 }

@@ -1,10 +1,5 @@
 import { Keyboard, Pressable, StyleSheet, TextInput, View } from "react-native";
-import {
-  AppText,
-  Card,
-  PrimaryButton,
-  Screen,
-} from "../../../componenets/ui";
+import { AppText, Card, PrimaryButton, Screen } from "../../../componenets/ui";
 import { theme } from "../../../constants/theme";
 
 import { useAuth } from "@clerk/expo";
@@ -15,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Divider from "../../../componenets/ui/Divider";
 import { useState } from "react";
-import {AntDesign} from "@expo/vector-icons"
+import { AntDesign } from "@expo/vector-icons";
 
 interface DashboardStat {
   label: string;
@@ -27,6 +22,8 @@ export default function DashboardScreen() {
   const [inputLotId, setInputLotId] = useState("1");
   const [activeLotId, setActiveLotId] = useState("1");
   const { refetch, loading, lotData } = useLotData("Lot" + activeLotId);
+
+  const [refreshData, setRefreshData] = useState(1);
 
   console.log(loading, lotData);
 
@@ -41,18 +38,22 @@ export default function DashboardScreen() {
     { label: "Hourly rate", value: lotData?.HourlyRate },
   ];
 
-function handleChangeLotId() {
-  const formattedId = inputLotId.trim();
-  if (!formattedId) return; 
+  function handleChangeLotId() {
+    const formattedId = inputLotId.trim();
+    if (!formattedId) return;
 
-  if (formattedId === activeLotId) {
-    refetch(); // Forces a refresh if the ID didn't change
-  } else {
-    setActiveLotId(formattedId);
+    if (formattedId === activeLotId) {
+      refetch(); // Forces a refresh if the ID didn't change
+    } else {
+      setActiveLotId(formattedId);
+    }
+
+    Keyboard.dismiss();
   }
 
-  Keyboard.dismiss(); 
-}
+  const refreshParentData = () => {
+    setRefreshData(refreshData + 1);
+  };
   return (
     <Screen scroll>
       {/* <Show when="signed-in"> */}
@@ -64,7 +65,7 @@ function handleChangeLotId() {
         <AppText variant="label" style={styles.nowShowingLabel}>
           NOW SHOWING
         </AppText>
-        
+
         <View style={styles.lotRow}>
           <View style={styles.inputWrapper}>
             <AppText variant="hero" style={styles.lotText}>
@@ -85,12 +86,12 @@ function handleChangeLotId() {
             />
           </View>
 
-          <Pressable 
+          <Pressable
             onPress={handleChangeLotId}
             style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           >
             <View style={styles.circle}>
-              <AntDesign name="reload" size={22} color={theme.colors.white}/>
+              <AntDesign name="reload" size={22} color={theme.colors.white} />
             </View>
           </Pressable>
         </View>
@@ -111,7 +112,11 @@ function handleChangeLotId() {
         <View>
           {lotData.Cars.map((item) => (
             <View key={item.Plate} style={{ marginBottom: theme.spacing.md }}>
-              <CarListItem car={item} />
+              <CarListItem
+                car={item}
+                lot={activeLotId}
+                onRefreshParent={refreshParentData}
+              />
             </View>
           ))}
         </View>
@@ -131,7 +136,7 @@ function handleChangeLotId() {
 const styles = StyleSheet.create({
   lotCard: {
     marginBottom: theme.spacing.md,
-    padding: theme.spacing.lg, 
+    padding: theme.spacing.lg,
   },
   nowShowingLabel: {
     marginBottom: theme.spacing.sm,
@@ -146,16 +151,15 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8, 
+    gap: 8,
   },
-  lotText: {
-  },
+  lotText: {},
   textInput: {
     ...theme.typography.hero,
     color: theme.colors.textPrimary,
-    borderBottomWidth: 2, 
+    borderBottomWidth: 2,
     borderBottomColor: theme.colors.accent,
-    minWidth: 60, 
+    minWidth: 60,
     paddingBottom: 2,
   },
   subtitle: {
