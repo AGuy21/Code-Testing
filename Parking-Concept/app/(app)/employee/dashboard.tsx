@@ -53,6 +53,7 @@ export default function DashboardScreen() {
 
   const refreshParentData = () => {
     setRefreshData(refreshData + 1);
+    lotData.Cars
   };
   return (
     <Screen scroll>
