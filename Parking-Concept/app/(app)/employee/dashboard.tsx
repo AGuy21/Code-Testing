@@ -9,7 +9,7 @@ import CarListItem from "../../../componenets/ui/CarListItem";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Divider from "../../../componenets/ui/Divider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
 
 interface DashboardStat {
@@ -21,11 +21,15 @@ export default function DashboardScreen() {
   const { signOut } = useAuth({ treatPendingAsSignedOut: false });
   const [inputLotId, setInputLotId] = useState("1");
   const [activeLotId, setActiveLotId] = useState("1");
-  const { refetch, loading, lotData } = useLotData("Lot" + activeLotId);
+  const { refetch, loading, lotData } = useLotData(activeLotId);
 
-  const [refreshData, setRefreshData] = useState(1);
+  let mappedCars = [];
 
-  console.log(loading, lotData);
+  useEffect(() => {
+    mappedCars = lotData.Cars.map((item, index) => {
+      return { ...item, id: index };
+    });
+  }, [lotData]);
 
   if (loading) {
     return <LoadingScreen />;
@@ -49,10 +53,12 @@ export default function DashboardScreen() {
     Keyboard.dismiss();
   }
 
-  const refreshParentData = () => {
-    setRefreshData(refreshData + 1);
-    lotData.Cars
+  const refreshParentData = (index: number) => {
+    console.log("Refreshing...");
+    lotData.Cars.splice(index, index);
+    console.log(lotData.Cars);
   };
+
   return (
     <Screen scroll>
       {/* <Show when="signed-in"> */}
@@ -74,7 +80,7 @@ export default function DashboardScreen() {
             <TextInput
               value={inputLotId}
               onChangeText={setInputLotId}
-              placeholder="e.g. 1"
+              placeholder="e.g. University Street"
               placeholderTextColor={theme.colors.textSecondary}
               autoCapitalize="none"
               autoCorrect={false}
@@ -109,11 +115,12 @@ export default function DashboardScreen() {
 
       <SafeAreaView>
         <View>
-          {lotData.Cars.map((item) => (
+          {lotData.Cars.map((item, index) => (
             <View key={item.Plate} style={{ marginBottom: theme.spacing.md }}>
               <CarListItem
                 car={item}
                 lot={activeLotId}
+                index={index}
                 onRefreshParent={refreshParentData}
               />
             </View>
@@ -154,7 +161,9 @@ const styles = StyleSheet.create({
   },
   lotText: {},
   textInput: {
-    ...theme.typography.hero,
+    fontWeight: theme.typography.hero.fontWeight,
+    letterSpacing: theme.typography.hero.letterSpacing,
+    fontSize: 20,
     color: theme.colors.textPrimary,
     borderBottomWidth: 2,
     borderBottomColor: theme.colors.accent,

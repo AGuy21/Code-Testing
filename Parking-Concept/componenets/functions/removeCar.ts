@@ -22,7 +22,7 @@ export default async function removeCar(
 ) {
   try {
     const docId = getDocId(lot, plate, prepay);
-    const docRef = doc(db, "Lots", "Lot" + lot, "Cars", docId);
+    const docRef = doc(db, "Lots", lot, "Cars", docId);
     console.log("Deleting Doc...", docId)
     console.log("Ref...", docRef)
 

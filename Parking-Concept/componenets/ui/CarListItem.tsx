@@ -9,12 +9,14 @@ import removeCar from "../functions/removeCar";
 interface CarListItemProps {
   car: Car;
   lot: string;
-  onRefreshParent: () => void;
+  index: number;
+  onRefreshParent: any;
 }
 
 export default function CarListItem({
   car,
   lot,
+  index,
   onRefreshParent,
 }: CarListItemProps) {
   const startTime = car.Start;
@@ -63,12 +65,16 @@ export default function CarListItem({
         },
         {
           text: "OK",
-          onPress: () => removeCar(lot, car.Plate, car.Prepayment),
+          onPress: () => {
+            removeCar(lot, car.Plate, car.Prepayment)
+            onRefreshParent(index)
+          },
         },
       ],
     );
   }
 
+  
   return (
     <Pressable onPress={() => handleDeleteCar()}>
       <View

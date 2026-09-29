@@ -13,7 +13,6 @@ import { useState } from "react";
 import Divider from "../../componenets/ui/Divider";
 import LoadingScreen from "../../componenets/ui/LoadingScreen";
 import addCar from "../../componenets/functions/addCar";
-import removeCar from "../../componenets/functions/removeCar";
 interface LotStats {
   label: string;
   value: number;
@@ -21,7 +20,6 @@ interface LotStats {
 
 export default function ParkingLotScreen() {
   const { lotId } = useLocalSearchParams<{ lotId: string }>();
-  const lotIdNumber = lotId.split("Lot");
 
   const { loading, lotData } = useLotData(lotId);
 
@@ -50,8 +48,12 @@ export default function ParkingLotScreen() {
     console.log("Adding New Car: ");
     console.log("LotId:", lotId);
     console.log("Plate:", plate);
+    console.log("Make:", make);
+    console.log("Color:", color);
 
+    
     Alert.prompt("");
+    
     addCar(lotId, plate, make, color, lotData.Hours);
   };
 
@@ -80,7 +82,7 @@ export default function ParkingLotScreen() {
       <Card variant="accent" style={styles.lotCard}>
         <AppText variant="label">Now parking</AppText>
         <AppText variant="hero" style={styles.lotId}>
-          Lot: {lotIdNumber}
+          Lot: {lotId}
         </AppText>
         <AppText variant="body" style={styles.lotCaption}>
           You are paying for parking at this lot.
