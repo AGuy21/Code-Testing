@@ -13,6 +13,8 @@ const db = getFirestore();
 export default async function addCar(
   lot: string,
   plate: string,
+  make: string,
+  color: string,
   prepay: number,
 ) {
   try {
@@ -21,6 +23,8 @@ export default async function addCar(
 
     const docData: Car = {
       Plate: plate,
+      Make: make,
+      Color: color,
       Start: serverTimestamp(),
       Prepayment: prepay,
     };

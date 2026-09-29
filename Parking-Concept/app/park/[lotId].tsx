@@ -26,6 +26,8 @@ export default function ParkingLotScreen() {
   const { loading, lotData } = useLotData(lotId);
 
   const [plate, setPlate] = useState<string>("");
+  const [make, setMake] = useState<string>("");
+  const [color, setColor] = useState<string>("");
 
   const [error, setError] = useState<string>();
 
@@ -48,9 +50,9 @@ export default function ParkingLotScreen() {
     console.log("Adding New Car: ");
     console.log("LotId:", lotId);
     console.log("Plate:", plate);
-    
-    Alert.prompt("")
-    addCar(lotId, plate, lotData.Hours);
+
+    Alert.prompt("");
+    addCar(lotId, plate, make, color, lotData.Hours);
   };
 
   /**
@@ -102,7 +104,21 @@ export default function ParkingLotScreen() {
         onChangeText={setPlate}
         autoCapitalize="characters"
       />
-      
+
+      <AppTextInput
+        label="Input Car Make (Brand)"
+        value={make}
+        onChangeText={setMake}
+        autoCapitalize="characters"
+      />
+
+      <AppTextInput
+        label="Input Car Color"
+        value={color}
+        onChangeText={setColor}
+        autoCapitalize="characters"
+      />
+
       <PrimaryButton label="Pay now" onPress={handlePay} />
       <Divider />
       {/* <PrimaryButton
@@ -117,13 +133,14 @@ export default function ParkingLotScreen() {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          marginTop: theme.spacing.md
+          marginTop: theme.spacing.md,
         }}
       >
         <AppText variant="label">Go Back</AppText>
       </Pressable>
-      <AppText variant="muted" style={styles.disclaimer}> 
-        Please input lisence plate then the number of pre-pay hours. After, press 'Pay Now' to complete purchase
+      <AppText variant="muted" style={styles.disclaimer}>
+        Please input lisence plate then the number of pre-pay hours. After,
+        press 'Pay Now' to complete purchase
       </AppText>
     </Screen>
   );

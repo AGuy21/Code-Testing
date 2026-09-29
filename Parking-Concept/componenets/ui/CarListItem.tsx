@@ -12,7 +12,11 @@ interface CarListItemProps {
   onRefreshParent: () => void;
 }
 
-export default function CarListItem({ car, lot, onRefreshParent }: CarListItemProps) {
+export default function CarListItem({
+  car,
+  lot,
+  onRefreshParent,
+}: CarListItemProps) {
   const startTime = car.Start;
 
   if (!startTime) {
@@ -47,7 +51,7 @@ export default function CarListItem({ car, lot, onRefreshParent }: CarListItemPr
   const isOvertime = allowedUntilMs < secureCurrentTimeMs;
 
   function handleDeleteCar() {
-    console.log(lot, car.Plate, car.Prepayment)
+    console.log(lot, car.Plate, car.Prepayment);
     Alert.alert(
       "Confirm Deletion?",
       "Press OK to confirm deletion of car on dashboard and database",
@@ -81,7 +85,11 @@ export default function CarListItem({ car, lot, onRefreshParent }: CarListItemPr
           borderWidth: 1,
         }}
       >
-        <AppText variant="caption">Plate: {car.Plate}</AppText>
+        <View>
+          <AppText variant="caption">Plate: {car.Plate}</AppText>
+          <AppText variant="caption">Make: {car.Make}</AppText>
+          <AppText variant="caption">Color: {car.Color}</AppText>
+        </View>
         <AppText variant="caption">
           Allowed Until: {timestampToText(allowedUntilDate)}
         </AppText>
