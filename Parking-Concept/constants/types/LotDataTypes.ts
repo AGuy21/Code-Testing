@@ -6,7 +6,6 @@ export interface Car {
 }
 export interface LotDataType {
     Cars: Car[]
-    HourlyRate: number;
-    TakenSpots: number;
-    TotalSpots: number;
+    Price: number;
+    Hours: number;
 }

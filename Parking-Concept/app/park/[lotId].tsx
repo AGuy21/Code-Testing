@@ -26,7 +26,6 @@ export default function ParkingLotScreen() {
   const { loading, lotData } = useLotData(lotId);
 
   const [plate, setPlate] = useState<string>("");
-  const [prepaymentText, setPrepaymentText] = useState<string>("1");
 
   const [error, setError] = useState<string>();
 
@@ -35,8 +34,8 @@ export default function ParkingLotScreen() {
   }
 
   const LOT_STATS: readonly LotStats[] = [
-    { label: "Free spots", value: lotData?.TotalSpots - lotData?.TakenSpots },
-    { label: "Hourly Rate", value: lotData.HourlyRate },
+    { label: "Price", value: lotData?.Price },
+    { label: "Hours", value: lotData.Hours },
   ];
 
   const acceptablePlate = plate.trim().length >= 5;
@@ -46,17 +45,12 @@ export default function ParkingLotScreen() {
       setError("Plate length too small");
       return;
     }
-    if (!(Number(prepaymentText) >= 1)) {
-      setError("Minimum prepayment is 1 hour");
-      return;
-    }
     console.log("Adding New Car: ");
     console.log("LotId:", lotId);
     console.log("Plate:", plate);
-    console.log("Prepayment:", prepaymentText + "Hrs")
     
     Alert.prompt("")
-    addCar(lotId, plate, Number(prepaymentText));
+    addCar(lotId, plate, lotData.Hours);
   };
 
   /**
@@ -107,13 +101,6 @@ export default function ParkingLotScreen() {
         value={plate}
         onChangeText={setPlate}
         autoCapitalize="characters"
-      />
-
-      <AppTextInput
-        label="Hours Pre-Paid"
-        value={prepaymentText}
-        onChangeText={setPrepaymentText}
-        keyboardType="number-pad"
       />
       
       <PrimaryButton label="Pay now" onPress={handlePay} />

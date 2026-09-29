@@ -32,10 +32,8 @@ export default function DashboardScreen() {
   }
 
   const DASHBOARD_STATS: readonly DashboardStat[] = [
-    { label: "Total spots", value: lotData?.TotalSpots },
-    { label: "Taken spots", value: lotData.TakenSpots },
-    { label: "Free spots", value: lotData?.TotalSpots - lotData?.TakenSpots },
-    { label: "Hourly rate", value: lotData?.HourlyRate },
+    { label: "Price", value: lotData?.Price },
+    { label: "Hours", value: lotData.Hours },
   ];
 
   function handleChangeLotId() {
