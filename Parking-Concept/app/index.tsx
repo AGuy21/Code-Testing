@@ -11,6 +11,7 @@ import {
 } from "../componenets/ui";
 import { theme } from "../constants/theme";
 import Divider from "../componenets/ui/Divider";
+import LotDropdown from "../componenets/ui/LotDropdown";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function HomeScreen() {
 
       <View style={styles.content}>
         <Card>
-          <AppText variant="label" style={{ marginBottom: theme.spacing.sm }}>
+          {/* <AppText variant="label" style={{ marginBottom: theme.spacing.sm }}>
             Enter lot ID
           </AppText>
           <AppTextInput
@@ -51,7 +52,9 @@ export default function HomeScreen() {
             autoCorrect={false}
             returnKeyType="go"
             onSubmitEditing={goToLot}
-          />
+          /> */}
+
+          <LotDropdown />
           <PrimaryButton
             label="Find parking lot"
             onPress={goToLot}
