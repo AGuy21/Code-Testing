@@ -6,11 +6,13 @@ import { theme } from "../../constants/theme";
 
 interface LotDropdownProps {
   onLotSelect: (lotId: string) => void;
+  startingLot?: string;
 }
 
-const LotDropdown = ({ onLotSelect }: LotDropdownProps) => {
+const LotDropdown = ({ onLotSelect, startingLot }: LotDropdownProps & { startingLot: string }) => {
   const { lots, loading } = useDocData();
-  const [selectedLot, setSelectedLot] = useState<string | null>(null);
+  const [selectedLot, setSelectedLot] = useState<string | null>(startingLot || null);
+
   const dropdownLots = lots.map((lot) => ({
     ...lot,
     label: typeof lot.name === "string" && lot.name.trim() ? lot.name : lot.id,

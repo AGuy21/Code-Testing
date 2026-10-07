@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import Divider from "../../../componenets/ui/Divider";
 import { useState, useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
+import LotDropdown from "../../../componenets/ui/LotDropdown";
 
 interface DashboardStat {
   label: string;
@@ -19,8 +20,8 @@ interface DashboardStat {
 
 export default function DashboardScreen() {
   const { signOut } = useAuth({ treatPendingAsSignedOut: false });
-  const [inputLotId, setInputLotId] = useState("1");
-  const [activeLotId, setActiveLotId] = useState("1");
+  const [inputLotId, setInputLotId] = useState("University Street");
+  const [activeLotId, setActiveLotId] = useState("University Street");
   const { refetch, loading, lotData } = useLotData(activeLotId);
 
   let mappedCars = [];
@@ -67,39 +68,21 @@ export default function DashboardScreen() {
         Welcome back — here's today at a glance.
       </AppText>
       <Card variant="accent" style={styles.lotCard}>
-        <AppText variant="label" style={styles.nowShowingLabel}>
-          NOW SHOWING
-        </AppText>
-
         <View style={styles.lotRow}>
-          <View style={styles.inputWrapper}>
-            <AppText variant="hero" style={styles.lotText}>
-              Lot:
-            </AppText>
-
-            <TextInput
-              value={inputLotId}
-              onChangeText={setInputLotId}
-              placeholder="e.g. University Street"
-              placeholderTextColor={theme.colors.textSecondary}
-              autoCapitalize="none"
-              autoCorrect={false}
-              returnKeyType="go"
-              onSubmitEditing={handleChangeLotId}
-              textAlign="center"
-              style={styles.textInput}
-            />
-          </View>
-
+          <AppText variant="label" style={styles.nowShowingLabel}>
+            NOW SHOWING
+          </AppText>
           <Pressable
             onPress={handleChangeLotId}
             style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           >
             <View style={styles.circle}>
-              <AntDesign name="reload" size={22} color={theme.colors.white} />
+              <AntDesign name="reload" size={16} color={theme.colors.white} />
             </View>
           </Pressable>
         </View>
+
+        <LotDropdown onLotSelect={setInputLotId} startingLot={"University Street"} />
       </Card>
 
       <View style={styles.grid}>
@@ -153,13 +136,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
+    marginBottom: theme.spacing.md,
   },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  lotText: {},
   textInput: {
     fontWeight: theme.typography.hero.fontWeight,
     letterSpacing: theme.typography.hero.letterSpacing,
@@ -187,8 +165,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xs,
   },
   circle: {
-    height: 44,
-    width: 44,
+    height: 33,
+    width: 33,
     borderRadius: 22,
     backgroundColor: theme.colors.accentStrong,
     alignItems: "center",
