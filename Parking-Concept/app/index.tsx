@@ -54,9 +54,9 @@ export default function HomeScreen() {
             onSubmitEditing={goToLot}
           /> */}
 
-          <LotDropdown />
+          <LotDropdown onLotSelect={setLotId} />
           <PrimaryButton
-            label="Find parking lot"
+            label="Go to parking lot"
             onPress={goToLot}
             disabled={!lotReady}
           />
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.accent,
     borderColor: theme.colors.borderStrong,
     borderRadius: theme.radii.md + 4,
-    borderWidth: 1,
+    borderWidth: 2,
     height: 72,
     justifyContent: "center",
     marginBottom: theme.spacing.md,
