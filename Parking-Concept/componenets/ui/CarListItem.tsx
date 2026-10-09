@@ -26,7 +26,7 @@ export default function CarListItem({
   }
 
   let baseMillis: number | null = null;
-
+  const GRACE_PERIOD_MINUTES = 180;
   const localTimeMs = Date.now();
 
   if (typeof (startTime as any)?.toDate === "function") {
@@ -43,7 +43,7 @@ export default function CarListItem({
   }
 
   const prepayMins = (car.Prepayment || 0) * 60;
-  const allowedUntilMs = baseMillis + prepayMins * 60 * 1000;
+  const allowedUntilMs = baseMillis + (prepayMins + GRACE_PERIOD_MINUTES) * 60 * 1000;
   const allowedUntilDate = new Date(baseMillis + prepayMins * 60 * 1000);
 
   const context = globalThis as any;
@@ -84,7 +84,7 @@ export default function CarListItem({
           justifyContent: "space-between",
           backgroundColor: isOvertime
             ? theme.colors.error
-            : theme.colors.surface,
+            : "#008000",
           borderColor: theme.colors.border,
           borderRadius: theme.radii.md,
           padding: theme.spacing.lg,
@@ -92,11 +92,17 @@ export default function CarListItem({
         }}
       >
         <View>
-          <AppText variant="caption">Plate: {car.Plate}</AppText>
-          <AppText variant="caption">Make: {car.Make}</AppText>
-          <AppText variant="caption">Color: {car.Color}</AppText>
+          <AppText variant="caption" style={{ fontWeight: "bold", color: "#000" }}>
+            Plate: {car.Plate}
+          </AppText>
+          <AppText variant="caption" style={{ fontWeight: "bold", color: "#000" }}>
+            Make: {car.Make}
+          </AppText>
+          <AppText variant="caption" style={{ fontWeight: "bold", color: "#000" }}>
+            Color: {car.Color}
+          </AppText>
         </View>
-        <AppText variant="caption">
+        <AppText variant="caption" style={{ fontWeight: "bold", color: "#000"}}>
           Allowed Until: {timestampToText(allowedUntilDate)}
         </AppText>
       </View>
