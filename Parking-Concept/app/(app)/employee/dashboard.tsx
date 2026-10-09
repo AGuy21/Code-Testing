@@ -83,7 +83,7 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
-        <LotDropdown onLotSelect={setInputLotId} startingLot={"University Street"} />
+        <LotDropdown onLotSelect={setInputLotId} startingLot={inputLotId} />
       </Card>
 
       <View style={styles.grid}>
@@ -91,7 +91,7 @@ export default function DashboardScreen() {
           <Card key={stat.label} style={styles.tile}>
             <AppText variant="title" style={styles.tileValue}>
               {stat.value}
-            </AppText>
+            </AppText> 
             <AppText variant="caption">{stat.label}</AppText>
           </Card>
         ))}

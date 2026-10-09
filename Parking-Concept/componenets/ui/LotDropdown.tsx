@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dropdown } from "react-native-element-dropdown";
 import useDocData from "../hooks/useDocData";
 import { theme } from "../../constants/theme";
@@ -9,9 +9,15 @@ interface LotDropdownProps {
   startingLot?: string;
 }
 
-const LotDropdown = ({ onLotSelect, startingLot }: LotDropdownProps & { startingLot: string }) => {
+const LotDropdown = ({ onLotSelect, startingLot }: LotDropdownProps) => {
   const { lots, loading } = useDocData();
   const [selectedLot, setSelectedLot] = useState<string | null>(startingLot || null);
+
+  useEffect(() => {
+    if (startingLot !== undefined) {
+      setSelectedLot(startingLot || null);
+    }
+  }, [startingLot]);
 
   const dropdownLots = lots.map((lot) => ({
     ...lot,

@@ -117,7 +117,7 @@ export default function ParkingLotScreen() {
 
       <AppTextInput
         label="Input Car Color"
-        value={color}
+        value={color} 
         onChangeText={setColor}
         autoCapitalize="words"
       />
