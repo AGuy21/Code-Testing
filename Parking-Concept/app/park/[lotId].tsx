@@ -102,23 +102,24 @@ export default function ParkingLotScreen() {
       {error && <AppText variant="error">{error}</AppText>}
       <AppTextInput
         label="Input Lisence Plate"
-        value={plate}
-        onChangeText={setPlate}
+        value={plate.toLocaleUpperCase()}
+        onChangeText={() => setPlate(plate.toUpperCase())}
         autoCapitalize="characters"
+        
       />
 
       <AppTextInput
         label="Input Car Make (Brand)"
         value={make}
         onChangeText={setMake}
-        autoCapitalize="characters"
+        autoCapitalize="words"
       />
 
       <AppTextInput
         label="Input Car Color"
         value={color}
         onChangeText={setColor}
-        autoCapitalize="characters"
+        autoCapitalize="words"
       />
 
       <PrimaryButton label="Pay now" onPress={handlePay} />
