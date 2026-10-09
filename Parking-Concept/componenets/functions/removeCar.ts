@@ -35,13 +35,10 @@ export default async function removeCar(
       const timeString = elapsedTime?.toString();
       console.log("Deleting Doc...");
       deleteDoc(docRef);
-      Alert.alert("Stayed for total time: ", timeString) + " Minutes";
     } else {
       console.error("Document does not exist")
-      Alert.alert("Doc not found")
     }
   } catch (error) {
     console.error("Error removing document: ", error);
-    Alert.alert("Error, Plate Not Found")
   }
 }

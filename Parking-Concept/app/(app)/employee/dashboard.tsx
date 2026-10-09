@@ -57,6 +57,7 @@ export default function DashboardScreen() {
   const refreshParentData = (index: number) => {
     console.log("Refreshing...");
     lotData.Cars.splice(index, index);
+    refetch();
     console.log(lotData.Cars);
   };
 

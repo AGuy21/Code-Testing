@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Pressable, View } from "react-native";
 import { Car } from "../../constants/types/LotDataTypes";
 import { AppText } from "./AppText";
@@ -52,6 +52,15 @@ export default function CarListItem({
 
   const isOvertime = allowedUntilMs < secureCurrentTimeMs;
 
+  useEffect(() => {
+    console.log("Checking if car is overtime...");
+    if (isOvertime) {
+      removeCar(lot, car.Plate, car.Prepayment);
+      console.log(`Car ${car.Plate} has been removed from lot ${lot} due to overtime.`);
+      onRefreshParent(index);
+    }
+
+  }, [car, allowedUntilDate]);
   function handleDeleteCar() {
     console.log(lot, car.Plate, car.Prepayment);
     Alert.alert(
@@ -102,6 +111,7 @@ export default function CarListItem({
             Color: {car.Color}
           </AppText>
         </View>
+
         <AppText variant="caption" style={{ fontWeight: "bold", color: "#000"}}>
           Allowed Until: {timestampToText(allowedUntilDate)}
         </AppText>
