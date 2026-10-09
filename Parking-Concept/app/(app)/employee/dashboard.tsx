@@ -55,6 +55,11 @@ export default function DashboardScreen() {
     Keyboard.dismiss();
   }
 
+  function handleLotSelect(lotId: string) {
+    setInputLotId(lotId);
+    setActiveLotId(lotId);
+  }
+
   return (
     <Screen scroll>
       {/* <Show when="signed-in"> */}
@@ -77,7 +82,7 @@ export default function DashboardScreen() {
           </Pressable>
         </View>
 
-        <LotDropdown onLotSelect={setInputLotId} startingLot={inputLotId} />
+        <LotDropdown onLotSelect={handleLotSelect} startingLot={inputLotId} />
       </Card>
 
       <View style={styles.grid}>
