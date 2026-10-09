@@ -12,6 +12,7 @@ import {
 import getDocId from "./getDocId";
 import getTimeTotal from "./getTimeTotal";
 import { Alert } from "react-native";
+import { backupCar } from "./backupCar";
 
 const db = getFirestore();
 
@@ -31,8 +32,8 @@ export default async function removeCar(
 
     if (docSnap.exists()) {
       console.log("Doc Exist");
-      const elapsedTime = await getTimeTotal(docData);
-      const timeString = elapsedTime?.toString();
+      console.log("Backing Up Doc...");
+      await backupCar(docId, lot, docData);
       console.log("Deleting Doc...");
       deleteDoc(docRef);
     } else {

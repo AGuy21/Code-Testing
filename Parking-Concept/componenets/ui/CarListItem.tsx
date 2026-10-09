@@ -60,7 +60,8 @@ export default function CarListItem({
       onRefreshParent(index);
     }
 
-  }, [car, allowedUntilDate]);
+  }, []);
+  
   function handleDeleteCar() {
     console.log(lot, car.Plate, car.Prepayment);
     Alert.alert(
