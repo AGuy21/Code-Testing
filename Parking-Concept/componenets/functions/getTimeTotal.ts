@@ -1,6 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 import { Car } from '../../constants/types/LotDataTypes';
 
+// DEPRACTED: used to get the total timed stayed at a location
 export default async function getTimeTotal(docData: Car) {
     const createdAt = docData.Start;
 

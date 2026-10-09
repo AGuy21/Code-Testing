@@ -9,7 +9,7 @@ import CarListItem from "../../../componenets/ui/CarListItem";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import Divider from "../../../componenets/ui/Divider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import LotDropdown from "../../../componenets/ui/LotDropdown";
 
@@ -23,6 +23,7 @@ export default function DashboardScreen() {
   const [inputLotId, setInputLotId] = useState("University Street");
   const [activeLotId, setActiveLotId] = useState("University Street");
   const { refetch, loading, lotData } = useLotData(activeLotId);
+  const refreshParentData = useCallback(() => refetch(), [refetch]);
 
   let mappedCars = [];
 
@@ -53,13 +54,6 @@ export default function DashboardScreen() {
 
     Keyboard.dismiss();
   }
-
-  const refreshParentData = (index: number) => {
-    console.log("Refreshing...");
-    lotData.Cars.splice(index, index);
-    refetch();
-    console.log(lotData.Cars);
-  };
 
   return (
     <Screen scroll>
@@ -104,7 +98,6 @@ export default function DashboardScreen() {
               <CarListItem
                 car={item}
                 lot={activeLotId}
-                index={index}
                 onRefreshParent={refreshParentData}
               />
             </View>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Alert, Pressable, View } from "react-native";
 import { Car } from "../../constants/types/LotDataTypes";
 import { AppText } from "./AppText";
@@ -9,22 +9,15 @@ import removeCar from "../functions/removeCar";
 interface CarListItemProps {
   car: Car;
   lot: string;
-  index: number;
-  onRefreshParent: any;
+  onRefreshParent: () => Promise<void>;
 }
 
 export default function CarListItem({
   car,
   lot,
-  index,
   onRefreshParent,
 }: CarListItemProps) {
   const startTime = car.Start;
-
-  if (!startTime) {
-    return null;
-  }
-
   let baseMillis: number | null = null;
   const GRACE_PERIOD_MINUTES = 180;
   const localTimeMs = Date.now();
@@ -37,30 +30,38 @@ export default function CarListItem({
     baseMillis = (startTime as any).seconds * 1000;
   }
 
-  if (baseMillis === null) {
-    console.log("Timestamp is missing or still syncing...");
-    return null;
-  }
-
+  const hasValidStartTime = baseMillis !== null;
+  const resolvedBaseMillis = baseMillis ?? 0;
   const prepayMins = (car.Prepayment || 0) * 60;
-  const allowedUntilMs = baseMillis + (prepayMins + GRACE_PERIOD_MINUTES) * 60 * 1000;
-  const allowedUntilDate = new Date(baseMillis + prepayMins * 60 * 1000);
+  const allowedUntilMs = resolvedBaseMillis + (prepayMins + GRACE_PERIOD_MINUTES) * 60 * 1000;
+  const allowedUntilDate = new Date(resolvedBaseMillis + prepayMins * 60 * 1000);
 
   const context = globalThis as any;
   const firebaseClockOffset = context._firestoreServerTimeOffset || 0;
   const secureCurrentTimeMs = localTimeMs + firebaseClockOffset;
 
-  const isOvertime = allowedUntilMs < secureCurrentTimeMs;
+  const isOvertime = hasValidStartTime && allowedUntilMs < secureCurrentTimeMs;
 
   useEffect(() => {
-    console.log("Checking if car is overtime...");
-    if (isOvertime) {
-      removeCar(lot, car.Plate, car.Prepayment);
-      console.log(`Car ${car.Plate} has been removed from lot ${lot} due to overtime.`);
-      onRefreshParent(index);
-    }
+    if (!isOvertime) return;
 
-  }, []);
+    let cancelled = false;
+    const removeOvertimeCar = async () => {
+      const deleted = await removeCar(lot, car.Plate, car.Prepayment);
+      if (deleted && !cancelled) {
+        await onRefreshParent();
+      }
+    };
+
+    void removeOvertimeCar();
+    return () => {
+      cancelled = true;
+    };
+  }, [car.Plate, car.Prepayment, isOvertime, lot, onRefreshParent]);
+
+  if (!hasValidStartTime) {
+    return null;
+  }
   
   function handleDeleteCar() {
     console.log(lot, car.Plate, car.Prepayment);
@@ -75,9 +76,11 @@ export default function CarListItem({
         },
         {
           text: "OK",
-          onPress: () => {
-            removeCar(lot, car.Plate, car.Prepayment)
-            onRefreshParent(index)
+          onPress: async () => {
+            const deleted = await removeCar(lot, car.Plate, car.Prepayment);
+            if (deleted) {
+              await onRefreshParent();
+            }
           },
         },
       ],
