@@ -150,7 +150,7 @@ export default function Profile() {
               {index > 0 ? (
                 <View style={[styles.divider, { backgroundColor: palette.border }]} />
               ) : null}
-              <EventRow hangout={hangout} />
+              <EventRow hangout={hangout} manage />
             </Fragment>
           ))}
         </Card>
@@ -197,9 +197,11 @@ function StatTile({ label, value }: { label: string; value: number }) {
 
 interface EventRowProps {
   hangout: Hangout;
+  /** Show the host "manage" shortcut. */
+  manage?: boolean;
 }
 
-function EventRow({ hangout }: EventRowProps) {
+function EventRow({ hangout, manage }: EventRowProps) {
   const router = useRouter();
   const palette = useThemePalette();
   const { rsvps, focusHangout } = useHangouts();
@@ -252,6 +254,15 @@ function EventRow({ hangout }: EventRowProps) {
             size={18}
             color={palette.primary}
           />
+        </Pressable>
+      ) : null}
+      {manage ? (
+        <Pressable
+          onPress={() => router.push(`/manage/${hangout.id}`)}
+          style={styles.rowChat}
+          hitSlop={8}
+        >
+          <Ionicons name="settings-outline" size={18} color={palette.primary} />
         </Pressable>
       ) : null}
       <Text style={[styles.rowChevron, { color: palette.textMuted }]}>›</Text>

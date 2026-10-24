@@ -1,0 +1,239 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Alert, Share, StyleSheet, Text, View } from "react-native";
+import { AppText, AppTextInput, Card, PrimaryButton, Screen } from "../../components/ui";
+import { useHangouts } from "../../hooks/useHangouts";
+import { useThemePalette } from "../../hooks/useColorTheme";
+import { Fonts } from "../../constants/Fonts";
+
+const PRIVACY_LABEL = {
+  public: "🌍 Public",
+  request: "✋ Request to join",
+  invite: "💌 Invite only",
+  friends: "🫶 Friends only",
+} as const;
+
+/** Host tools for a hangout: requests, guests, invites, +1s and invite code. */
+export default function ManageHangout() {
+  const { hangoutId } = useLocalSearchParams<{ hangoutId: string }>();
+  const router = useRouter();
+  const palette = useThemePalette();
+  const {
+    hangouts,
+    getPeople,
+    getInviteCode,
+    regenerateInviteCode,
+    inviteUser,
+    approveRequest,
+    denyRequest,
+    removeGuest,
+    setAllowPlusOnes,
+    lookupNames,
+    searchUsers,
+  } = useHangouts();
+
+  const hangout = hangouts.find((item) => item.id === hangoutId);
+  const people = getPeople(hangoutId);
+  const [names, setNames] = useState<Record<string, string>>({});
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState<{ id: string; displayName: string }[]>([]);
+
+  const idsKey = [...people.requested, ...people.approved, ...people.going].join(",");
+  useEffect(() => {
+    const ids = idsKey ? idsKey.split(",") : [];
+    if (ids.length === 0) return;
+    void lookupNames(ids).then((found) => setNames((prev) => ({ ...prev, ...found })));
+  }, [idsKey, lookupNames]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      searchUsers(search)
+        .then((found) => {
+          if (!cancelled) setResults(found);
+        })
+        .catch(() => undefined);
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [search, searchUsers]);
+
+  if (!hangout) {
+    return (
+      <Screen>
+        <AppText variant="subtitle">Hangout not found</AppText>
+        <PrimaryButton label="Back" variant="outline" onPress={() => router.back()} />
+      </Screen>
+    );
+  }
+
+  const isPrivate = hangout.privacy !== "public";
+  const code = getInviteCode(hangout.id);
+  const nameOf = (id: string) => names[id] ?? id;
+  const guests = people.approved.filter(
+    (id) => !people.requested.includes(id),
+  );
+
+  const makeCode = async () => {
+    try {
+      await regenerateInviteCode(hangout.id);
+    } catch (error) {
+      Alert.alert(
+        "Couldn't create a code",
+        error instanceof Error ? error.message : "Please try again.",
+      );
+    }
+  };
+
+  const confirmRemove = (id: string) =>
+    Alert.alert("Remove guest", `Remove ${nameOf(id)} from this hangout?`, [
+      { text: "Cancel", style: "cancel" },
+      { text: "Remove", style: "destructive", onPress: () => removeGuest(hangout.id, id) },
+    ]);
+
+  return (
+    <Screen scroll>
+      <PrimaryButton label="‹ Back" variant="ghost" onPress={() => router.back()} />
+      <AppText variant="hero">{hangout.emoji} {hangout.title}</AppText>
+      <AppText variant="caption" style={styles.sub}>
+        {PRIVACY_LABEL[hangout.privacy]} · {people.going.length + people.plusOnes.length} going
+      </AppText>
+
+      <Text style={[styles.label, { color: palette.textMuted }]}>+1s</Text>
+      <Card>
+        <PrimaryButton
+          label={hangout.allowPlusOnes ? "+1s allowed — tap to disable" : "+1s off — tap to allow"}
+          variant={hangout.allowPlusOnes ? "primary" : "outline"}
+          onPress={() => setAllowPlusOnes(hangout.id, !hangout.allowPlusOnes)}
+        />
+      </Card>
+
+      {isPrivate ? (
+        <>
+          <Text style={[styles.label, { color: palette.textMuted }]}>Invite code</Text>
+          <Card>
+            <Text style={[styles.code, { color: palette.text }]}>{code ?? "No code yet"}</Text>
+            <View style={styles.row}>
+              <PrimaryButton
+                label={code ? "New code" : "Create code"}
+                variant="outline"
+                onPress={() => void makeCode()}
+                style={styles.flex}
+              />
+              {code ? (
+                <PrimaryButton
+                  label="Share"
+                  onPress={() =>
+                    void Share.share({
+                      message: `Join "${hangout.title}" on Functions with invite code ${code}`,
+                    })
+                  }
+                  style={styles.flex}
+                />
+              ) : null}
+            </View>
+          </Card>
+
+          {hangout.privacy === "request" ? (
+            <>
+              <Text style={[styles.label, { color: palette.textMuted }]}>
+                Join requests ({people.requested.length})
+              </Text>
+              <Card>
+                {people.requested.length === 0 ? (
+                  <Text style={{ color: palette.textMuted }}>No pending requests.</Text>
+                ) : (
+                  people.requested.map((id) => (
+                    <View key={id} style={styles.person}>
+                      <Text style={[styles.name, { color: palette.text }]}>{nameOf(id)}</Text>
+                      <PrimaryButton
+                        label="Approve"
+                        onPress={() => approveRequest(hangout.id, id)}
+                        style={styles.small}
+                      />
+                      <PrimaryButton
+                        label="Deny"
+                        variant="outline"
+                        onPress={() => denyRequest(hangout.id, id)}
+                        style={styles.small}
+                      />
+                    </View>
+                  ))
+                )}
+              </Card>
+            </>
+          ) : null}
+
+          <Text style={[styles.label, { color: palette.textMuted }]}>Invite someone</Text>
+          <AppTextInput
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Search by name"
+            autoCapitalize="none"
+          />
+          {results
+            .filter((user) => !people.approved.includes(user.id) && user.id !== hangout.hostId)
+            .map((user) => (
+              <View key={user.id} style={styles.person}>
+                <Text style={[styles.name, { color: palette.text }]}>{user.displayName}</Text>
+                <PrimaryButton
+                  label="Invite"
+                  onPress={() => {
+                    inviteUser(hangout.id, user.id);
+                    setNames((prev) => ({ ...prev, [user.id]: user.displayName }));
+                    setSearch("");
+                  }}
+                  style={styles.small}
+                />
+              </View>
+            ))}
+
+          <Text style={[styles.label, { color: palette.textMuted }]}>
+            Approved guests ({guests.length})
+          </Text>
+          <Card>
+            {guests.length === 0 ? (
+              <Text style={{ color: palette.textMuted }}>Nobody approved yet.</Text>
+            ) : (
+              guests.map((id) => (
+                <View key={id} style={styles.person}>
+                  <Text style={[styles.name, { color: palette.text }]}>
+                    {nameOf(id)}
+                    {people.going.includes(id) ? " · going" : ""}
+                    {people.plusOnes.includes(id) ? " +1" : ""}
+                  </Text>
+                  <PrimaryButton
+                    label="Remove"
+                    variant="outline"
+                    onPress={() => confirmRemove(id)}
+                    style={styles.small}
+                  />
+                </View>
+              ))
+            )}
+          </Card>
+        </>
+      ) : null}
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  sub: { marginBottom: 16, marginTop: 6 },
+  label: {
+    fontFamily: Fonts.SemiBold,
+    fontSize: 12,
+    letterSpacing: 1,
+    marginBottom: 8,
+    marginTop: 16,
+    textTransform: "uppercase",
+  },
+  code: { fontFamily: Fonts.ExtraBold, fontSize: 28, letterSpacing: 4, marginBottom: 12, textAlign: "center" },
+  row: { flexDirection: "row", gap: 8 },
+  flex: { flex: 1 },
+  person: { alignItems: "center", flexDirection: "row", gap: 8, paddingVertical: 6 },
+  name: { flex: 1, fontFamily: Fonts.SemiBold, fontSize: 15 },
+  small: { paddingHorizontal: 12 },
+});

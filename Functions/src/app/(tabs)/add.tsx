@@ -19,7 +19,11 @@ import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { CATEGORY_META, CATEGORY_ORDER } from "../../constants/Categories";
 import { Fonts } from "../../constants/Fonts";
-import type { HangoutCategory, LatLng } from "../../constants/types/hangout";
+import type {
+  HangoutCategory,
+  HangoutPrivacy,
+  LatLng,
+} from "../../constants/types/hangout";
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -29,6 +33,29 @@ import { PlaceSearchInput } from "../../components/hangouts/PlaceSearchInput";
 import type { PlaceResult } from "../../utils/places";
 
 type PickerMode = "date" | "time";
+
+const PRIVACY_OPTIONS: readonly {
+  key: HangoutPrivacy;
+  label: string;
+  hint: string;
+}[] = [
+  { key: "public", label: "🌍 Public", hint: "Anyone can see it and join." },
+  {
+    key: "request",
+    label: "✋ Request to join",
+    hint: "Others see the basics; you approve who gets the exact spot.",
+  },
+  {
+    key: "invite",
+    label: "💌 Invite only",
+    hint: "Only people you invite (or who have your code) see the details.",
+  },
+  {
+    key: "friends",
+    label: "🫶 Friends only",
+    hint: "Only people you approve see the details.",
+  },
+];
 
 const makeDate = (dayOffset: number, hour: number, minute = 0): Date => {
   const value = new Date();
@@ -76,6 +103,10 @@ export default function Add() {
   const [location, setLocation] = useState<LatLng | null>(null);
   const [placeName, setPlaceName] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
+  const [privacy, setPrivacy] = useState<HangoutPrivacy>("public");
+  const [allowPlusOnes, setAllowPlusOnes] = useState(false);
+  const [withInviteCode, setWithInviteCode] = useState(false);
+  const isPrivate = privacy !== "public";
 
   const canSubmit =
     title.trim().length > 0 && location !== null && !isSubmitting;
@@ -146,6 +177,9 @@ export default function Add() {
         placeLabel: placeLabel.trim() || "Shared pin",
         startsAt: date.toISOString(),
         hostName: user?.firstName ?? user?.username ?? "You",
+        privacy,
+        allowPlusOnes,
+        withInviteCode: isPrivate && withInviteCode,
       });
       focusHangout(created.id);
       router.push("/(tabs)/map");
@@ -328,6 +362,74 @@ export default function Add() {
         placeholder="e.g. Zilker Park great lawn"
         returnKeyType="done"
       />
+
+      <Text style={[styles.fieldLabel, { color: palette.textMuted }]}>Who can join</Text>
+      <View style={styles.chipRow}>
+        {PRIVACY_OPTIONS.map((option) => {
+          const isSelected = option.key === privacy;
+          return (
+            <Pressable
+              key={option.key}
+              onPress={() => setPrivacy(option.key)}
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: isSelected ? palette.primary : palette.surfaceElevated,
+                  borderColor: isSelected ? palette.borderStrong : palette.border,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.chipText,
+                  { color: isSelected ? "#0E1713" : palette.text },
+                ]}
+              >
+                {option.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+      <Text style={[styles.selectedTime, { color: palette.textMuted }]}>
+        {PRIVACY_OPTIONS.find((option) => option.key === privacy)?.hint}
+      </Text>
+      <View style={styles.chipRow}>
+        <Pressable
+          onPress={() => setAllowPlusOnes((value) => !value)}
+          style={[
+            styles.chip,
+            {
+              backgroundColor: allowPlusOnes ? palette.primary : palette.surfaceElevated,
+              borderColor: allowPlusOnes ? palette.borderStrong : palette.border,
+            },
+          ]}
+        >
+          <Text
+            style={[styles.chipText, { color: allowPlusOnes ? "#0E1713" : palette.text }]}
+          >
+            ➕ Allow +1s
+          </Text>
+        </Pressable>
+        {isPrivate ? (
+          <Pressable
+            onPress={() => setWithInviteCode((value) => !value)}
+            style={[
+              styles.chip,
+              {
+                backgroundColor: withInviteCode ? palette.primary : palette.surfaceElevated,
+                borderColor: withInviteCode ? palette.borderStrong : palette.border,
+              },
+            ]}
+          >
+            <Text
+              style={[styles.chipText, { color: withInviteCode ? "#0E1713" : palette.text }]}
+            >
+              🔑 Create invite code
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
 
       <PrimaryButton
         label={isSubmitting ? "Pinning…" : "Pin it on the map"}

@@ -5,6 +5,8 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
+  limit,
   onSnapshot,
   orderBy,
   query,
@@ -12,8 +14,11 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
+  where,
   writeBatch,
 } from "firebase/firestore";
+import * as Crypto from "expo-crypto";
+import * as Location from "expo-location";
 import {
   createContext,
   useCallback,
@@ -29,6 +34,8 @@ import type {
   Hangout,
   HangoutCategory,
   HangoutId,
+  HangoutPeople,
+  HangoutPrivacy,
   LatLng,
   RsvpStatus,
 } from "../constants/types/hangout";
@@ -42,6 +49,18 @@ export interface NewHangoutInput {
   placeLabel: string;
   startsAt: string;
   hostName?: string;
+  privacy?: HangoutPrivacy;
+  allowPlusOnes?: boolean;
+  /** Generate a private invite code for the host to share. */
+  withInviteCode?: boolean;
+}
+
+/** Exact details that only approved viewers may read (private hangouts). */
+interface PrivateDetails {
+  location: LatLng;
+  placeLabel: string;
+  description: string;
+  inviteCode?: string;
 }
 
 export interface HangoutsContextValue {
@@ -61,6 +80,28 @@ export interface HangoutsContextValue {
   clearRsvp: (id: HangoutId) => void;
   /** Writes the hangout to Firestore; resolves once the write succeeds. */
   addHangout: (input: NewHangoutInput) => Promise<Hangout>;
+  /** Ask the host for access to a request-to-join hangout. */
+  requestAccess: (id: HangoutId) => void;
+  cancelRequest: (id: HangoutId) => void;
+  /** Redeems a private invite code; resolves with the hangout title. */
+  redeemInviteCode: (code: string) => Promise<string>;
+  /** Host tools — ignored unless the current user is the host. */
+  inviteUser: (id: HangoutId, userId: string) => void;
+  approveRequest: (id: HangoutId, userId: string) => void;
+  denyRequest: (id: HangoutId, userId: string) => void;
+  removeGuest: (id: HangoutId, userId: string) => void;
+  setAllowPlusOnes: (id: HangoutId, allow: boolean) => void;
+  /** Creates (or replaces) the invite code and resolves with it. */
+  regenerateInviteCode: (id: HangoutId) => Promise<string>;
+  getInviteCode: (id: HangoutId) => string | null;
+  getPeople: (id: HangoutId) => HangoutPeople;
+  /** Whether the current user is bringing a +1. */
+  hasPlusOne: (id: HangoutId) => boolean;
+  togglePlusOne: (id: HangoutId) => void;
+  /** Display names for Clerk user ids (falls back to the id). */
+  lookupNames: (userIds: string[]) => Promise<Record<string, string>>;
+  /** Prefix search over public profiles, for inviting people. */
+  searchUsers: (prefix: string) => Promise<{ id: string; displayName: string }[]>;
   /** Head count including the current user's "going" RSVP. */
   goingCount: (id: HangoutId) => number;
   /** Set from the Events list so the map tab can focus a marker. */
@@ -85,6 +126,13 @@ interface HangoutDoc {
   baseGoingCount?: number;
   goingUserIds?: string[];
   passedUserIds?: string[];
+  privacy?: HangoutPrivacy;
+  allowPlusOnes?: boolean;
+  requestedUserIds?: string[];
+  approvedUserIds?: string[];
+  deniedUserIds?: string[];
+  plusOneUserIds?: string[];
+  inviteCodeHash?: string;
 }
 
 /** Internal entry: the hangout plus the raw RSVP arrays used to derive state. */
@@ -93,6 +141,49 @@ interface HangoutEntry {
   baseGoingCount: number;
   goingUserIds: string[];
   passedUserIds: string[];
+  requestedUserIds: string[];
+  approvedUserIds: string[];
+  deniedUserIds: string[];
+  plusOneUserIds: string[];
+}
+
+const INVITE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const LIMITED_DESCRIPTION =
+  "Private hangout — get approved to see the details and exact spot.";
+
+function generateInviteCode(): string {
+  const bytes = Crypto.getRandomValues(new Uint8Array(6));
+  return Array.from(bytes, (b) => INVITE_ALPHABET[b % INVITE_ALPHABET.length]).join("");
+}
+
+function hashInviteCode(code: string): Promise<string> {
+  return Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    code.trim().toUpperCase(),
+  );
+}
+
+/** ~1 km precision so a limited viewer only learns the general area. */
+function coarsen(location: LatLng): LatLng {
+  return {
+    latitude: Math.round(location.latitude * 100) / 100,
+    longitude: Math.round(location.longitude * 100) / 100,
+  };
+}
+
+async function neighborhoodFor(location: LatLng): Promise<string> {
+  try {
+    const [place] = await Location.reverseGeocodeAsync(location);
+    return place?.district || place?.subregion || place?.city || "Nearby";
+  } catch {
+    return "Nearby";
+  }
+}
+
+function hasFullAccess(entry: HangoutEntry, userId: string | null | undefined): boolean {
+  if (entry.hangout.privacy === "public") return true;
+  if (!userId) return false;
+  return entry.hangout.hostId === userId || entry.approvedUserIds.includes(userId);
 }
 
 function mapDocToEntry(id: string, data: HangoutDoc): HangoutEntry {
@@ -117,10 +208,18 @@ function mapDocToEntry(id: string, data: HangoutDoc): HangoutEntry {
       hostName: data.hostName,
       hostId: data.hostId ?? undefined,
       goingCount: data.baseGoingCount ?? 0,
+      privacy: data.privacy ?? "public",
+      allowPlusOnes: data.allowPlusOnes ?? false,
+      access: "full",
+      requestPending: false,
     },
     baseGoingCount: data.baseGoingCount ?? 0,
     goingUserIds: data.goingUserIds ?? [],
     passedUserIds: data.passedUserIds ?? [],
+    requestedUserIds: data.requestedUserIds ?? [],
+    approvedUserIds: data.approvedUserIds ?? [],
+    deniedUserIds: data.deniedUserIds ?? [],
+    plusOneUserIds: data.plusOneUserIds ?? [],
   };
 }
 
@@ -155,6 +254,9 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [focusedHangoutId, setFocusedHangoutId] = useState<HangoutId | null>(null);
+  const [privateDetails, setPrivateDetails] = useState<
+    Record<HangoutId, PrivateDetails>
+  >({});
 
   const canRsvp = Boolean(userId);
 
@@ -228,9 +330,14 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     if (expired.length === 0) return;
     deletingExpiredRef.current = true;
     void Promise.all(
-      expired.map((entry) =>
-        deleteDoc(doc(db, "hangouts", entry.hangout.id)),
-      ),
+      expired.map(async (entry) => {
+        if (entry.hangout.privacy !== "public") {
+          await deleteDoc(
+            doc(db, "hangouts", entry.hangout.id, "private", "details"),
+          ).catch(() => undefined);
+        }
+        await deleteDoc(doc(db, "hangouts", entry.hangout.id));
+      }),
     )
       .catch((error) => {
         console.warn("Failed to delete expired hangouts:", error);
@@ -243,6 +350,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
   const setRsvp = useCallback(
     (id: HangoutId, status: RsvpStatus | null) => {
       if (!userId) return;
+      const target = snapshotEntries.find((item) => item.hangout.id === id);
+      if (target && !hasFullAccess(target, userId)) return;
       const docRef = doc(db, "hangouts", id);
       const update =
         status === "going"
@@ -250,6 +359,9 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
           : status === "passed"
             ? { passedUserIds: arrayUnion(userId), goingUserIds: arrayRemove(userId) }
             : { goingUserIds: arrayRemove(userId), passedUserIds: arrayRemove(userId) };
+      if (status !== "going") {
+        Object.assign(update, { plusOneUserIds: arrayRemove(userId) });
+      }
       updateDoc(docRef, update).catch((error) =>
         console.warn("Failed to update RSVP:", error),
       );
@@ -305,6 +417,15 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         throw new Error("Sign in to host a hangout.");
       }
       const id = `hangout-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      const privacy = input.privacy ?? "public";
+      const isPrivate = privacy !== "public";
+      const allowPlusOnes = input.allowPlusOnes ?? false;
+      const inviteCode =
+        isPrivate && input.withInviteCode ? generateInviteCode() : undefined;
+      const publicLocation = isPrivate ? coarsen(input.location) : input.location;
+      const publicPlaceLabel = isPrivate
+        ? await neighborhoodFor(input.location)
+        : input.placeLabel;
       const hangout: Hangout = {
         id,
         title: input.title,
@@ -317,13 +438,32 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         hostName: input.hostName ?? "You",
         hostId: userId,
         goingCount: 1,
+        privacy,
+        allowPlusOnes,
+        access: "full",
+        requestPending: false,
       };
       const entry: HangoutEntry = {
         hangout,
         baseGoingCount: 1,
         goingUserIds: [],
         passedUserIds: [],
+        requestedUserIds: [],
+        approvedUserIds: [],
+        deniedUserIds: [],
+        plusOneUserIds: [],
       };
+      if (isPrivate) {
+        setPrivateDetails((prev) => ({
+          ...prev,
+          [id]: {
+            location: input.location,
+            placeLabel: input.placeLabel,
+            description: input.description,
+            inviteCode,
+          },
+        }));
+      }
       // Show the pin immediately; the snapshot confirms it (or we roll back).
       setPendingEntries((prev) => [...prev, entry]);
       setIsSubmitting(true);
@@ -331,19 +471,36 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         const batch = writeBatch(db);
         batch.set(doc(db, "hangouts", id), {
           title: input.title,
-          description: input.description,
+          description: isPrivate ? LIMITED_DESCRIPTION : input.description,
           category: input.category,
           emoji: input.emoji,
-          location: input.location,
-          placeLabel: input.placeLabel,
+          location: publicLocation,
+          placeLabel: publicPlaceLabel,
           startsAt: Timestamp.fromDate(new Date(input.startsAt)),
           hostName: input.hostName ?? "You",
           hostId: userId,
           baseGoingCount: 1,
           goingUserIds: [],
           passedUserIds: [],
+          privacy,
+          allowPlusOnes,
+          requestedUserIds: [],
+          approvedUserIds: [],
+          deniedUserIds: [],
+          plusOneUserIds: [],
+          ...(inviteCode
+            ? { inviteCodeHash: await hashInviteCode(inviteCode) }
+            : {}),
           createdAt: serverTimestamp(),
         });
+        if (isPrivate) {
+          batch.set(doc(db, "hangouts", id, "private", "details"), {
+            location: input.location,
+            placeLabel: input.placeLabel,
+            description: input.description,
+            ...(inviteCode ? { inviteCode } : {}),
+          });
+        }
         // Every hangout gets a group chat seeded with its host.
         batch.set(doc(db, "conversations", id), {
           type: "group",
@@ -362,6 +519,10 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         setPendingEntries((prev) =>
           prev.filter((item) => item.hangout.id !== id),
         );
+        setPrivateDetails((prev) => {
+          const { [id]: _removed, ...rest } = prev;
+          return rest;
+        });
         console.warn("Failed to save hangout:", error);
         throw error instanceof Error
           ? error
@@ -373,7 +534,66 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     [userId],
   );
 
-  const hangouts = useMemo(() => entries.map((entry) => entry.hangout), [entries]);
+  // Fetch exact details for private hangouts the viewer may see.
+  useEffect(() => {
+    const wanted = entries.filter(
+      (entry) =>
+        entry.hangout.privacy !== "public" &&
+        hasFullAccess(entry, userId) &&
+        !privateDetails[entry.hangout.id],
+    );
+    for (const entry of wanted) {
+      const id = entry.hangout.id;
+      void getDoc(doc(db, "hangouts", id, "private", "details"))
+        .then((snap) => {
+          if (snap.exists()) {
+            setPrivateDetails((prev) => ({
+              ...prev,
+              [id]: snap.data() as PrivateDetails,
+            }));
+          }
+        })
+        .catch((error) => console.warn("Failed to load private details:", error));
+    }
+  }, [entries, userId, privateDetails]);
+
+  const viewEntries = useMemo(
+    () =>
+      entries.map((entry): HangoutEntry => {
+        if (entry.hangout.privacy === "public") return entry;
+        if (hasFullAccess(entry, userId)) {
+          const details = privateDetails[entry.hangout.id];
+          return {
+            ...entry,
+            hangout: {
+              ...entry.hangout,
+              access: "full",
+              ...(details
+                ? {
+                    location: details.location,
+                    placeLabel: details.placeLabel,
+                    description: details.description,
+                  }
+                : {}),
+            },
+          };
+        }
+        return {
+          ...entry,
+          hangout: {
+            ...entry.hangout,
+            access: "limited",
+            description: LIMITED_DESCRIPTION,
+            requestPending: Boolean(
+              userId && entry.requestedUserIds.includes(userId),
+            ),
+          },
+        };
+      }),
+    [entries, userId, privateDetails],
+  );
+
+  const hangouts = useMemo(() => viewEntries.map((entry) => entry.hangout), [viewEntries]);
 
   const rsvps = useMemo(() => {
     const next: Record<HangoutId, RsvpStatus> = {};
@@ -392,11 +612,244 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     (id: HangoutId) => {
       const entry = entries.find((item) => item.hangout.id === id);
       if (!entry) return 0;
-      const mine = userId && entry.goingUserIds.includes(userId) ? 1 : 0;
-      return entry.baseGoingCount + mine;
+      return (
+        entry.baseGoingCount +
+        entry.goingUserIds.length +
+        entry.plusOneUserIds.length
+      );
     },
     [entries, userId],
   );
+
+  const patchHangout = useCallback((id: HangoutId, data: Record<string, unknown>) => {
+    updateDoc(doc(db, "hangouts", id), data).catch((error) =>
+      console.warn("Failed to update hangout:", error),
+    );
+  }, []);
+
+  const findEntry = useCallback(
+    (id: HangoutId) => entries.find((item) => item.hangout.id === id),
+    [entries],
+  );
+
+  /** Runs `action` only when the current user hosts the hangout. */
+  const asHost = useCallback(
+    (id: HangoutId, action: (entry: HangoutEntry) => void) => {
+      const entry = findEntry(id);
+      if (entry && userId && entry.hangout.hostId === userId) action(entry);
+    },
+    [findEntry, userId],
+  );
+
+  const requestAccess = useCallback(
+    (id: HangoutId) => {
+      const entry = findEntry(id);
+      if (!userId || !entry || entry.hangout.privacy !== "request") return;
+      if (entry.deniedUserIds.includes(userId)) return;
+      patchHangout(id, { requestedUserIds: arrayUnion(userId) });
+    },
+    [findEntry, patchHangout, userId],
+  );
+
+  const cancelRequest = useCallback(
+    (id: HangoutId) => {
+      if (!userId) return;
+      patchHangout(id, { requestedUserIds: arrayRemove(userId) });
+    },
+    [patchHangout, userId],
+  );
+
+  const redeemInviteCode = useCallback(
+    async (code: string): Promise<string> => {
+      if (!userId) throw new Error("Sign in to use an invite code.");
+      const trimmed = code.trim();
+      if (trimmed.length === 0) throw new Error("Enter an invite code.");
+      const matches = await getDocs(
+        query(
+          collection(db, "hangouts"),
+          where("inviteCodeHash", "==", await hashInviteCode(trimmed)),
+          limit(1),
+        ),
+      );
+      const match = matches.docs[0];
+      const data = match?.data() as HangoutDoc | undefined;
+      if (!match || !data) throw new Error("That invite code isn't valid.");
+      if ((data.deniedUserIds ?? []).includes(userId)) {
+        throw new Error("The host can't accept you for this hangout.");
+      }
+      await updateDoc(match.ref, {
+        approvedUserIds: arrayUnion(userId),
+        requestedUserIds: arrayRemove(userId),
+      });
+      return data.title;
+    },
+    [userId],
+  );
+
+  const inviteUser = useCallback(
+    (id: HangoutId, guestId: string) =>
+      asHost(id, () =>
+        patchHangout(id, {
+          approvedUserIds: arrayUnion(guestId),
+          requestedUserIds: arrayRemove(guestId),
+          deniedUserIds: arrayRemove(guestId),
+        }),
+      ),
+    [asHost, patchHangout],
+  );
+
+  const approveRequest = useCallback(
+    (id: HangoutId, guestId: string) =>
+      asHost(id, () =>
+        patchHangout(id, {
+          approvedUserIds: arrayUnion(guestId),
+          requestedUserIds: arrayRemove(guestId),
+        }),
+      ),
+    [asHost, patchHangout],
+  );
+
+  const denyRequest = useCallback(
+    (id: HangoutId, guestId: string) =>
+      asHost(id, () =>
+        patchHangout(id, {
+          requestedUserIds: arrayRemove(guestId),
+          deniedUserIds: arrayUnion(guestId),
+        }),
+      ),
+    [asHost, patchHangout],
+  );
+
+  const removeGuest = useCallback(
+    (id: HangoutId, guestId: string) =>
+      asHost(id, () => {
+        patchHangout(id, {
+          approvedUserIds: arrayRemove(guestId),
+          goingUserIds: arrayRemove(guestId),
+          plusOneUserIds: arrayRemove(guestId),
+          requestedUserIds: arrayRemove(guestId),
+          deniedUserIds: arrayUnion(guestId),
+        });
+        updateDoc(doc(db, "conversations", id), {
+          participantUserIds: arrayRemove(guestId),
+        }).catch((error) => console.warn("Failed to update chat members:", error));
+      }),
+    [asHost, patchHangout],
+  );
+
+  const setAllowPlusOnes = useCallback(
+    (id: HangoutId, allow: boolean) =>
+      asHost(id, () =>
+        patchHangout(id, {
+          allowPlusOnes: allow,
+          ...(allow ? {} : { plusOneUserIds: [] }),
+        }),
+      ),
+    [asHost, patchHangout],
+  );
+
+  const regenerateInviteCode = useCallback(
+    async (id: HangoutId): Promise<string> => {
+      const entry = findEntry(id);
+      if (!entry || !userId || entry.hangout.hostId !== userId) {
+        throw new Error("Only the host can create an invite code.");
+      }
+      if (entry.hangout.privacy === "public") {
+        throw new Error("Public hangouts don't need an invite code.");
+      }
+      const code = generateInviteCode();
+      const hash = await hashInviteCode(code);
+      const batch = writeBatch(db);
+      batch.update(doc(db, "hangouts", id), { inviteCodeHash: hash });
+      batch.set(
+        doc(db, "hangouts", id, "private", "details"),
+        { inviteCode: code },
+        { merge: true },
+      );
+      await batch.commit();
+      setPrivateDetails((prev) => ({
+        ...prev,
+        ...(prev[id] ? { [id]: { ...prev[id], inviteCode: code } } : {}),
+      }));
+      return code;
+    },
+    [findEntry, userId],
+  );
+
+  const getInviteCode = useCallback(
+    (id: HangoutId) => privateDetails[id]?.inviteCode ?? null,
+    [privateDetails],
+  );
+
+  const getPeople = useCallback(
+    (id: HangoutId): HangoutPeople => {
+      const entry = findEntry(id);
+      return {
+        requested: entry?.requestedUserIds ?? [],
+        approved: entry?.approvedUserIds ?? [],
+        denied: entry?.deniedUserIds ?? [],
+        going: entry?.goingUserIds ?? [],
+        plusOnes: entry?.plusOneUserIds ?? [],
+      };
+    },
+    [findEntry],
+  );
+
+  const hasPlusOne = useCallback(
+    (id: HangoutId) =>
+      Boolean(userId && findEntry(id)?.plusOneUserIds.includes(userId)),
+    [findEntry, userId],
+  );
+
+  const togglePlusOne = useCallback(
+    (id: HangoutId) => {
+      const entry = findEntry(id);
+      if (!userId || !entry || !entry.hangout.allowPlusOnes) return;
+      if (!entry.goingUserIds.includes(userId)) return;
+      patchHangout(id, {
+        plusOneUserIds: entry.plusOneUserIds.includes(userId)
+          ? arrayRemove(userId)
+          : arrayUnion(userId),
+      });
+    },
+    [findEntry, patchHangout, userId],
+  );
+
+  const lookupNames = useCallback(
+    async (userIds: string[]): Promise<Record<string, string>> => {
+      const result: Record<string, string> = {};
+      await Promise.all(
+        userIds.map(async (id) => {
+          try {
+            const snap = await getDoc(doc(db, "users", id));
+            const name = snap.data()?.displayName;
+            result[id] = typeof name === "string" && name ? name : id;
+          } catch {
+            result[id] = id;
+          }
+        }),
+      );
+      return result;
+    },
+    [],
+  );
+
+  const searchUsers = useCallback(async (prefix: string) => {
+    const text = prefix.trim();
+    if (text.length < 2) return [];
+    const snap = await getDocs(
+      query(
+        collection(db, "users"),
+        where("displayName", ">=", text),
+        where("displayName", "<=", `${text}\uf8ff`),
+        limit(5),
+      ),
+    );
+    return snap.docs.map((d) => ({
+      id: d.id,
+      displayName: String(d.data().displayName ?? d.id),
+    }));
+  }, []);
 
   const focusHangout = useCallback((id: HangoutId) => setFocusedHangoutId(id), []);
   const clearFocus = useCallback(() => setFocusedHangoutId(null), []);
@@ -413,6 +866,21 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       pass,
       clearRsvp,
       addHangout,
+      requestAccess,
+      cancelRequest,
+      redeemInviteCode,
+      inviteUser,
+      approveRequest,
+      denyRequest,
+      removeGuest,
+      setAllowPlusOnes,
+      regenerateInviteCode,
+      getInviteCode,
+      getPeople,
+      hasPlusOne,
+      togglePlusOne,
+      lookupNames,
+      searchUsers,
       goingCount,
       focusedHangoutId,
       focusHangout,
@@ -429,6 +897,21 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       pass,
       clearRsvp,
       addHangout,
+      requestAccess,
+      cancelRequest,
+      redeemInviteCode,
+      inviteUser,
+      approveRequest,
+      denyRequest,
+      removeGuest,
+      setAllowPlusOnes,
+      regenerateInviteCode,
+      getInviteCode,
+      getPeople,
+      hasPlusOne,
+      togglePlusOne,
+      lookupNames,
+      searchUsers,
       goingCount,
       focusedHangoutId,
       focusHangout,

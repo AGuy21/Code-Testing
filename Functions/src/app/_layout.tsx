@@ -48,6 +48,7 @@ export default function Layout() {
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="chat/[conversationId]" />
+            <Stack.Screen name="manage/[hangoutId]" />
           </Stack>
         </ChatProvider>
       </HangoutsProvider>

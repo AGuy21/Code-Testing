@@ -24,9 +24,57 @@ export interface RsvpButtonsProps {
  * again undoes the RSVP; tapping the other half switches the answer.
  */
 export function RsvpButtons({ hangoutId, style }: RsvpButtonsProps) {
-  const { rsvps, join, pass, clearRsvp, canRsvp } = useHangouts();
+  const {
+    rsvps,
+    join,
+    pass,
+    clearRsvp,
+    canRsvp,
+    hangouts,
+    requestAccess,
+    cancelRequest,
+    hasPlusOne,
+    togglePlusOne,
+  } = useHangouts();
   const palette = useThemePalette();
   const status: RsvpStatus | undefined = rsvps[hangoutId];
+  const hangout = hangouts.find((item) => item.id === hangoutId);
+
+  // Viewers without access can only ask (request-to-join) or see a lock.
+  if (hangout && hangout.access === "limited") {
+    const canAsk = hangout.privacy === "request";
+    return (
+      <View
+        style={[
+          styles.segment,
+          {
+            backgroundColor: palette.surfaceElevated,
+            borderColor: palette.border,
+            opacity: canRsvp ? 1 : 0.5,
+          },
+          style,
+        ]}
+      >
+        <Segment
+          label={
+            canAsk
+              ? hangout.requestPending
+                ? "Requested ✓"
+                : "Request to join"
+              : "🔒 Invite only"
+          }
+          tone={hangout.requestPending ? "soft" : "idle"}
+          disabled={!canRsvp || !canAsk}
+          onPress={() =>
+            hangout.requestPending
+              ? cancelRequest(hangoutId)
+              : requestAccess(hangoutId)
+          }
+          palette={palette}
+        />
+      </View>
+    );
+  }
 
   const choose = (value: RsvpStatus) => {
     if (!canRsvp) return;
@@ -65,6 +113,15 @@ export function RsvpButtons({ hangoutId, style }: RsvpButtonsProps) {
         onPress={() => choose("passed")}
         palette={palette}
       />
+      {hangout?.allowPlusOnes && status === "going" ? (
+        <Segment
+          label={hasPlusOne(hangoutId) ? "+1 ✓" : "+1"}
+          tone={hasPlusOne(hangoutId) ? "solid" : "idle"}
+          disabled={!canRsvp}
+          onPress={() => togglePlusOne(hangoutId)}
+          palette={palette}
+        />
+      ) : null}
     </View>
   );
 }

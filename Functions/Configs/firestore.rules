@@ -47,18 +47,36 @@ service cloud.firestore {
         && request.resource.data.goingUserIds is list
         && request.resource.data.goingUserIds.size() == 0
         && request.resource.data.passedUserIds is list
-        && request.resource.data.passedUserIds.size() == 0;
+        && request.resource.data.passedUserIds.size() == 0
+        && (!('privacy' in request.resource.data)
+            || request.resource.data.privacy in
+               ['public', 'invite', 'request', 'friends']);
 
-      // RSVPs (Join / Pass / undo) may only modify the participant arrays.
+      // RSVPs (Join / Pass / undo), +1s and private-access bookkeeping
+      // (join requests, approvals, denials, invite-code hash, +1 setting) may
+      // only modify these participant/access fields.
       // As with create, request.auth is always null (Clerk ≠ Firebase Auth)
       // — the field restriction is the guard. The client writes the Clerk
       // user id via arrayUnion/arrayRemove.
       allow update: if request.resource.data.diff(resource.data).affectedKeys()
-           .hasOnly(['goingUserIds', 'passedUserIds'])
+           .hasOnly(['goingUserIds', 'passedUserIds', 'plusOneUserIds',
+                     'requestedUserIds', 'approvedUserIds', 'deniedUserIds',
+                     'allowPlusOnes', 'inviteCodeHash'])
         && request.resource.data.goingUserIds is list
         && request.resource.data.passedUserIds is list
         && request.resource.data.goingUserIds.size() <= 1000
         && request.resource.data.passedUserIds.size() <= 1000;
+
+      // Exact location, full description and invite code of a private
+      // hangout. NOTE: with no Firebase Auth token (Clerk ≠ Firebase Auth)
+      // rules cannot tell who is asking, so this is shape-validated only;
+      // real read enforcement needs the Clerk→Firebase custom-token backend.
+      match /private/{docId} {
+        allow read: if true;
+        allow create, update: if request.resource.data.keys().hasOnly(
+            ['location', 'placeLabel', 'description', 'inviteCode']);
+        allow delete: if true;
+      }
 
       // Auto-expiry: the client deletes hangouts once startsAt has passed.
       // Legacy seed docs never carried a hostId, so they can be purged too.

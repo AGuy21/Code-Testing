@@ -82,6 +82,7 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
             {hangout.title}
           </Text>
           <Text style={[styles.context, { color: palette.textMuted }]} numberOfLines={1}>
+            {hangout.privacy !== "public" ? "🔒 " : ""}
             {meta.label} · {hangout.placeLabel} · host {hangout.hostName}
           </Text>
         </View>

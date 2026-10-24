@@ -155,7 +155,10 @@ export default function Map() {
                   {selected.title}
                 </AppText>
                 <AppText variant="caption" numberOfLines={1}>
-                  {selected.placeLabel} · {formatStartsAt(selected.startsAt)}
+                  {selected.access === "limited"
+                    ? `🔒 Near ${selected.placeLabel}`
+                    : selected.placeLabel}{" "}
+                  · {formatStartsAt(selected.startsAt)}
                 </AppText>
               </View>
               {selectedMeta ? (

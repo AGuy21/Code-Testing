@@ -11,6 +11,18 @@ export interface LatLng {
 /** The user's answer to "do you want to join this hangout?" */
 export type RsvpStatus = "going" | "passed";
 
+/**
+ * Who may see the full hangout.
+ * - public: everyone
+ * - invite: only people the host invited (or who redeemed an invite code)
+ * - request: anyone can ask; the host approves or denies
+ * - friends: the host's approved list only (no friends graph exists yet)
+ */
+export type HangoutPrivacy = "public" | "invite" | "request" | "friends";
+
+/** `limited` viewers only get title, category, neighborhood and head count. */
+export type HangoutAccess = "full" | "limited";
+
 export interface Hangout {
   id: HangoutId;
   title: string;
@@ -26,4 +38,20 @@ export interface Hangout {
   hostId?: string;
   /** Base head count before the current user's RSVP is applied. */
   goingCount: number;
+  privacy: HangoutPrivacy;
+  /** Whether guests may bring a +1. */
+  allowPlusOnes: boolean;
+  /** Viewer-specific: `limited` hides the description and exact pin. */
+  access: HangoutAccess;
+  /** Viewer-specific: the current user already asked to join. */
+  requestPending: boolean;
+}
+
+/** Everyone the host manages for a private hangout. */
+export interface HangoutPeople {
+  requested: string[];
+  approved: string[];
+  denied: string[];
+  going: string[];
+  plusOnes: string[];
 }
