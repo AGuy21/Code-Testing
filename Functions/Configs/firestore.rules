@@ -53,15 +53,23 @@ service cloud.firestore {
                ['public', 'invite', 'request', 'friends']);
 
       // RSVPs (Join / Pass / undo), +1s and private-access bookkeeping
-      // (join requests, approvals, denials, invite-code hash, +1 setting) may
-      // only modify these participant/access fields.
+      // (join requests, approvals, denials, invite-code hash, +1 setting),
+      // host edits (title/description/category/emoji/placeLabel) and the
+      // `cancelled` flag (swept by Cloud Functions) may only modify these
+      // fields. Host-only checks live in the client — no Firebase Auth token.
       // As with create, request.auth is always null (Clerk ≠ Firebase Auth)
       // — the field restriction is the guard. The client writes the Clerk
       // user id via arrayUnion/arrayRemove.
       allow update: if request.resource.data.diff(resource.data).affectedKeys()
            .hasOnly(['goingUserIds', 'passedUserIds', 'plusOneUserIds',
                      'requestedUserIds', 'approvedUserIds', 'deniedUserIds',
-                     'allowPlusOnes', 'inviteCodeHash'])
+                     'allowPlusOnes', 'inviteCodeHash',
+                     'title', 'description', 'category', 'emoji',
+                     'placeLabel', 'cancelled'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.description.size() <= 500
         && request.resource.data.goingUserIds is list
         && request.resource.data.passedUserIds is list
         && request.resource.data.goingUserIds.size() <= 1000

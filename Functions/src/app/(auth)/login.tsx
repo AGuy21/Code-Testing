@@ -7,35 +7,35 @@ import {
   ActivityIndicator,
   ImageBackground,
 } from "react-native";
-import { useEffect } from "react";
-import { useRouter } from "expo-router";
+import { useState } from "react";
 import { useAuth } from "@clerk/expo";
 import { useHostedAuth } from "@clerk/expo/hosted-auth";
 import { useColorTheme } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
 
 export default function LoginScreen() {
-  const router = useRouter();
-
   const backgroundColor = useColorTheme("background");
   const textColor = useColorTheme("text");
   const primary = useColorTheme("primary");
   const secondary = useColorTheme("secondary");
 
-  const { isLoaded, isSignedIn } = useAuth();
+  const { isLoaded } = useAuth();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { startHostedAuth } = useHostedAuth();
 
-  useEffect(() => {
-    if (isSignedIn) {
-      router.replace("/(tabs)/profile");
-    }
-  }, [isSignedIn, router]);
-
+  // Navigation after sign-in is handled by the auth gate in the root layout.
   const handleSignIn = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
     try {
-      await startHostedAuth({ mode: "sign-up" });
-    } catch (error) {
-      console.error("Failed to start hosted auth", error);
+      await startHostedAuth();
+    } catch (err) {
+      console.error("Failed to start hosted auth", err);
+      setError("Couldn't sign you in. Please try again.");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -88,11 +88,21 @@ export default function LoginScreen() {
               },
             ]}
             onPress={handleSignIn}
+            disabled={busy}
           >
-            <Text style={[styles.buttonText, { color: "#121212" }]}>
-              Sign In
-            </Text>
+            {busy ? (
+              <ActivityIndicator color="#121212" />
+            ) : (
+              <Text style={[styles.buttonText, { color: "#121212" }]}>
+                Sign In
+              </Text>
+            )}
           </Pressable>
+          {error ? (
+            <Text style={[styles.meta, { color: "#E5484D", marginBottom: 12 }]}>
+              {error}
+            </Text>
+          ) : null}
         </View>
 
         <Text style={[styles.meta, { color: secondary }]}>

@@ -1,10 +1,12 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Alert, Share, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Alert, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import { AppText, AppTextInput, Card, PrimaryButton, Screen } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
+import { CATEGORY_META, CATEGORY_ORDER } from "../../constants/Categories";
+import type { HangoutCategory } from "../../constants/types/hangout";
 
 const PRIVACY_LABEL = {
   public: "🌍 Public",
@@ -28,6 +30,8 @@ export default function ManageHangout() {
     denyRequest,
     removeGuest,
     setAllowPlusOnes,
+    editHangout,
+    cancelHangout,
     lookupNames,
     searchUsers,
   } = useHangouts();
@@ -37,6 +41,23 @@ export default function ManageHangout() {
   const [names, setNames] = useState<Record<string, string>>({});
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<{ id: string; displayName: string }[]>([]);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [placeLabel, setPlaceLabel] = useState("");
+  const [category, setCategory] = useState<HangoutCategory>("chill");
+  const [saving, setSaving] = useState(false);
+  const loadedRef = useRef<string | null>(null);
+
+  // Seed the form once per hangout so live snapshots don't clobber typing.
+  useEffect(() => {
+    if (!hangout || loadedRef.current === hangout.id) return;
+    loadedRef.current = hangout.id;
+    setTitle(hangout.title);
+    setDescription(hangout.description);
+    setPlaceLabel(hangout.placeLabel);
+    setCategory(hangout.category);
+  }, [hangout]);
 
   const idsKey = [...people.requested, ...people.approved, ...people.going].join(",");
   useEffect(() => {
@@ -87,6 +108,46 @@ export default function ManageHangout() {
     }
   };
 
+  const save = async () => {
+    setSaving(true);
+    try {
+      await editHangout(hangout.id, {
+        title,
+        description,
+        category,
+        emoji: CATEGORY_META[category].emoji,
+        placeLabel,
+      });
+      Alert.alert("Saved", "Your hangout is updated.");
+    } catch (error) {
+      Alert.alert(
+        "Couldn't save",
+        error instanceof Error ? error.message : "Please try again.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const confirmCancel = () =>
+    Alert.alert("Cancel hangout", "Everyone will lose access. This can't be undone.", [
+      { text: "Keep it", style: "cancel" },
+      {
+        text: "Cancel hangout",
+        style: "destructive",
+        onPress: () => {
+          cancelHangout(hangout.id)
+            .then(() => router.back())
+            .catch((error) =>
+              Alert.alert(
+                "Couldn't cancel",
+                error instanceof Error ? error.message : "Please try again.",
+              ),
+            );
+        },
+      },
+    ]);
+
   const confirmRemove = (id: string) =>
     Alert.alert("Remove guest", `Remove ${nameOf(id)} from this hangout?`, [
       { text: "Cancel", style: "cancel" },
@@ -100,6 +161,44 @@ export default function ManageHangout() {
       <AppText variant="caption" style={styles.sub}>
         {PRIVACY_LABEL[hangout.privacy]} · {people.going.length + people.plusOnes.length} going
       </AppText>
+
+      <Text style={[styles.label, { color: palette.textMuted }]}>Details</Text>
+      <AppTextInput label="Title" value={title} onChangeText={setTitle} />
+      <AppTextInput
+        label="Description"
+        value={description}
+        onChangeText={setDescription}
+        multiline
+        style={styles.multiline}
+      />
+      <AppTextInput label="Place name" value={placeLabel} onChangeText={setPlaceLabel} />
+      <View style={styles.chips}>
+        {CATEGORY_ORDER.map((key) => {
+          const active = key === category;
+          return (
+            <Pressable
+              key={key}
+              onPress={() => setCategory(key)}
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: active ? palette.primary : palette.surfaceElevated,
+                  borderColor: active ? palette.borderStrong : palette.border,
+                },
+              ]}
+            >
+              <Text style={{ color: active ? "#0E1713" : palette.text, fontFamily: Fonts.SemiBold }}>
+                {CATEGORY_META[key].emoji} {CATEGORY_META[key].label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+      <PrimaryButton
+        label={saving ? "Saving…" : "Save changes"}
+        onPress={() => void save()}
+        disabled={saving || title.trim().length === 0}
+      />
 
       <Text style={[styles.label, { color: palette.textMuted }]}>+1s</Text>
       <Card>
@@ -216,11 +315,21 @@ export default function ManageHangout() {
           </Card>
         </>
       ) : null}
+      <PrimaryButton
+        label="Cancel hangout"
+        variant="outline"
+        onPress={confirmCancel}
+        style={styles.danger}
+      />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  multiline: { height: 90, textAlignVertical: "top" },
+  chips: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 14 },
+  chip: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 8 },
+  danger: { marginBottom: 24, marginTop: 28 },
   sub: { marginBottom: 16, marginTop: 6 },
   label: {
     fontFamily: Fonts.SemiBold,

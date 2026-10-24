@@ -55,6 +55,15 @@ export interface NewHangoutInput {
   withInviteCode?: boolean;
 }
 
+/** Fields a host may change after publishing. */
+export interface HangoutEdits {
+  title: string;
+  description: string;
+  category: HangoutCategory;
+  emoji: string;
+  placeLabel: string;
+}
+
 /** Exact details that only approved viewers may read (private hangouts). */
 interface PrivateDetails {
   location: LatLng;
@@ -80,6 +89,10 @@ export interface HangoutsContextValue {
   clearRsvp: (id: HangoutId) => void;
   /** Writes the hangout to Firestore; resolves once the write succeeds. */
   addHangout: (input: NewHangoutInput) => Promise<Hangout>;
+  /** Host-only: edits the basics of a hangout. */
+  editHangout: (id: HangoutId, edits: HangoutEdits) => Promise<void>;
+  /** Host-only: cancels the hangout (the server sweep deletes it). */
+  cancelHangout: (id: HangoutId) => Promise<void>;
   /** Ask the host for access to a request-to-join hangout. */
   requestAccess: (id: HangoutId) => void;
   cancelRequest: (id: HangoutId) => void;
@@ -133,6 +146,8 @@ interface HangoutDoc {
   deniedUserIds?: string[];
   plusOneUserIds?: string[];
   inviteCodeHash?: string;
+  cancelled?: boolean;
+  hidden?: boolean;
 }
 
 /** Internal entry: the hangout plus the raw RSVP arrays used to derive state. */
@@ -145,6 +160,8 @@ interface HangoutEntry {
   approvedUserIds: string[];
   deniedUserIds: string[];
   plusOneUserIds: string[];
+  /** Cancelled by the host or hidden by moderation. */
+  removed: boolean;
 }
 
 const INVITE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -220,6 +237,7 @@ function mapDocToEntry(id: string, data: HangoutDoc): HangoutEntry {
     approvedUserIds: data.approvedUserIds ?? [],
     deniedUserIds: data.deniedUserIds ?? [],
     plusOneUserIds: data.plusOneUserIds ?? [],
+    removed: data.cancelled === true || data.hidden === true,
   };
 }
 
@@ -311,7 +329,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       (entry) => !confirmed.has(entry.hangout.id),
     );
     const upcoming = [...snapshotEntries, ...pending].filter(
-      (entry) => startTime(entry.hangout.startsAt) > now,
+      (entry) => startTime(entry.hangout.startsAt) > now && !entry.removed,
     );
     return upcoming.sort(
       (a, b) => startTime(a.hangout.startsAt) - startTime(b.hangout.startsAt),
@@ -452,6 +470,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         approvedUserIds: [],
         deniedUserIds: [],
         plusOneUserIds: [],
+        removed: false,
       };
       if (isPrivate) {
         setPrivateDetails((prev) => ({
@@ -851,6 +870,67 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const editHangout = useCallback(
+    async (id: HangoutId, edits: HangoutEdits): Promise<void> => {
+      const entry = findEntry(id);
+      if (!entry || !userId || entry.hangout.hostId !== userId) {
+        throw new Error("Only the host can edit this hangout.");
+      }
+      const title = edits.title.trim();
+      if (title.length === 0) throw new Error("Give your hangout a title.");
+      const isPrivate = entry.hangout.privacy !== "public";
+      const batch = writeBatch(db);
+      batch.update(doc(db, "hangouts", id), {
+        title,
+        category: edits.category,
+        emoji: edits.emoji,
+        // Private hangouts keep exact text in the details doc; the public
+        // doc only carries the neutral placeholder.
+        ...(isPrivate
+          ? {}
+          : {
+              description: edits.description.trim(),
+              placeLabel: edits.placeLabel.trim() || "Shared pin",
+            }),
+      });
+      if (isPrivate) {
+        batch.set(
+          doc(db, "hangouts", id, "private", "details"),
+          {
+            description: edits.description.trim(),
+            placeLabel: edits.placeLabel.trim() || "Shared pin",
+          },
+          { merge: true },
+        );
+      }
+      await batch.commit();
+      setPrivateDetails((prev) =>
+        prev[id]
+          ? {
+              ...prev,
+              [id]: {
+                ...prev[id],
+                description: edits.description.trim(),
+                placeLabel: edits.placeLabel.trim() || "Shared pin",
+              },
+            }
+          : prev,
+      );
+    },
+    [findEntry, userId],
+  );
+
+  const cancelHangout = useCallback(
+    async (id: HangoutId): Promise<void> => {
+      const entry = findEntry(id);
+      if (!entry || !userId || entry.hangout.hostId !== userId) {
+        throw new Error("Only the host can cancel this hangout.");
+      }
+      await updateDoc(doc(db, "hangouts", id), { cancelled: true });
+    },
+    [findEntry, userId],
+  );
+
   const focusHangout = useCallback((id: HangoutId) => setFocusedHangoutId(id), []);
   const clearFocus = useCallback(() => setFocusedHangoutId(null), []);
 
@@ -866,6 +946,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       pass,
       clearRsvp,
       addHangout,
+      editHangout,
+      cancelHangout,
       requestAccess,
       cancelRequest,
       redeemInviteCode,
@@ -897,6 +979,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       pass,
       clearRsvp,
       addHangout,
+      editHangout,
+      cancelHangout,
       requestAccess,
       cancelRequest,
       redeemInviteCode,

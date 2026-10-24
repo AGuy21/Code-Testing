@@ -34,7 +34,7 @@ export async function searchPlaces(query: string, max = 5): Promise<PlaceResult[
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
         // Field mask limits the response (and billing) to what we render.
         "X-Goog-FieldMask":
           "places.displayName,places.formattedAddress,places.location",
@@ -64,4 +64,108 @@ export async function searchPlaces(query: string, max = 5): Promise<PlaceResult[
     });
   }
   return results;
+}
+
+export interface PlaceSuggestion {
+  placeId: string;
+  /** Main line, e.g. "Zilker Park". */
+  primary: string;
+  /** Context line, e.g. "Austin, TX, USA". */
+  secondary: string;
+}
+
+/** One token per typing session groups autocomplete + the final details call into a single billed session. */
+export function newPlacesSessionToken(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+/** Autocomplete (New): suggestions as the user types. Throws like searchPlaces. */
+export async function autocompletePlaces(
+  input: string,
+  sessionToken: string,
+  near?: { latitude: number; longitude: number },
+): Promise<PlaceSuggestion[]> {
+  const trimmed = input.trim();
+  if (trimmed.length < 2) return [];
+  const response = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
+    },
+    body: JSON.stringify({
+      input: trimmed,
+      sessionToken,
+      ...(near
+        ? { locationBias: { circle: { center: near, radius: 30000 } } }
+        : {}),
+    }),
+  });
+  if (!response.ok) {
+    const hint =
+      response.status === 403
+        ? "enable 'Places API (New)' for this key in Google Cloud Console"
+        : `HTTP ${response.status}`;
+    throw new Error(`Places autocomplete failed — ${hint}`);
+  }
+  const data = (await response.json()) as {
+    suggestions?: Array<{
+      placePrediction?: {
+        placeId?: string;
+        structuredFormat?: {
+          mainText?: { text?: string };
+          secondaryText?: { text?: string };
+        };
+        text?: { text?: string };
+      };
+    }>;
+  };
+  const out: PlaceSuggestion[] = [];
+  for (const item of data.suggestions ?? []) {
+    const prediction = item.placePrediction;
+    if (!prediction?.placeId) continue;
+    out.push({
+      placeId: prediction.placeId,
+      primary:
+        prediction.structuredFormat?.mainText?.text ??
+        prediction.text?.text ??
+        "Unnamed place",
+      secondary: prediction.structuredFormat?.secondaryText?.text ?? "",
+    });
+  }
+  return out;
+}
+
+/** Resolves a chosen suggestion into coordinates (ends the billing session). */
+export async function getPlaceDetails(
+  suggestion: PlaceSuggestion,
+  sessionToken: string,
+): Promise<PlaceResult> {
+  const response = await fetch(
+    `https://places.googleapis.com/v1/places/${encodeURIComponent(
+      suggestion.placeId,
+    )}?sessionToken=${encodeURIComponent(sessionToken)}`,
+    {
+      headers: {
+        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
+        "X-Goog-FieldMask": "location,formattedAddress",
+      },
+    },
+  );
+  if (!response.ok) throw new Error(`Place lookup failed — HTTP ${response.status}`);
+  const data = (await response.json()) as {
+    formattedAddress?: string;
+    location?: { latitude?: number; longitude?: number };
+  };
+  const latitude = data.location?.latitude;
+  const longitude = data.location?.longitude;
+  if (typeof latitude !== "number" || typeof longitude !== "number") {
+    throw new Error("That place has no coordinates.");
+  }
+  return {
+    label: suggestion.secondary
+      ? `${suggestion.primary}, ${suggestion.secondary}`
+      : (data.formattedAddress ?? suggestion.primary),
+    location: { latitude, longitude },
+  };
 }

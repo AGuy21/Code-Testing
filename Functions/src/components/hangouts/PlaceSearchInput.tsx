@@ -9,15 +9,23 @@ import {
 import { AppTextInput } from "../ui";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
-import { searchPlaces, type PlaceResult } from "../../utils/places";
+import {
+  autocompletePlaces,
+  getPlaceDetails,
+  newPlacesSessionToken,
+  type PlaceResult,
+  type PlaceSuggestion,
+} from "../../utils/places";
 
-const SEARCH_DEBOUNCE_MS = 350;
+const SEARCH_DEBOUNCE_MS = 200;
 
 export interface PlaceSearchInputProps {
   /** Called with the chosen place when a suggestion is tapped. */
   onPlaceSelected: (place: PlaceResult) => void;
   /** Optional: pre-selected place name to show under the field. */
   selectedLabel?: string | null;
+  /** Biases suggestions toward this point (e.g. the user's location). */
+  near?: { latitude: number; longitude: number } | null;
 }
 
 /**
@@ -28,10 +36,12 @@ export interface PlaceSearchInputProps {
 export function PlaceSearchInput({
   onPlaceSelected,
   selectedLabel,
+  near,
 }: PlaceSearchInputProps) {
   const palette = useThemePalette();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<PlaceResult[]>([]);
+  const [results, setResults] = useState<PlaceSuggestion[]>([]);
+  const sessionRef = useRef(newPlacesSessionToken());
   const [isSearching, setIsSearching] = useState(false);
   const [hasError, setHasError] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -40,7 +50,7 @@ export function PlaceSearchInput({
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (query.trim().length < 3) {
+    if (query.trim().length < 2) {
       setResults([]);
       setHasError(false);
       setIsSearching(false);
@@ -49,7 +59,7 @@ export function PlaceSearchInput({
     setIsSearching(true);
     const request = ++requestRef.current;
     debounceRef.current = setTimeout(() => {
-      searchPlaces(query)
+      autocompletePlaces(query, sessionRef.current, near ?? undefined)
         .then((places) => {
           if (request !== requestRef.current) return; // stale response
           setResults(places);
@@ -67,14 +77,24 @@ export function PlaceSearchInput({
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [query]);
+  }, [query, near]);
 
-  const choose = (place: PlaceResult) => {
-    setQuery("");
-    setResults([]);
-    setHasError(false);
-    setIsSearching(false);
-    onPlaceSelected(place);
+  const choose = async (suggestion: PlaceSuggestion) => {
+    const token = sessionRef.current;
+    setIsSearching(true);
+    try {
+      const place = await getPlaceDetails(suggestion, token);
+      setQuery("");
+      setResults([]);
+      setHasError(false);
+      onPlaceSelected(place);
+      sessionRef.current = newPlacesSessionToken();
+    } catch (error) {
+      console.warn("Place lookup failed:", error);
+      setHasError(true);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
@@ -83,7 +103,7 @@ export function PlaceSearchInput({
         label="Address or place"
         value={query}
         onChangeText={setQuery}
-        placeholder="Type an address or venue — tap a match to pin it"
+        placeholder="Start typing a venue or address"
         returnKeyType="search"
       />
 
@@ -124,8 +144,8 @@ export function PlaceSearchInput({
           ) : (
             results.map((place, index) => (
               <Pressable
-                key={`${place.label}-${index}`}
-                onPress={() => choose(place)}
+                key={place.placeId}
+                onPress={() => void choose(place)}
                 style={({ pressed }) => [
                   styles.suggestion,
                   pressed && styles.suggestionPressed,
@@ -140,7 +160,10 @@ export function PlaceSearchInput({
                   style={[styles.suggestionText, { color: palette.text }]}
                   numberOfLines={1}
                 >
-                  {place.label}
+                  {place.primary}
+                  {place.secondary ? (
+                    <Text style={{ color: palette.textMuted }}> · {place.secondary}</Text>
+                  ) : null}
                 </Text>
               </Pressable>
             ))

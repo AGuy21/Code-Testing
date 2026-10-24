@@ -353,6 +353,7 @@ export default function Add() {
       <PlaceSearchInput
         onPlaceSelected={handlePlaceSelected}
         selectedLabel={placeName}
+        near={location}
       />
 
       <AppTextInput
