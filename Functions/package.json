@@ -36,7 +36,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "fix:android-deps": "npx expo install react-native-reanimated@4.5.1 react-native-worklets@0.10.1 react-native-screens@4.26.0 react-native-safe-area-context@5.7.0",
-    "android:clean": "rm -rf android node_modules/react-native-worklets/android/.cxx node_modules/react-native-worklets/android/build node_modules/react-native-reanimated/android/.cxx node_modules/react-native-reanimated/android/build node_modules/expo-modules-core/android/.cxx node_modules/expo-modules-core/android/build ~/.gradle/caches/transforms-4 && npx expo prebuild --clean && npx expo run:android --no-bundler-cache"
+    "android:clean": "rm -rf android ~/.gradle/caches/build-cache-1 ~/.gradle/caches/transforms-4 && for m in react-native-worklets react-native-reanimated react-native-gesture-handler expo-modules-core react-native-screens react-native-safe-area-context react-native-maps; do rm -rf node_modules/$m/android/.cxx node_modules/$m/android/build; done && npx expo prebuild --clean && npx expo run:android --no-build-cache"
   },
   "private": true,
   "allowScripts": {
