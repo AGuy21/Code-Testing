@@ -19,7 +19,7 @@ import { RsvpButtons } from "../../components/hangouts/RsvpButtons";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useChat } from "../../hooks/useChat";
 import { useThemePalette } from "../../hooks/useColorTheme";
-import { CATEGORY_META } from "../../constants/Categories";
+import { categoryMeta, goingLabel } from "../../constants/Categories";
 import { MAP_INITIAL_REGION } from "../../data/hangouts";
 import { formatStartsAt } from "../../utils/hangouts";
 import type { HangoutId } from "../../constants/types/hangout";
@@ -85,7 +85,7 @@ export default function Map() {
   const selected = selectedId
     ? hangouts.find((hangout) => hangout.id === selectedId) ?? null
     : null;
-  const selectedMeta = selected ? CATEGORY_META[selected.category] : null;
+  const selectedMeta = selected ? categoryMeta(selected.category) : null;
 
   // The group chat is visible to the host and members who said they're going.
   const selectedIsMember = Boolean(
@@ -186,7 +186,7 @@ export default function Map() {
             </AppText>
 
             <View style={styles.metaRow}>
-              <View style={styles.goingRow}><Icon name="people" size={15} color={palette.primary} /><AppText variant="caption">{goingCount(selected.id)} going</AppText></View>
+              <View style={styles.goingRow}><Icon name="people" size={15} color={palette.primary} /><AppText variant="caption">{goingLabel(goingCount(selected.id))}</AppText></View>
               <Pressable
                 disabled={!selected.hostId}
                 onPress={() =>

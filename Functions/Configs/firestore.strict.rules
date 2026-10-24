@@ -46,7 +46,7 @@ service cloud.firestore {
         (resource.data.hostId == me()
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
                'title', 'description', 'category', 'emoji', 'placeLabel',
-               'startsAt', 'location', 'cancelled', 'allowPlusOnes',
+               'startsAt', 'location', 'cancelled', 'allowPlusOnes', 'baseGoingCount',
                'inviteCodeHash', 'requestedUserIds', 'approvedUserIds',
                'deniedUserIds', 'plusOneUserIds', 'goingUserIds',
                'passedUserIds'])

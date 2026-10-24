@@ -1,7 +1,7 @@
 /** Stable identifier for a hangout. */
 export type HangoutId = string;
 
-export type HangoutCategory = "chill" | "food" | "sports" | "party" | "study";
+export type HangoutCategory = "chill" | "food" | "sports" | "party" | "study" | "misc";
 
 export interface LatLng {
   latitude: number;
@@ -41,6 +41,8 @@ export interface Hangout {
   privacy: HangoutPrivacy;
   /** Whether guests may bring a +1. */
   allowPlusOnes: boolean;
+  /** People the host says are already coming (set by the host, not real RSVPs). */
+  presetGoing: number;
   /** Viewer-specific: `limited` hides the description and exact pin. */
   access: HangoutAccess;
   /** Viewer-specific: the current user already asked to join. */

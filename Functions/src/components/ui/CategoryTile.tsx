@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { CATEGORY_META } from "../../constants/Categories";
+import { categoryMeta } from "../../constants/Categories";
 import type { HangoutCategory } from "../../constants/types/hangout";
 import { Icon } from "./Icon";
 
@@ -10,7 +10,7 @@ export interface CategoryTileProps {
 
 /** Rounded, colour-tinted tile with the category's icon — replaces emoji. */
 export function CategoryTile({ category, size = 48 }: CategoryTileProps) {
-  const meta = CATEGORY_META[category] ?? CATEGORY_META.chill;
+  const meta = categoryMeta(category);
   return (
     <View
       style={[

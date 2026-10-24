@@ -14,7 +14,7 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import { useAuth } from "@clerk/expo";
 import { doc, getDoc } from "firebase/firestore";
-import { AppText, Card, Screen } from "../../components/ui";
+import { AppText, Avatar, Card, Screen } from "../../components/ui";
 import { MessageBubble } from "../../components/chat/MessageBubble";
 import {
   useChat,
@@ -135,11 +135,7 @@ export default function ConversationThread() {
               />
             </View>
           ) : (
-            <View style={[styles.avatar, styles.avatarDm]}>
-              <Text style={styles.avatarInitial}>
-                {title.charAt(0).toUpperCase()}
-              </Text>
-            </View>
+            <Avatar userId={otherId} name={title} size={40} />
           )}
           <Pressable
             style={styles.headerText}

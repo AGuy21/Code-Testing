@@ -63,7 +63,7 @@ service cloud.firestore {
       allow update: if request.resource.data.diff(resource.data).affectedKeys()
            .hasOnly(['goingUserIds', 'passedUserIds', 'plusOneUserIds',
                      'requestedUserIds', 'approvedUserIds', 'deniedUserIds',
-                     'allowPlusOnes', 'inviteCodeHash',
+                     'allowPlusOnes', 'baseGoingCount', 'inviteCodeHash',
                      'title', 'description', 'category', 'emoji',
                      'placeLabel', 'cancelled', 'startsAt', 'location'])
         && request.resource.data.title is string

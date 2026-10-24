@@ -19,7 +19,19 @@ export const CATEGORY_META: Record<HangoutCategory, CategoryMeta> = {
   sports: { label: "Sports", emoji: "🏀", icon: "basketball", color: "#4CA6FF" },
   party: { label: "Party", emoji: "🎉", icon: "sparkles", color: "#FF5CA8" },
   study: { label: "Study", emoji: "📚", icon: "book", color: "#FFC94C" },
+  misc: { label: "Something else", emoji: "✨", icon: "shapes", color: "#4FD1B5" },
 };
+
+/** Unknown or missing categories (older docs, typos) land on "misc". */
+export function categoryMeta(category: string | undefined): CategoryMeta {
+  return CATEGORY_META[category as HangoutCategory] ?? CATEGORY_META.misc;
+}
+
+/** Human-friendly head count; a lone host isn't counted as "going" to their own event. */
+export function goingLabel(count: number): string {
+  if (count <= 0) return "Be the first in";
+  return count === 1 ? "1 going" : `${count} going`;
+}
 
 export const CATEGORY_ORDER: readonly HangoutCategory[] = [
   "chill",
@@ -27,6 +39,7 @@ export const CATEGORY_ORDER: readonly HangoutCategory[] = [
   "sports",
   "party",
   "study",
+  "misc",
 ];
 
 export const PRIVACY_META = {

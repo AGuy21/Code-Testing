@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useThemePalette } from "../../hooks/useColorTheme";
+import { Avatar } from "../ui/Avatar";
 import { Fonts } from "../../constants/Fonts";
 import type { ChatMessage } from "../../constants/types/chat";
 
@@ -13,6 +14,11 @@ export interface MessageBubbleProps {
 export function MessageBubble({ message, isMine }: MessageBubbleProps) {
   const palette = useThemePalette();
   const router = useRouter();
+  const openProfile = () =>
+    router.push({
+      pathname: "/user/[userId]",
+      params: { userId: message.senderId, name: message.senderName },
+    });
   return (
     <View
       style={[
@@ -20,6 +26,11 @@ export function MessageBubble({ message, isMine }: MessageBubbleProps) {
         isMine ? styles.rowMine : styles.rowTheirs,
       ]}
     >
+      {!isMine ? (
+        <Pressable onPress={openProfile} hitSlop={6} style={styles.avatar}>
+          <Avatar userId={message.senderId} name={message.senderName} size={30} />
+        </Pressable>
+      ) : null}
       <View
         style={[
           styles.bubble,
@@ -32,12 +43,7 @@ export function MessageBubble({ message, isMine }: MessageBubbleProps) {
           <Text
             style={[styles.sender, { color: palette.primary }]}
             numberOfLines={1}
-            onPress={() =>
-              router.push({
-                pathname: "/user/[userId]",
-                params: { userId: message.senderId, name: message.senderName },
-              })
-            }
+            onPress={openProfile}
           >
             {message.senderName}
           </Text>
@@ -68,6 +74,7 @@ function shortTime(iso: string): string {
 }
 
 const styles = StyleSheet.create({
+  avatar: { alignSelf: "flex-end", marginRight: 8 },
   row: {
     flexDirection: "row",
     marginBottom: 8,

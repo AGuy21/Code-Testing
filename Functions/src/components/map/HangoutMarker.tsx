@@ -1,6 +1,6 @@
 import { Marker } from "react-native-maps";
 import { StyleSheet, Text, View } from "react-native";
-import { CATEGORY_META } from "../../constants/Categories";
+import { categoryMeta } from "../../constants/Categories";
 import { Icon } from "../ui/Icon";
 import { Fonts } from "../../constants/Fonts";
 import { useThemePalette } from "../../hooks/useColorTheme";
@@ -52,20 +52,22 @@ export function HangoutMarker({
               height: size,
               borderRadius: size / 2,
               backgroundColor: palette.surface,
-              borderColor: (CATEGORY_META[hangout.category] ?? CATEGORY_META.chill).color,
+              borderColor: categoryMeta(hangout.category).color,
               borderWidth: selected ? 3 : 2,
             },
           ]}
         >
           <Icon
-            name={(CATEGORY_META[hangout.category] ?? CATEGORY_META.chill).icon}
+            name={categoryMeta(hangout.category).icon}
             size={selected ? 26 : 22}
-            color={(CATEGORY_META[hangout.category] ?? CATEGORY_META.chill).color}
+            color={categoryMeta(hangout.category).color}
           />
         </View>
-        <View style={[styles.countBadge, { backgroundColor: palette.primary }]}>
-          <Text style={styles.countText}>{goingCount}</Text>
-        </View>
+        {goingCount > 0 ? (
+          <View style={[styles.countBadge, { backgroundColor: palette.primary }]}>
+            <Text style={styles.countText}>{goingCount}</Text>
+          </View>
+        ) : null}
       </View>
     </Marker>
   );

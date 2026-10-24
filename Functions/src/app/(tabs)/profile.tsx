@@ -174,7 +174,7 @@ export default function Profile() {
       ) : (
         <Card variant="accent" style={styles.emptyCard}>
           <Text style={[styles.emptyText, { color: palette.textMuted }]}>
-            No RSVPs yet — say you're in from the Events tab.
+            Nothing yet. Join something from Events.
           </Text>
         </Card>
       )}
@@ -205,13 +205,10 @@ export default function Profile() {
         Friends
       </Text>
       <Card>
-        <Text style={[styles.accountNote, { color: palette.textMuted }]}>
-          Friends-only hangouts you host are shared with this list.
-        </Text>
         <AppTextInput
           value={friendSearch}
           onChangeText={setFriendSearch}
-          placeholder="Find people by name"
+          placeholder="Add friends by name"
           autoCorrect={false}
         />
         {friendResults

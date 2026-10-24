@@ -33,3 +33,17 @@ describe("formatStartsAt", () => {
     expect(formatStartsAt(tomorrow.toISOString())).toMatch(/^Tomorrow · /);
   });
 });
+
+import { categoryMeta, goingLabel } from "../constants/Categories";
+
+describe("categories and head count", () => {
+  it("falls back to misc for unknown categories", () => {
+    expect(categoryMeta("nonsense").label).toBe("Something else");
+    expect(categoryMeta(undefined).label).toBe("Something else");
+  });
+  it("words the going count like a person would", () => {
+    expect(goingLabel(0)).toBe("Be the first in");
+    expect(goingLabel(1)).toBe("1 going");
+    expect(goingLabel(7)).toBe("7 going");
+  });
+});

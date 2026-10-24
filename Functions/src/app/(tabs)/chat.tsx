@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@clerk/expo";
-import { AppText, Card, Icon, Screen } from "../../components/ui";
+import { AppText, Avatar, Card, Icon, Screen } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { CATEGORY_META } from "../../constants/Categories";
 import { useChat } from "../../hooks/useChat";
@@ -123,11 +123,11 @@ export default function Chat() {
                   />
                 </View>
               ) : (
-                <View style={[styles.avatar, styles.avatarDm]}>
-                  <Text style={styles.avatarInitial}>
-                    {titleOf(item).charAt(0).toUpperCase()}
-                  </Text>
-                </View>
+                <Avatar
+                  userId={item.participantUserIds.find((id) => id !== userId)}
+                  name={titleOf(item)}
+                  size={48}
+                />
               )}
               <View style={styles.rowText}>
                 <Text

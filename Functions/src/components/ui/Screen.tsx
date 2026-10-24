@@ -34,7 +34,7 @@ export function Screen({
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   // Scale gutters with the screen and cap line length on tablets/landscape.
-  const gutter = width < 360 ? 14 : width < 600 ? 20 : 32;
+  const gutter = width < 360 ? 18 : width < 600 ? 24 : 40;
   const column = { maxWidth: 720, width: "100%" as const, alignSelf: "center" as const };
   const scheme = useColorScheme();
   const resolvedStatusBarStyle: StatusBarStyle =
@@ -46,7 +46,7 @@ export function Screen({
         styles.root,
         {
           backgroundColor: palette.background,
-          paddingTop: insets.top + (padded ? 8 : 0),
+          paddingTop: insets.top + (padded ? 16 : 0),
           paddingLeft: Math.max(insets.left, 0),
           paddingRight: Math.max(insets.right, 0),
         },
@@ -68,7 +68,7 @@ export function Screen({
           keyboardDismissMode="on-drag"
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingBottom: insets.bottom + 32, gap: 2 },
+            { paddingBottom: insets.bottom + 48, gap: 6 },
           ]}
           showsVerticalScrollIndicator={false}
         >

@@ -15,6 +15,7 @@ import {
   PrimaryButton,
   Chip,
   Screen,
+  Stepper,
 } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
@@ -41,24 +42,24 @@ const PRIVACY_OPTIONS: readonly {
   label: string;
   hint: string;
 }[] = [
-  { key: "public", icon: "earth", label: "Public", hint: "Anyone can see it and join." },
+  { key: "public", icon: "earth", label: "Public", hint: "Anyone can join." },
   {
     key: "request",
     icon: "hand-left",
     label: "Request to join",
-    hint: "Others see the basics; you approve who gets the exact spot.",
+    hint: "You approve who sees the spot.",
   },
   {
     key: "invite",
     icon: "mail",
     label: "Invite only",
-    hint: "Only people you invite (or who have your code) see the details.",
+    hint: "Only invited people see details.",
   },
   {
     key: "friends",
     icon: "heart",
     label: "Friends only",
-    hint: "Only people you approve see the details.",
+    hint: "Only approved people see details.",
   },
 ];
 
@@ -110,6 +111,7 @@ export default function Add() {
   const [locating, setLocating] = useState(false);
   const [privacy, setPrivacy] = useState<HangoutPrivacy>("public");
   const [allowPlusOnes, setAllowPlusOnes] = useState(false);
+  const [presetGoing, setPresetGoing] = useState(0);
   const [withInviteCode, setWithInviteCode] = useState(false);
   const isPrivate = privacy !== "public";
 
@@ -184,6 +186,7 @@ export default function Add() {
         hostName: user?.firstName ?? user?.username ?? "You",
         privacy,
         allowPlusOnes,
+        presetGoing,
         withInviteCode: isPrivate && withInviteCode,
       });
       focusHangout(created.id);
@@ -201,7 +204,7 @@ export default function Add() {
     <Screen scroll>
       <AppText variant="hero">Host a hangout</AppText>
       <AppText variant="caption" style={styles.subtitle}>
-        Pin it, and others can say if they want to join
+        Pin it and let people join
       </AppText>
 
       <AppTextInput
@@ -325,6 +328,11 @@ export default function Add() {
       <Text style={[styles.selectedTime, { color: palette.textMuted }]}>
         {PRIVACY_OPTIONS.find((option) => option.key === privacy)?.hint}
       </Text>
+      <Text style={[styles.fieldLabel, { color: palette.textMuted }]}>Already coming</Text>
+      <Text style={[styles.selectedTime, { color: palette.textMuted }]}>
+        Friends already in. Not counting you.
+      </Text>
+      <Stepper value={presetGoing} onChange={setPresetGoing} />
       <View style={styles.chipRow}>
         <Chip label="Allow +1s" icon="person-add" selected={allowPlusOnes} onPress={() => setAllowPlusOnes((value) => !value)} />
         {isPrivate ? (
@@ -340,12 +348,12 @@ export default function Add() {
       />
       {isSignedIn ? null : (
         <Text style={[styles.hint, { color: palette.textMuted }]}>
-          You're signed out — sign in to publish your hangout
+          Sign in to post
         </Text>
       )}
       {!location ? (
         <Text style={[styles.hint, { color: palette.textMuted }]}>
-          Add a location pin to publish your hangout
+          Drop a pin to post
         </Text>
       ) : null}
     </Screen>
@@ -354,7 +362,7 @@ export default function Add() {
 
 const styles = StyleSheet.create({
   subtitle: {
-    marginBottom: 20,
+    marginBottom: 28,
     marginTop: 6,
   },
   multiline: {
@@ -372,8 +380,8 @@ const styles = StyleSheet.create({
   chipRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 18,
+    gap: 10,
+    marginBottom: 24,
   },
   chip: {
     borderRadius: 999,
@@ -388,13 +396,13 @@ const styles = StyleSheet.create({
   selectedTime: {
     fontFamily: Fonts.Medium,
     fontSize: 13,
-    marginBottom: 18,
+    marginBottom: 24,
     marginTop: -10,
   },
   pickerSheet: {
     borderRadius: 20,
     borderWidth: 1,
-    marginBottom: 18,
+    marginBottom: 24,
     padding: 8,
   },
   pickerActions: {
@@ -409,7 +417,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 12,
-    marginBottom: 18,
+    marginBottom: 24,
   },
   locationButton: {
     flexGrow: 0,

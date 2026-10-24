@@ -8,7 +8,7 @@ import { RsvpButtons } from "./RsvpButtons";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useChat } from "../../hooks/useChat";
 import { useThemePalette } from "../../hooks/useColorTheme";
-import { CATEGORY_META } from "../../constants/Categories";
+import { categoryMeta, goingLabel } from "../../constants/Categories";
 import { Fonts } from "../../constants/Fonts";
 import { formatStartsAt } from "../../utils/hangouts";
 import type { Hangout } from "../../constants/types/hangout";
@@ -28,7 +28,6 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
   const { goingCount, rsvps, focusHangout } = useHangouts();
   const { openGroupChat } = useChat();
   const { userId } = useAuth();
-  const meta = CATEGORY_META[hangout.category];
 
   // The group chat is for the host and anyone who said they're going.
   const isMember = Boolean(
@@ -76,7 +75,7 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
             {hangout.title}
           </Text>
           <Text style={[styles.context, { color: palette.textMuted }]} numberOfLines={1}>
-            {meta.label} · {hangout.placeLabel} · host{" "}
+            {hangout.placeLabel} · by{" "}
             {hangout.hostId ? (
               <Text
                 style={{ color: palette.primary, fontFamily: Fonts.SemiBold }}
@@ -102,15 +101,17 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
         )}
       </View>
 
-      <Text style={[styles.description, { color: palette.text }]} numberOfLines={2}>
-        {hangout.description}
-      </Text>
+      {hangout.description?.trim() && !/^no details yet/i.test(hangout.description) ? (
+        <Text style={[styles.description, { color: palette.text }]} numberOfLines={2}>
+          {hangout.description}
+        </Text>
+      ) : null}
 
       <View style={[styles.footer, { borderTopColor: palette.border }]}>
         <View style={styles.goingPill}>
           <View style={[styles.goingDot, { backgroundColor: palette.primary }]} />
           <Text style={[styles.goingText, { color: palette.text }]}>
-            {goingCount(hangout.id)} going
+            {goingLabel(goingCount(hangout.id))}
           </Text>
         </View>
         {isMember ? (
@@ -136,7 +137,8 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 26,
     borderWidth: 1.5,
-    padding: 16,
+    padding: 20,
+    marginBottom: 6,
   },
   pressed: {
     opacity: 0.88,
@@ -145,7 +147,7 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "flex-start",
     flexDirection: "row",
-    gap: 12,
+    gap: 14,
   },
   emojiTile: {
     alignItems: "center",
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     flex: 1,
-    gap: 2,
+    gap: 4,
   },
   title: {
     fontFamily: Fonts.Bold,
@@ -181,8 +183,8 @@ const styles = StyleSheet.create({
   description: {
     fontFamily: Fonts.Medium,
     fontSize: 14,
-    lineHeight: 20,
-    marginTop: 12,
+    lineHeight: 21,
+    marginTop: 16,
     opacity: 0.92,
   },
   footer: {
@@ -190,8 +192,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 14,
-    paddingTop: 12,
+    marginTop: 18,
+    paddingTop: 16,
   },
   goingPill: {
     alignItems: "center",

@@ -29,6 +29,6 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 24,
     borderWidth: 1.5,
-    padding: 18,
+    padding: 22,
   },
 });

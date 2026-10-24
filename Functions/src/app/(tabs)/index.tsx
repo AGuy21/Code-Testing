@@ -77,10 +77,10 @@ export default function HomeScreen() {
       </View>
       <AppText variant="caption" style={styles.subtitle}>
         {isLoading
-          ? "Finding hangouts…"
+          ? "Looking around…"
           : visible.length === 1
-            ? "1 hangout near you — you in?"
-            : `${visible.length} hangouts near you — you in?`}
+            ? "1 hangout nearby"
+            : `${visible.length} hangouts nearby`}
       </AppText>
 
       {syncError ? (
@@ -157,7 +157,7 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  chips: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
+  chips: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 24 },
   titleRow: { alignItems: "center", flexDirection: "row", gap: 8 },
   bannerRow: { alignItems: "center", flexDirection: "row", gap: 8 },
   flex: { flex: 1 },

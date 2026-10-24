@@ -30,6 +30,7 @@ import {
 } from "react";
 import { useAuth } from "@clerk/expo";
 import { db } from "../../Configs/FirebaseConfig";
+import { CATEGORY_ORDER } from "../constants/Categories";
 import type {
   Hangout,
   HangoutCategory,
@@ -51,6 +52,8 @@ export interface NewHangoutInput {
   hostName?: string;
   privacy?: HangoutPrivacy;
   allowPlusOnes?: boolean;
+  /** Friends the host already knows are coming. */
+  presetGoing?: number;
   /** Generate a private invite code for the host to share. */
   withInviteCode?: boolean;
 }
@@ -108,6 +111,8 @@ export interface HangoutsContextValue {
   denyRequest: (id: HangoutId, userId: string) => void;
   removeGuest: (id: HangoutId, userId: string) => void;
   setAllowPlusOnes: (id: HangoutId, allow: boolean) => void;
+  /** Host-only: how many people are already coming. */
+  setPresetGoing: (id: HangoutId, count: number) => void;
   /** Creates (or replaces) the invite code and resolves with it. */
   regenerateInviteCode: (id: HangoutId) => Promise<string>;
   getInviteCode: (id: HangoutId) => string | null;
@@ -173,6 +178,12 @@ interface HangoutEntry {
 }
 
 const INVITE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+/** Host-entered head count: whole number, 0–999, anything else becomes 0. */
+function clampPreset(value: unknown): number {
+  const n = typeof value === "number" ? Math.floor(value) : 0;
+  return Number.isFinite(n) ? Math.min(999, Math.max(0, n)) : 0;
+}
+
 const LIMITED_DESCRIPTION =
   "Private hangout — get approved to see the details and exact spot.";
 
@@ -222,7 +233,7 @@ function mapDocToEntry(id: string, data: HangoutDoc): HangoutEntry {
       id,
       title: data.title,
       description: data.description,
-      category: (data.category ?? "chill") as HangoutCategory,
+      category: (CATEGORY_ORDER.includes(data.category as HangoutCategory) ? data.category : "misc") as HangoutCategory,
       emoji: data.emoji,
       location: {
         latitude: data.location?.latitude ?? 0,
@@ -232,7 +243,8 @@ function mapDocToEntry(id: string, data: HangoutDoc): HangoutEntry {
       startsAt,
       hostName: data.hostName,
       hostId: data.hostId ?? undefined,
-      goingCount: data.baseGoingCount ?? 0,
+      goingCount: 0,
+      presetGoing: clampPreset(data.baseGoingCount),
       privacy: data.privacy ?? "public",
       allowPlusOnes: data.allowPlusOnes ?? false,
       access: "full",
@@ -477,7 +489,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         startsAt: input.startsAt,
         hostName: input.hostName ?? "You",
         hostId: userId,
-        goingCount: 1,
+        goingCount: 0,
+        presetGoing: clampPreset(input.presetGoing),
         privacy,
         allowPlusOnes,
         access: "full",
@@ -485,7 +498,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       };
       const entry: HangoutEntry = {
         hangout,
-        baseGoingCount: 1,
+        baseGoingCount: clampPreset(input.presetGoing),
         goingUserIds: [],
         passedUserIds: [],
         requestedUserIds: [],
@@ -520,7 +533,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
           startsAt: Timestamp.fromDate(new Date(input.startsAt)),
           hostName: input.hostName ?? "You",
           hostId: userId,
-          baseGoingCount: 1,
+          baseGoingCount: clampPreset(input.presetGoing),
           goingUserIds: [],
           passedUserIds: [],
           privacy,
@@ -654,11 +667,9 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     (id: HangoutId) => {
       const entry = entries.find((item) => item.hangout.id === id);
       if (!entry) return 0;
-      return (
-        entry.baseGoingCount +
-        entry.goingUserIds.length +
-        entry.plusOneUserIds.length
-      );
+      const base = clampPreset(entry.baseGoingCount);
+      const going = new Set(entry.goingUserIds).size;
+      return Math.max(0, base + going + entry.plusOneUserIds.length);
     },
     [entries, userId],
   );
@@ -776,6 +787,12 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
           participantUserIds: arrayRemove(guestId),
         }).catch((error) => console.warn("Failed to update chat members:", error));
       }),
+    [asHost, patchHangout],
+  );
+
+  const setPresetGoing = useCallback(
+    (id: HangoutId, count: number) =>
+      asHost(id, () => patchHangout(id, { baseGoingCount: clampPreset(count) })),
     [asHost, patchHangout],
   );
 
@@ -1020,6 +1037,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       denyRequest,
       removeGuest,
       setAllowPlusOnes,
+      setPresetGoing,
       regenerateInviteCode,
       getInviteCode,
       getPeople,
@@ -1056,6 +1074,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       denyRequest,
       removeGuest,
       setAllowPlusOnes,
+      setPresetGoing,
       regenerateInviteCode,
       getInviteCode,
       getPeople,

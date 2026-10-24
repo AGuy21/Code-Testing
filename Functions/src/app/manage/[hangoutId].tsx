@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Alert, Platform, Pressable, Share, StyleSheet, Text, View } from "react-native";
-import { AppText, AppTextInput, Card, CategoryTile, Chip, Icon, PrimaryButton, Screen } from "../../components/ui";
+import { AppText, AppTextInput, Card, CategoryTile, Chip, Icon, PrimaryButton, Screen, Stepper } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
@@ -27,6 +27,7 @@ export default function ManageHangout() {
     denyRequest,
     removeGuest,
     setAllowPlusOnes,
+    setPresetGoing,
     editHangout,
     cancelHangout,
     lookupNames,
@@ -232,6 +233,15 @@ export default function ManageHangout() {
         onPress={() => void save()}
         disabled={saving || title.trim().length === 0}
       />
+
+      <Text style={[styles.label, { color: palette.textMuted }]}>Already coming</Text>
+      <Card>
+        <AppText variant="caption">People you know are showing up, on top of RSVPs.</AppText>
+        <Stepper
+          value={hangout.presetGoing}
+          onChange={(next) => setPresetGoing(hangout.id, next)}
+        />
+      </Card>
 
       <Text style={[styles.label, { color: palette.textMuted }]}>+1s</Text>
       <Card>
