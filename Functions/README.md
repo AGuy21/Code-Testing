@@ -50,7 +50,7 @@ This README serves two audiences:
 | Runtime | Expo SDK 57 · React Native 0.86 · React 19 |
 | Language | TypeScript (strict) |
 | Navigation | expo-router (file-based routes) |
-| Auth | Clerk (`@clerk/expo`, hosted auth + secure token cache) |
+| Auth | Clerk (`@clerk/expo`, native in-app auth + secure token cache) |
 | Backend | Firebase Firestore — modular JS SDK, real-time listeners |
 | Maps & location | `react-native-maps` (Google Maps on Android) + `expo-location` |
 | Icons & type | `@react-native-vector-icons/ionicons`, `material-design-icons` · Manrope |
@@ -395,3 +395,8 @@ Ideas beyond the roadmap: mutual friend requests, server-side invite redemption,
 - App code — MIT (see `LICENSE`).
 - Manrope — SIL OFL · Ionicons — MIT · Material Design Icons — Apache-2.0.
 - Google Maps Platform / Firebase — subject to Google's Terms of Service; Clerk — subject to Clerk's terms.
+
+## Testing & QA
+
+- `npm run check` — typecheck the app, run Jest unit tests (`src/__tests__`) and typecheck `functions/`.
+- `npm run smoke:android` — relaunches the dev build on the emulator and fails on JS errors, crashes, unmatched routes or Firebase auth re-init errors; screenshot at `/tmp/smoke.png`.

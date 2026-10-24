@@ -37,6 +37,7 @@ const config: ExpoConfig = {
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
+  backgroundColor: "#0E1713",
   ios: {
     supportsTablet: true,
     ...(envMapsKey ? { config: { googleMapsApiKey: envMapsKey } } : {}),

@@ -31,6 +31,8 @@ function notifications(): ExpoNotifications | null {
 
 // Present FCM notifications while the app is foregrounded. Safe at module
 // scope: a no-op when the native module is missing.
+
+
 const Notifications = notifications();
 if (Notifications) {
   Notifications.setNotificationHandler({

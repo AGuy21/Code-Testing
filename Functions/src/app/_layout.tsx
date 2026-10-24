@@ -1,6 +1,7 @@
-import { Stack } from "expo-router";
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router";
 import * as Font from "expo-font";
 import { useEffect, useState } from "react";
+import { useThemePalette } from "../hooks/useColorTheme";
 import { ClerkProvider, useAuth } from "@clerk/expo";
 import { ActivityIndicator, View } from "react-native";
 import { tokenCache } from "@clerk/expo/token-cache";
@@ -19,17 +20,25 @@ if (!publishableKey) {
 // restored session is never mistaken for "signed out" on cold start.
 function RootNavigator() {
   const { isLoaded, isSignedIn } = useAuth();
+  const palette = useThemePalette();
 
   if (!isLoaded) {
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: palette.background }}>
         <ActivityIndicator size="large" />
       </View>
     );
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: "fade_from_bottom",
+        animationDuration: 200,
+        contentStyle: { backgroundColor: palette.background },
+      }}
+    >
       <Stack.Protected guard={!isSignedIn}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
@@ -41,6 +50,7 @@ function RootNavigator() {
         <Stack.Screen name="user/[userId]" />
       </Stack.Protected>
       <Stack.Screen name="hosted-auth-callback" />
+      <Stack.Screen name="sso-callback" />
     </Stack>
   );
 }
@@ -75,12 +85,39 @@ export default function Layout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <FirebaseAuthBridge />
-      <HangoutsProvider>
-        <ChatProvider>
-          <RootNavigator />
-        </ChatProvider>
-      </HangoutsProvider>
+      <ThemedRoot />
     </ClerkProvider>
   );
+}
+
+// Paints every layer (window, navigation theme, scenes) with the app palette
+// so transitions never flash the default white.
+function ThemedRoot() {
+  const palette = useThemePalette();
+  const base = palette.background === DarkTheme.colors.background || isDark(palette.background)
+    ? DarkTheme
+    : DefaultTheme;
+  const theme = {
+    ...base,
+    colors: { ...base.colors, background: palette.background, card: palette.background },
+  };
+  return (
+    <ThemeProvider value={theme}>
+      <View style={{ flex: 1, backgroundColor: palette.background }}>
+        <FirebaseAuthBridge />
+        <HangoutsProvider>
+          <ChatProvider>
+            <RootNavigator />
+          </ChatProvider>
+        </HangoutsProvider>
+      </View>
+    </ThemeProvider>
+  );
+}
+
+function isDark(hex: string): boolean {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return false;
+  const n = parseInt(m[1], 16);
+  return ((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 < 128;
 }

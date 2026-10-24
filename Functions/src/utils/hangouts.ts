@@ -42,6 +42,6 @@ export function distanceKm(
 
 /** "0.4 km" / "12 km" label for feed cards. */
 export function formatDistance(km: number): string {
-  if (km < 1) return `${Math.max(1, Math.round(km * 10) * 100)} m`;
+  if (km < 1) return `${Math.max(100, Math.round(km * 10) * 100)} m`;
   return km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km)} km`;
 }
