@@ -96,7 +96,7 @@ export default function Add() {
   const palette = useThemePalette();
   const { user } = useUser();
   const { isSignedIn } = useAuth();
-  const { addHangout, focusHangout, isSubmitting } = useHangouts();
+  const { addHangout, isSubmitting } = useHangouts();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -189,8 +189,7 @@ export default function Add() {
         presetGoing,
         withInviteCode: isPrivate && withInviteCode,
       });
-      focusHangout(created.id);
-      router.push("/(tabs)/map");
+      router.replace("/(tabs)");
     } catch (error) {
       const message =
         error instanceof Error && error.message.length > 0

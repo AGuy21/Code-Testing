@@ -202,7 +202,7 @@ export default function Map() {
               </Pressable>
             </View>
 
-            <RsvpButtons hangoutId={selected.id} />
+            <RsvpButtons hangoutId={selected.id} style={styles.rsvp} />
             {selectedIsMember ? (
               <PrimaryButton
                 label="Open chat"
@@ -219,6 +219,7 @@ export default function Map() {
 }
 
 const styles = StyleSheet.create({
+  rsvp: { marginTop: 18 },
   loadingRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   root: {
     flex: 1,
@@ -277,6 +278,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   chatButton: {
-    marginTop: 2,
+    marginTop: 12,
   },
 });

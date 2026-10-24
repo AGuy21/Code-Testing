@@ -124,7 +124,7 @@ export default function ManageHangout() {
         ...(newLocation ? { location: newLocation } : {}),
       });
       setNewLocation(null);
-      Alert.alert("Saved", "Your hangout is updated.");
+      router.replace("/(tabs)");
     } catch (error) {
       Alert.alert(
         "Couldn't save",
@@ -143,7 +143,7 @@ export default function ManageHangout() {
         style: "destructive",
         onPress: () => {
           cancelHangout(hangout.id)
-            .then(() => router.back())
+            .then(() => router.replace("/(tabs)"))
             .catch((error) =>
               Alert.alert(
                 "Couldn't cancel",

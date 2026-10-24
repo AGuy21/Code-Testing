@@ -192,8 +192,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 18,
-    paddingTop: 16,
+    gap: 14,
+    marginTop: 22,
+    paddingTop: 20,
   },
   goingPill: {
     alignItems: "center",
@@ -216,6 +217,7 @@ const styles = StyleSheet.create({
     width: 30,
   },
   rsvp: {
+    marginLeft: "auto",
     width: 172,
   },
 });
