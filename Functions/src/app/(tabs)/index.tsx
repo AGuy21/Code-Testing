@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import {
   AppText,
   AppTextInput,
@@ -126,6 +126,19 @@ export default function HomeScreen() {
         renderItem={({ item }) => <HangoutCard hangout={item} />}
         ItemSeparatorComponent={ListSeparator}
         scrollEnabled={false}
+        ListEmptyComponent={
+          isLoading ? (
+            <ActivityIndicator color={palette.primary} style={{ marginTop: 32 }} />
+          ) : (
+            <Card variant="accent">
+              <AppText variant="caption">
+                {category
+                  ? "No hangouts in this category yet."
+                  : "No upcoming hangouts yet — host one from the + tab!"}
+              </AppText>
+            </Card>
+          )
+        }
       />
     </Screen>
   );

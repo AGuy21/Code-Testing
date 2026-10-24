@@ -37,6 +37,7 @@ export default function Map() {
     focusedHangoutId,
     clearFocus,
     syncError,
+    isLoading,
   } = useHangouts();
   const router = useRouter();
   const { userId } = useAuth();
@@ -119,10 +120,25 @@ export default function Map() {
       {/* Header overlay */}
       <View style={[styles.headerOverlay, { top: insets.top + 8 }]}>
         <Card variant="accent" style={styles.headerCard}>
-          <AppText variant="subtitle">{hangouts.length} hangouts nearby</AppText>
-          <AppText variant="caption">
-            {syncError ? `⚠️ ${syncError}` : "Tap a pin to see details and RSVP"}
-          </AppText>
+          {isLoading ? (
+            <View style={styles.loadingRow}>
+              <ActivityIndicator color={palette.primary} />
+              <AppText variant="subtitle">Loading hangouts…</AppText>
+            </View>
+          ) : (
+            <>
+              <AppText variant="subtitle">
+                {hangouts.length === 1 ? "1 hangout nearby" : `${hangouts.length} hangouts nearby`}
+              </AppText>
+              <AppText variant="caption">
+                {syncError
+                  ? `⚠️ ${syncError}`
+                  : hangouts.length === 0
+                    ? "Nothing yet — host the first one from the + tab"
+                    : "Tap a pin to see details and RSVP"}
+              </AppText>
+            </>
+          )}
         </Card>
       </View>
 
@@ -192,6 +208,7 @@ export default function Map() {
 }
 
 const styles = StyleSheet.create({
+  loadingRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   root: {
     flex: 1,
   },

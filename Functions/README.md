@@ -31,6 +31,10 @@ This README serves two audiences:
 - **Interactive map** — custom emoji pins with live head counts, tap-to-open detail card, "locate me" FAB and auto-fit camera.
 - **One-tap RSVPs** — Join / Pass / undo, persisted per signed-in Clerk user.
 - **Host anywhere** — pin via GPS or type any address/venue (Google Places Text Search) and get a live suggestion dropdown.
+- **Private hangouts** — public, request-to-join, invite-only (with shareable codes) or friends-only; non-members see a coarse neighbourhood, the exact spot is released on approval. +1s are host-controlled.
+- **Host tools** — a manage screen (profile → gear) to edit, approve/deny requests, invite by name, remove guests, rotate the invite code or cancel.
+- **Feed filters** — category chips and Soonest / Nearest sort.
+- **Places autocomplete** — suggestions as you type, biased to your location.
 - **Auto-expiry** — hangouts whose start time has passed are deleted from Firestore and disappear from the feed, map and profile automatically.
 - **Chats** — every hangout auto-creates a group chat (host + "going" members), plus direct messages between members; new messages fire FCM pushes via a Cloud Function.
 - **Theming** — emerald/slate palette, light & dark, Manrope type ramp, reusable UI kit.
@@ -146,6 +150,15 @@ Screens never touch Firestore directly — everything goes through `useHangouts(
 | `goingUserIds` | string[] | RSVP state |
 | `passedUserIds` | string[] | RSVP state |
 | `createdAt` | server Timestamp | audit |
+| `privacy` | string | `public` \| `request` \| `invite` \| `friends` |
+| `allowPlusOnes` | boolean | host toggle |
+| `plusOneUserIds` | string[] | guests bringing a +1 |
+| `requestedUserIds` / `approvedUserIds` / `deniedUserIds` | string[] | join-request state (private hangouts) |
+| `inviteCodeHash` | string | SHA-256 of the invite code; the code itself is never public |
+| `cancelled` / `hidden` | boolean | host soft-delete / moderation flag; both are swept |
+| `goingCount` | number | denormalised by `onHangoutWritten` |
+
+For non-public hangouts the public doc carries a **coarsened** `location`, a neighbourhood `placeLabel` and a placeholder `description`. The real values live in `hangouts/{id}/private/details` (`location`, `placeLabel`, `description`, `inviteCode`) and are only read for the host and approved guests.
 
 **`users/{userId}`** — created on first chat visit
 
@@ -171,11 +184,14 @@ Subcollection **`conversations/{id}/messages/{messageId}`**: `text` (≤1000) ·
 
 ### Security rules
 
+> **Limitation:** Clerk can't mint Firebase Auth tokens, so rules can only validate shape. Private-hangout hiding and host-only actions are enforced in the client; truly secret locations need a Clerk → Firebase custom-token backend. "Friends only" currently behaves like invite-only (no friends graph yet).
+
 `Configs/firestore.rules` matches this write pattern exactly:
 
 - `read` — public; the feed and map work for everyone.
 - `create` — validates the fields above and requires empty RSVP arrays. There is **no signed-in check**: the app authenticates with Clerk, which cannot mint Firebase Auth tokens, so `request.auth` is always null. A signed-in gate needs a backend that exchanges Clerk sessions for Firebase custom tokens (roadmap).
-- `update` — **restricted to** `goingUserIds` / `passedUserIds` (max 1000 each); no auth gate for the same Clerk/Firebase reason.
+- `update` — allow-list of RSVP, access-list, +1, invite-hash and host-editable fields (title, description, category, emoji, placeLabel, cancelled); no auth gate for the same Clerk/Firebase reason.
+- `private/{doc}` — key-whitelisted writes for the sensitive details.
 - `delete` — only for expired hangouts (`startsAt` in the past) or legacy
   seed docs (no `hostId`); live docs stay protected.
 - `users` — public reads; shape-validated writes (profile + FCM tokens).
@@ -252,7 +268,17 @@ Everything the app calls outside its own code — and exactly where it is wired.
 - Permission strings are configured in `app.config.ts` (`locationWhenInUsePermission`); the Android manifest requests `ACCESS_COARSE_LOCATION` / `ACCESS_FINE_LOCATION`.
 - Used by the locate-me FAB (map camera) and the host flow's "Use my location" pin via the shared resolver `src/utils/location.ts`: it checks that location **services** are on, asks for permission once, detects permanent denial and deep-links to app Settings, and retries at low accuracy when the provider hiccups (common on emulators).
 
-### 5. Chat push notifications (Cloud Functions + FCM)
+### 5. Cloud Functions (`functions/`) — pushes, counters, moderation, sweeps
+
+| Function | Trigger | Does |
+| --- | --- | --- |
+| `onChatMessage` | message created | FCM push to the other participants |
+| `onHangoutWritten` | hangout written | push to host on join/request, push to a guest when approved, writes `goingCount`, hides hangouts matching `BLOCKED_TERMS` |
+| `sweepHangouts` | every 15 min | recursively deletes started or cancelled hangouts |
+
+Dead FCM tokens are pruned automatically. Deploy with `firebase deploy --only functions` (Blaze plan). Also publish the updated rules: `firebase deploy --only firestore:rules`.
+
+#### Setup
 
 1. Firebase console → **Project settings → Cloud Messaging** → enable
    **Cloud Messaging API (V1)**.
@@ -350,13 +376,14 @@ npm start          # Metro dev server
 
 ## Roadmap
 
-- Chat backend — shipped: Firestore group chats per hangout + deterministic DMs with FCM pushes via Cloud Functions
-- Private Functions - Local sending of location for hangouts privately
-Add a privacy field to each event. Private events should support three access types: Invite Only, Request to Join, and Friends Only. Users without access can either not see the event at all, or only see limited information such as the event name, general neighborhood, category, and number attending. The exact location should only become visible after the user is approved. Hosts should be able to invite users directly, approve/deny join requests, remove guests, allow or disable +1s, and optionally generate a private invite link/code.
-- Places search — **shipped**: the host flow resolves typed addresses/venues via Google Places Text Search (New); autocomplete-as-you-type is the natural next step.
-- Push notifications when someone joins your hangout (chat message pushes ship via Cloud Functions today)
-- Cloud Functions for counters, moderation and server-side expiry sweeps
-- Edit/delete own hangouts · feed filters and distance sorting
+Shipped: chat backend · private hangouts (request / invite / friends, codes, +1s, host tools) · Places autocomplete · join/request pushes · Cloud Functions (counters, moderation, expiry sweep) · edit/cancel hangouts · feed filters and distance sort · robust auth gate with restored sessions.
+
+Next:
+
+- Clerk → Firebase custom-token backend so rules can enforce privacy and host-only writes server-side
+- A real friends graph for "Friends only" hangouts
+- Editing a hangout's time and exact location
+- Shareable invite links (deep links) in addition to codes
 
 ## License & attributions
 
