@@ -238,7 +238,15 @@ export default function Profile() {
         ) : (
           friendIds.map((id) => (
             <View key={id} style={[styles.friendRow, styles.friendSpread]}>
-              <Text style={{ color: palette.text, fontFamily: Fonts.Medium }}>
+              <Text
+                style={{ color: palette.text, fontFamily: Fonts.Medium }}
+                onPress={() =>
+                  router.push({
+                    pathname: "/user/[userId]",
+                    params: { userId: id, name: friendNames[id] ?? id },
+                  })
+                }
+              >
                 {friendNames[id] ?? id}
               </Text>
               <Pressable onPress={() => void removeFriend(id)}>

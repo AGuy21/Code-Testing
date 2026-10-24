@@ -38,6 +38,7 @@ function RootNavigator() {
         <Stack.Screen name="chat/[conversationId]" />
         <Stack.Screen name="manage/[hangoutId]" />
         <Stack.Screen name="invite/[code]" />
+        <Stack.Screen name="user/[userId]" />
       </Stack.Protected>
       <Stack.Screen name="hosted-auth-callback" />
     </Stack>

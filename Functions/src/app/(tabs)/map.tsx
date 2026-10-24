@@ -188,7 +188,19 @@ export default function Map() {
 
             <View style={styles.metaRow}>
               <AppText variant="caption">👥 {goingCount(selected.id)} going</AppText>
-              <AppText variant="caption">Host {selected.hostName}</AppText>
+              <Pressable
+                disabled={!selected.hostId}
+                onPress={() =>
+                  router.push({
+                    pathname: "/user/[userId]",
+                    params: { userId: selected.hostId as string, name: selected.hostName },
+                  })
+                }
+              >
+                <AppText variant="caption" style={{ color: palette.primary }}>
+                  Host {selected.hostName} ›
+                </AppText>
+              </Pressable>
             </View>
 
             <RsvpButtons hangoutId={selected.id} />

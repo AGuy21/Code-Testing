@@ -27,6 +27,8 @@ This README serves two audiences:
 
 ## Features
 
+- **Native sign-in** — in-app email/password (with email-code verification) and Google, built on Clerk hooks, no hosted web page.
+- **Public profiles** — tap any host or member name (cards, map, chat, manage, friends) to see their hangouts, add/remove friend, or message them.
 - **Live events feed** — hangouts stream in real time from Firestore snapshots; no pull-to-refresh needed.
 - **Interactive map** — custom emoji pins with live head counts, tap-to-open detail card, "locate me" FAB and auto-fit camera.
 - **One-tap RSVPs** — Join / Pass / undo, persisted per signed-in Clerk user.

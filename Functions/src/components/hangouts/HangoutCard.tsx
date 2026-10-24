@@ -83,7 +83,22 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
           </Text>
           <Text style={[styles.context, { color: palette.textMuted }]} numberOfLines={1}>
             {hangout.privacy !== "public" ? "🔒 " : ""}
-            {meta.label} · {hangout.placeLabel} · host {hangout.hostName}
+            {meta.label} · {hangout.placeLabel} · host{" "}
+            {hangout.hostId ? (
+              <Text
+                style={{ color: palette.primary, fontFamily: Fonts.SemiBold }}
+                onPress={() =>
+                  router.push({
+                    pathname: "/user/[userId]",
+                    params: { userId: hangout.hostId as string, name: hangout.hostName },
+                  })
+                }
+              >
+                {hangout.hostName}
+              </Text>
+            ) : (
+              hangout.hostName
+            )}
           </Text>
         </View>
 

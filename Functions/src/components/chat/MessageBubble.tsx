@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
@@ -11,6 +12,7 @@ export interface MessageBubbleProps {
 /** One chat bubble — emerald for mine, elevated surface for everyone else. */
 export function MessageBubble({ message, isMine }: MessageBubbleProps) {
   const palette = useThemePalette();
+  const router = useRouter();
   return (
     <View
       style={[
@@ -27,7 +29,16 @@ export function MessageBubble({ message, isMine }: MessageBubbleProps) {
         ]}
       >
         {!isMine ? (
-          <Text style={[styles.sender, { color: palette.primary }]} numberOfLines={1}>
+          <Text
+            style={[styles.sender, { color: palette.primary }]}
+            numberOfLines={1}
+            onPress={() =>
+              router.push({
+                pathname: "/user/[userId]",
+                params: { userId: message.senderId, name: message.senderName },
+              })
+            }
+          >
             {message.senderName}
           </Text>
         ) : null}

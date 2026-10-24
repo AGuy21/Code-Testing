@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/expo";
 import { getAuth, signInWithCustomToken, signOut } from "firebase/auth";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { app } from "../../Configs/FirebaseConfig";
 
 const TOKEN_URL =
@@ -16,6 +16,8 @@ const TOKEN_URL =
  */
 export function FirebaseAuthBridge() {
   const { isLoaded, isSignedIn, userId, getToken } = useAuth();
+  // One attempt per user per app run, so a missing function never spams.
+  const attemptedRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -25,8 +27,9 @@ export function FirebaseAuthBridge() {
       return;
     }
     if (firebaseAuth.currentUser?.uid === userId) return;
+    if (attemptedRef.current === userId) return;
+    attemptedRef.current = userId;
 
-    let cancelled = false;
     (async () => {
       try {
         const jwt = await getToken();
@@ -35,16 +38,14 @@ export function FirebaseAuthBridge() {
           method: "POST",
           headers: { Authorization: `Bearer ${jwt}` },
         });
+        if (response.status === 404) return; // function not deployed yet
         if (!response.ok) throw new Error(`token exchange ${response.status}`);
         const { token } = (await response.json()) as { token: string };
-        if (!cancelled) await signInWithCustomToken(firebaseAuth, token);
+        await signInWithCustomToken(firebaseAuth, token);
       } catch (error) {
         console.warn("Firebase sign-in skipped:", error);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
   }, [isLoaded, isSignedIn, userId, getToken]);
 
   return null;

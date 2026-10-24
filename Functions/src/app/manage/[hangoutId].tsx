@@ -99,6 +99,8 @@ export default function ManageHangout() {
   const isPrivate = hangout.privacy !== "public";
   const code = getInviteCode(hangout.id);
   const nameOf = (id: string) => names[id] ?? id;
+  const openProfile = (id: string) =>
+    router.push({ pathname: "/user/[userId]", params: { userId: id, name: nameOf(id) } });
   const guests = people.approved.filter(
     (id) => !people.requested.includes(id),
   );
@@ -294,7 +296,7 @@ export default function ManageHangout() {
                 ) : (
                   people.requested.map((id) => (
                     <View key={id} style={styles.person}>
-                      <Text style={[styles.name, { color: palette.text }]}>{nameOf(id)}</Text>
+                      <Text style={[styles.name, { color: palette.text }]} onPress={() => openProfile(id)}>{nameOf(id)}</Text>
                       <PrimaryButton
                         label="Approve"
                         onPress={() => approveRequest(hangout.id, id)}
@@ -346,7 +348,7 @@ export default function ManageHangout() {
             ) : (
               guests.map((id) => (
                 <View key={id} style={styles.person}>
-                  <Text style={[styles.name, { color: palette.text }]}>
+                  <Text style={[styles.name, { color: palette.text }]} onPress={() => openProfile(id)}>
                     {nameOf(id)}
                     {people.going.includes(id) ? " · going" : ""}
                     {people.plusOnes.includes(id) ? " +1" : ""}
