@@ -33,6 +33,8 @@ This README serves two audiences:
 - **Host anywhere** — pin via GPS or type any address/venue (Google Places Text Search) and get a live suggestion dropdown.
 - **Private hangouts** — public, request-to-join, invite-only (with shareable codes) or friends-only; non-members see a coarse neighbourhood, the exact spot is released on approval. +1s are host-controlled.
 - **Host tools** — a manage screen (profile → gear) to edit, approve/deny requests, invite by name, remove guests, rotate the invite code or cancel.
+- **Friends & invite links** — keep a friends list on your profile (friends-only hangouts start shared with it); share `functions://invite/<code>` links that redeem on open.
+- **Edit everything** — hosts can change time and exact location as well as the basics.
 - **Feed filters** — category chips and Soonest / Nearest sort.
 - **Places autocomplete** — suggestions as you type, biased to your location.
 - **Auto-expiry** — hangouts whose start time has passed are deleted from Firestore and disappear from the feed, map and profile automatically.
@@ -167,6 +169,7 @@ For non-public hangouts the public doc carries a **coarsened** `location`, a nei
 | `displayName` | string | from Clerk; used by chat |
 | `imageUrl?` | string | avatar (only when set) |
 | `fcmTokens` | string[] | device FCM tokens; read by Cloud Functions |
+| `friendIds` | string[] | the user's friends list (friends-only hangouts) |
 
 **`conversations/{id}`** — group chats (`id = hangoutId`) and DMs (`id = "dm-<uidA>-<uidB>"`, deterministic)
 
@@ -184,7 +187,9 @@ Subcollection **`conversations/{id}/messages/{messageId}`**: `text` (≤1000) ·
 
 ### Security rules
 
-> **Limitation:** Clerk can't mint Firebase Auth tokens, so rules can only validate shape. Private-hangout hiding and host-only actions are enforced in the client; truly secret locations need a Clerk → Firebase custom-token backend. "Friends only" currently behaves like invite-only (no friends graph yet).
+> **Strict mode:** `Configs/firestore.strict.rules` enforces host-only edits, own-id RSVPs and approved-only reads of `private/details` using `request.auth.uid`. It needs the `firebaseToken` Cloud Function (below) deployed first — the app signs in to Firebase through `src/providers/FirebaseAuthBridge.tsx`. Until you switch, the permissive `firestore.rules` stay in force. Remaining gap: invite-code redemption is checked client-side.
+>
+> **Limitation (permissive rules):** Clerk can't mint Firebase Auth tokens, so rules can only validate shape. Private-hangout hiding and host-only actions are enforced in the client; truly secret locations need a Clerk → Firebase custom-token backend. "Friends only" currently behaves like invite-only (no friends graph yet).
 
 `Configs/firestore.rules` matches this write pattern exactly:
 
@@ -274,9 +279,10 @@ Everything the app calls outside its own code — and exactly where it is wired.
 | --- | --- | --- |
 | `onChatMessage` | message created | FCM push to the other participants |
 | `onHangoutWritten` | hangout written | push to host on join/request, push to a guest when approved, writes `goingCount`, hides hangouts matching `BLOCKED_TERMS` |
+| `firebaseToken` | HTTPS | exchanges a Clerk session JWT for a Firebase custom token (uid = Clerk user id); needs secret `CLERK_SECRET_KEY` |
 | `sweepHangouts` | every 15 min | recursively deletes started or cancelled hangouts |
 
-Dead FCM tokens are pruned automatically. Deploy with `firebase deploy --only functions` (Blaze plan). Also publish the updated rules: `firebase deploy --only firestore:rules`.
+Set the secret with `firebase functions:secrets:set CLERK_SECRET_KEY`; override the endpoint with `EXPO_PUBLIC_FIREBASE_TOKEN_URL`. Dead FCM tokens are pruned automatically. Deploy with `firebase deploy --only functions` (Blaze plan). Also publish the updated rules: `firebase deploy --only firestore:rules`.
 
 #### Setup
 
@@ -376,14 +382,11 @@ npm start          # Metro dev server
 
 ## Roadmap
 
-Shipped: chat backend · private hangouts (request / invite / friends, codes, +1s, host tools) · Places autocomplete · join/request pushes · Cloud Functions (counters, moderation, expiry sweep) · edit/cancel hangouts · feed filters and distance sort · robust auth gate with restored sessions.
+All roadmap items are shipped: chat backend · private hangouts (request / invite / friends, codes, +1s, host tools) · Places autocomplete · join/request pushes · Cloud Functions (counters, moderation, expiry sweep) · edit/cancel hangouts including time and location · feed filters and distance sort · friends list · invite deep links · Clerk → Firebase custom-token backend with strict rules · robust auth gate with restored sessions.
 
-Next:
+Deployment checklist: `firebase functions:secrets:set CLERK_SECRET_KEY` → `firebase deploy --only functions` → confirm sign-in works → deploy `firestore.strict.rules`.
 
-- Clerk → Firebase custom-token backend so rules can enforce privacy and host-only writes server-side
-- A real friends graph for "Friends only" hangouts
-- Editing a hangout's time and exact location
-- Shareable invite links (deep links) in addition to codes
+Ideas beyond the roadmap: mutual friend requests, server-side invite redemption, per-hangout photo galleries.
 
 ## License & attributions
 

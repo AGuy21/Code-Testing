@@ -65,11 +65,14 @@ service cloud.firestore {
                      'requestedUserIds', 'approvedUserIds', 'deniedUserIds',
                      'allowPlusOnes', 'inviteCodeHash',
                      'title', 'description', 'category', 'emoji',
-                     'placeLabel', 'cancelled'])
+                     'placeLabel', 'cancelled', 'startsAt', 'location'])
         && request.resource.data.title is string
         && request.resource.data.title.size() >= 1
         && request.resource.data.title.size() <= 120
         && request.resource.data.description.size() <= 500
+        && request.resource.data.startsAt is timestamp
+        && request.resource.data.location.latitude is number
+        && request.resource.data.location.longitude is number
         && request.resource.data.goingUserIds is list
         && request.resource.data.passedUserIds is list
         && request.resource.data.goingUserIds.size() <= 1000
@@ -98,13 +101,20 @@ service cloud.firestore {
       // (bypasses rules). No Firebase Auth token exists (Clerk ≠ Firebase
       // Auth — see the hangouts note), so writes are validated by shape.
       allow read: if true;
+      // Friends list edits only touch `friendIds`.
+      allow create, update: if request.resource.data.keys().hasOnly(['friendIds'])
+        && request.resource.data.friendIds is list
+        && request.resource.data.friendIds.size() <= 500;
       allow create, update: if request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 1
         && request.resource.data.displayName.size() <= 80
         && (!('imageUrl' in request.resource.data)
             || request.resource.data.imageUrl is string)
         && request.resource.data.fcmTokens is list
-        && request.resource.data.fcmTokens.size() <= 10;
+        && request.resource.data.fcmTokens.size() <= 10
+        && (!('friendIds' in request.resource.data)
+            || (request.resource.data.friendIds is list
+                && request.resource.data.friendIds.size() <= 500));
     }
 
     match /conversations/{conversationId} {

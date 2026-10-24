@@ -3,6 +3,10 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onRequest } from "firebase-functions/v2/https";
+import { defineSecret } from "firebase-functions/params";
+import { getAuth } from "firebase-admin/auth";
+import { verifyToken } from "@clerk/backend";
 
 initializeApp();
 const db = getFirestore();
@@ -133,3 +137,30 @@ export const sweepHangouts = onSchedule("every 15 minutes", async () => {
   const ids = new Set([...expired.docs, ...cancelled.docs].map((d) => d.id));
   await Promise.all([...ids].map(deleteHangout));
 });
+
+
+const CLERK_SECRET_KEY = defineSecret("CLERK_SECRET_KEY");
+
+/**
+ * Exchanges a Clerk session JWT for a Firebase custom token whose uid is the
+ * Clerk user id, so Firestore rules can use `request.auth.uid`.
+ * Set the secret with: firebase functions:secrets:set CLERK_SECRET_KEY
+ */
+export const firebaseToken = onRequest(
+  { secrets: [CLERK_SECRET_KEY], cors: true },
+  async (req, res) => {
+    const header = req.get("authorization") ?? "";
+    const jwt = header.startsWith("Bearer ") ? header.slice(7) : "";
+    if (req.method !== "POST" || !jwt) {
+      res.status(401).json({ error: "Missing Clerk session token" });
+      return;
+    }
+    try {
+      const claims = await verifyToken(jwt, { secretKey: CLERK_SECRET_KEY.value() });
+      const token = await getAuth().createCustomToken(claims.sub);
+      res.json({ token });
+    } catch {
+      res.status(401).json({ error: "Invalid Clerk session token" });
+    }
+  },
+);

@@ -5,6 +5,7 @@ import { ClerkProvider, useAuth } from "@clerk/expo";
 import { ActivityIndicator, View } from "react-native";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { HangoutsProvider } from "../providers/HangoutsProvider";
+import { FirebaseAuthBridge } from "../providers/FirebaseAuthBridge";
 import { ChatProvider } from "../providers/ChatProvider";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -36,6 +37,7 @@ function RootNavigator() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="chat/[conversationId]" />
         <Stack.Screen name="manage/[hangoutId]" />
+        <Stack.Screen name="invite/[code]" />
       </Stack.Protected>
       <Stack.Screen name="hosted-auth-callback" />
     </Stack>
@@ -72,6 +74,7 @@ export default function Layout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <FirebaseAuthBridge />
       <HangoutsProvider>
         <ChatProvider>
           <RootNavigator />

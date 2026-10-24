@@ -62,6 +62,10 @@ export interface HangoutEdits {
   category: HangoutCategory;
   emoji: string;
   placeLabel: string;
+  /** ISO start time; omit to keep the current one. */
+  startsAt?: string;
+  /** New exact location; omit to keep the current one. */
+  location?: LatLng;
 }
 
 /** Exact details that only approved viewers may read (private hangouts). */
@@ -113,6 +117,10 @@ export interface HangoutsContextValue {
   togglePlusOne: (id: HangoutId) => void;
   /** Display names for Clerk user ids (falls back to the id). */
   lookupNames: (userIds: string[]) => Promise<Record<string, string>>;
+  /** Host's friends list; friends-only hangouts are shared with it. */
+  friendIds: string[];
+  addFriend: (userId: string) => Promise<void>;
+  removeFriend: (userId: string) => Promise<void>;
   /** Prefix search over public profiles, for inviting people. */
   searchUsers: (prefix: string) => Promise<{ id: string; displayName: string }[]>;
   /** Head count including the current user's "going" RSVP. */
@@ -269,6 +277,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
   const [snapshotEntries, setSnapshotEntries] = useState<HangoutEntry[]>([]);
   const [pendingEntries, setPendingEntries] = useState<HangoutEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [friendIds, setFriendIds] = useState<string[]>([]);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [focusedHangoutId, setFocusedHangoutId] = useState<HangoutId | null>(null);
@@ -277,6 +286,19 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
   >({});
 
   const canRsvp = Boolean(userId);
+
+  // The signed-in user's friends list.
+  useEffect(() => {
+    if (!userId) {
+      setFriendIds([]);
+      return;
+    }
+    return onSnapshot(
+      doc(db, "users", userId),
+      (snap) => setFriendIds((snap.data()?.friendIds as string[] | undefined) ?? []),
+      () => setFriendIds([]),
+    );
+  }, [userId]);
 
   // Real-time hangouts feed from Firestore.
   useEffect(() => {
@@ -467,7 +489,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         goingUserIds: [],
         passedUserIds: [],
         requestedUserIds: [],
-        approvedUserIds: [],
+        approvedUserIds: privacy === "friends" ? friendIds : [],
         deniedUserIds: [],
         plusOneUserIds: [],
         removed: false,
@@ -504,7 +526,8 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
           privacy,
           allowPlusOnes,
           requestedUserIds: [],
-          approvedUserIds: [],
+          // Friends-only hangouts start out shared with the host's friends.
+          approvedUserIds: privacy === "friends" ? friendIds : [],
           deniedUserIds: [],
           plusOneUserIds: [],
           ...(inviteCode
@@ -550,7 +573,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
         setIsSubmitting(false);
       }
     },
-    [userId],
+    [userId, friendIds],
   );
 
   // Fetch exact details for private hangouts the viewer may see.
@@ -870,6 +893,30 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const addFriend = useCallback(
+    async (friendId: string) => {
+      if (!userId || friendId === userId) return;
+      await setDoc(
+        doc(db, "users", userId),
+        { friendIds: arrayUnion(friendId) },
+        { merge: true },
+      );
+    },
+    [userId],
+  );
+
+  const removeFriend = useCallback(
+    async (friendId: string) => {
+      if (!userId) return;
+      await setDoc(
+        doc(db, "users", userId),
+        { friendIds: arrayRemove(friendId) },
+        { merge: true },
+      );
+    },
+    [userId],
+  );
+
   const editHangout = useCallback(
     async (id: HangoutId, edits: HangoutEdits): Promise<void> => {
       const entry = findEntry(id);
@@ -879,11 +926,26 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       const title = edits.title.trim();
       if (title.length === 0) throw new Error("Give your hangout a title.");
       const isPrivate = entry.hangout.privacy !== "public";
+      if (edits.startsAt && new Date(edits.startsAt).getTime() <= Date.now()) {
+        throw new Error("Pick a start time in the future.");
+      }
+      const moved = edits.location ?? null;
       const batch = writeBatch(db);
       batch.update(doc(db, "hangouts", id), {
         title,
         category: edits.category,
         emoji: edits.emoji,
+        ...(edits.startsAt
+          ? { startsAt: Timestamp.fromDate(new Date(edits.startsAt)) }
+          : {}),
+        ...(moved
+          ? {
+              location: isPrivate ? coarsen(moved) : moved,
+              ...(isPrivate
+                ? { placeLabel: await neighborhoodFor(moved) }
+                : {}),
+            }
+          : {}),
         // Private hangouts keep exact text in the details doc; the public
         // doc only carries the neutral placeholder.
         ...(isPrivate
@@ -899,6 +961,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
           {
             description: edits.description.trim(),
             placeLabel: edits.placeLabel.trim() || "Shared pin",
+            ...(moved ? { location: moved } : {}),
           },
           { merge: true },
         );
@@ -912,6 +975,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
                 ...prev[id],
                 description: edits.description.trim(),
                 placeLabel: edits.placeLabel.trim() || "Shared pin",
+                ...(moved ? { location: moved } : {}),
               },
             }
           : prev,
@@ -962,6 +1026,9 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       hasPlusOne,
       togglePlusOne,
       lookupNames,
+      friendIds,
+      addFriend,
+      removeFriend,
       searchUsers,
       goingCount,
       focusedHangoutId,
@@ -995,6 +1062,9 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       hasPlusOne,
       togglePlusOne,
       lookupNames,
+      friendIds,
+      addFriend,
+      removeFriend,
       searchUsers,
       goingCount,
       focusedHangoutId,

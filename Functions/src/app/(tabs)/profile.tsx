@@ -1,5 +1,5 @@
 import Ionicons from "@react-native-vector-icons/ionicons";
-import { Fragment, useMemo } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { useAuth, useUser } from "@clerk/expo";
 import { useChat } from "../../hooks/useChat";
@@ -12,7 +12,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { AppText, Card, PrimaryButton, Screen } from "../../components/ui";
+import { AppText, AppTextInput, Card, PrimaryButton, Screen } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
@@ -24,7 +24,46 @@ export default function Profile() {
   const palette = useThemePalette();
   const { userId, isLoaded, signOut } = useAuth();
   const { user } = useUser();
-  const { hangouts, rsvps, focusHangout } = useHangouts();
+  const {
+    hangouts,
+    rsvps,
+    focusHangout,
+    friendIds,
+    addFriend,
+    removeFriend,
+    searchUsers,
+    lookupNames,
+  } = useHangouts();
+  const [friendSearch, setFriendSearch] = useState("");
+  const [friendResults, setFriendResults] = useState<{ id: string; displayName: string }[]>([]);
+  const [friendNames, setFriendNames] = useState<Record<string, string>>({});
+
+  const friendsKey = friendIds.join(",");
+  useEffect(() => {
+    if (friendIds.length === 0) return;
+    void lookupNames(friendIds).then((found) =>
+      setFriendNames((prev) => ({ ...prev, ...found })),
+    );
+  }, [friendsKey, friendIds, lookupNames]);
+
+  useEffect(() => {
+    if (friendSearch.trim().length < 2) {
+      setFriendResults([]);
+      return;
+    }
+    let stale = false;
+    const timer = setTimeout(() => {
+      searchUsers(friendSearch)
+        .then((found) => {
+          if (!stale) setFriendResults(found.filter((u) => u.id !== userId));
+        })
+        .catch(() => undefined);
+    }, 300);
+    return () => {
+      stale = true;
+      clearTimeout(timer);
+    };
+  }, [friendSearch, searchUsers, userId]);
 
   // Live from Firestore: what this user hosts and where they said yes.
   const hosting = useMemo(
@@ -163,6 +202,56 @@ export default function Profile() {
       )}
 
       <Text style={[styles.sectionLabel, { color: palette.textMuted }]}>
+        Friends
+      </Text>
+      <Card>
+        <Text style={[styles.accountNote, { color: palette.textMuted }]}>
+          Friends-only hangouts you host are shared with this list.
+        </Text>
+        <AppTextInput
+          value={friendSearch}
+          onChangeText={setFriendSearch}
+          placeholder="Find people by name"
+          autoCorrect={false}
+        />
+        {friendResults
+          .filter((u) => !friendIds.includes(u.id))
+          .map((u) => (
+            <Pressable
+              key={u.id}
+              onPress={() => {
+                void addFriend(u.id);
+                setFriendNames((prev) => ({ ...prev, [u.id]: u.displayName }));
+                setFriendSearch("");
+              }}
+              style={styles.friendRow}
+            >
+              <Text style={{ color: palette.text, fontFamily: Fonts.SemiBold }}>
+                ＋ {u.displayName}
+              </Text>
+            </Pressable>
+          ))}
+        {friendIds.length === 0 ? (
+          <Text style={[styles.accountNote, { color: palette.textMuted }]}>
+            No friends added yet.
+          </Text>
+        ) : (
+          friendIds.map((id) => (
+            <View key={id} style={[styles.friendRow, styles.friendSpread]}>
+              <Text style={{ color: palette.text, fontFamily: Fonts.Medium }}>
+                {friendNames[id] ?? id}
+              </Text>
+              <Pressable onPress={() => void removeFriend(id)}>
+                <Text style={{ color: palette.textMuted, fontFamily: Fonts.SemiBold }}>
+                  Remove
+                </Text>
+              </Pressable>
+            </View>
+          ))
+        )}
+      </Card>
+
+      <Text style={[styles.sectionLabel, { color: palette.textMuted }]}>
         Account
       </Text>
       <Card>
@@ -271,6 +360,8 @@ function EventRow({ hangout, manage }: EventRowProps) {
 }
 
 const styles = StyleSheet.create({
+  friendRow: { paddingVertical: 10 },
+  friendSpread: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   loadingScreen: {
     alignItems: "center",
     justifyContent: "center",

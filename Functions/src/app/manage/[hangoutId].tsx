@@ -1,12 +1,15 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Pressable, Share, StyleSheet, Text, View } from "react-native";
+import { Alert, Platform, Pressable, Share, StyleSheet, Text, View } from "react-native";
 import { AppText, AppTextInput, Card, PrimaryButton, Screen } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
 import { CATEGORY_META, CATEGORY_ORDER } from "../../constants/Categories";
-import type { HangoutCategory } from "../../constants/types/hangout";
+import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import { PlaceSearchInput } from "../../components/hangouts/PlaceSearchInput";
+import { formatStartsAt } from "../../utils/hangouts";
+import type { HangoutCategory, LatLng } from "../../constants/types/hangout";
 
 const PRIVACY_LABEL = {
   public: "🌍 Public",
@@ -46,6 +49,8 @@ export default function ManageHangout() {
   const [description, setDescription] = useState("");
   const [placeLabel, setPlaceLabel] = useState("");
   const [category, setCategory] = useState<HangoutCategory>("chill");
+  const [startsAt, setStartsAt] = useState<Date>(new Date());
+  const [newLocation, setNewLocation] = useState<LatLng | null>(null);
   const [saving, setSaving] = useState(false);
   const loadedRef = useRef<string | null>(null);
 
@@ -57,6 +62,7 @@ export default function ManageHangout() {
     setDescription(hangout.description);
     setPlaceLabel(hangout.placeLabel);
     setCategory(hangout.category);
+    setStartsAt(new Date(hangout.startsAt));
   }, [hangout]);
 
   const idsKey = [...people.requested, ...people.approved, ...people.going].join(",");
@@ -117,7 +123,10 @@ export default function ManageHangout() {
         category,
         emoji: CATEGORY_META[category].emoji,
         placeLabel,
+        startsAt: startsAt.toISOString(),
+        ...(newLocation ? { location: newLocation } : {}),
       });
+      setNewLocation(null);
       Alert.alert("Saved", "Your hangout is updated.");
     } catch (error) {
       Alert.alert(
@@ -172,6 +181,45 @@ export default function ManageHangout() {
         style={styles.multiline}
       />
       <AppTextInput label="Place name" value={placeLabel} onChangeText={setPlaceLabel} />
+      <PlaceSearchInput
+        onPlaceSelected={(place) => {
+          setNewLocation(place.location);
+          setPlaceLabel(place.label);
+        }}
+        selectedLabel={newLocation ? placeLabel : null}
+        near={newLocation ?? hangout.location}
+      />
+      <Text style={[styles.label, { color: palette.textMuted }]}>Start time</Text>
+      <AppText variant="caption">🕒 {formatStartsAt(startsAt.toISOString())}</AppText>
+      {Platform.OS === "android" ? (
+        <View style={styles.chips}>
+          {(["date", "time"] as const).map((mode) => (
+            <PrimaryButton
+              key={mode}
+              label={mode === "date" ? "Change date" : "Change time"}
+              variant="outline"
+              onPress={() =>
+                DateTimePickerAndroid.open({
+                  value: startsAt,
+                  mode,
+                  is24Hour: false,
+                  onChange: (_event, selected) => {
+                    if (selected) setStartsAt(selected);
+                  },
+                })
+              }
+            />
+          ))}
+        </View>
+      ) : (
+        <DateTimePicker
+          value={startsAt}
+          mode="datetime"
+          onChange={(_event, selected) => {
+            if (selected) setStartsAt(selected);
+          }}
+        />
+      )}
       <View style={styles.chips}>
         {CATEGORY_ORDER.map((key) => {
           const active = key === category;
@@ -226,7 +274,7 @@ export default function ManageHangout() {
                   label="Share"
                   onPress={() =>
                     void Share.share({
-                      message: `Join "${hangout.title}" on Functions with invite code ${code}`,
+                      message: `Join "${hangout.title}" on Functions: functions://invite/${code} (or enter code ${code})`,
                     })
                   }
                   style={styles.flex}
