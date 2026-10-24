@@ -24,9 +24,10 @@ import type { ExpoConfig } from "expo/config";
 const envMapsKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
 
 // Development fallback so the map renders out of the box on fresh clones.
-// For production builds, set EXPO_PUBLIC_GOOGLE_MAPS_API_KEY in `.env.local`
+// For production builds, set EXPO_PUBLIC_GOOGLE_MAPS_API_KEY in `.env`
 // and restrict the key in Google Cloud Console (see README.md → Google Maps).
-const androidMapsApiKey = envMapsKey;
+const androidMapsApiKey =
+  envMapsKey ?? "AIzaSyAbQvbeWBss38by85XQbcvQZzGf109ov1s";
 
 const config: ExpoConfig = {
   scheme: "functions",
@@ -50,14 +51,14 @@ const config: ExpoConfig = {
     predictiveBackGestureEnabled: false,
     config: {
       googleMaps: {
-        apiKey: "AIzaSyAbQvbeWBss38by85XQbcvQZzGf109ov1s",
+        apiKey: androidMapsApiKey,
       },
     },
     permissions: [
       "android.permission.ACCESS_COARSE_LOCATION",
       "android.permission.ACCESS_FINE_LOCATION",
     ],
-    package: "com.anonymous.Functions",
+    package: "com.anonymous.functions",
   },
   web: {
     favicon: "./assets/favicon.png",
@@ -65,6 +66,13 @@ const config: ExpoConfig = {
   plugins: [
     "@react-native-vector-icons/ionicons",
     "@react-native-vector-icons/material-design-icons",
+    [
+      "react-native-maps",
+      {
+        androidGoogleMapsApiKey: androidMapsApiKey,
+        ...(envMapsKey ? { iosGoogleMapsApiKey: envMapsKey } : {}),
+      },
+    ],
     [
       "expo-font",
       {

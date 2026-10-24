@@ -5,14 +5,18 @@ type ExpoNotifications = typeof import("expo-notifications");
 // expo-notifications ships native code (ExpoPushTokenManager). A dev build
 // compiled before the package was installed doesn't have it, so the require
 // is guarded — the app keeps running with push disabled until rebuilt.
-declare const require: (id: "expo-notifications") => ExpoNotifications;
 
 let cached: ExpoNotifications | null | undefined;
 
 function notifications(): ExpoNotifications | null {
   if (cached === undefined) {
     try {
-      cached = require("expo-notifications");
+      const gRequire = (
+        globalThis as unknown as {
+          require?: (id: string) => ExpoNotifications;
+        }
+      ).require;
+      cached = gRequire ? gRequire("expo-notifications") : null;
     } catch (error) {
       console.warn(
         "expo-notifications unavailable — rebuild the dev client " +

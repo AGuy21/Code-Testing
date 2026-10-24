@@ -25,7 +25,7 @@ import {
   type ReactNode,
 } from "react";
 import { useAuth, useUser } from "@clerk/expo";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { db } from "../../Configs/FirebaseConfig";
 import { useHangouts } from "../hooks/useHangouts";
 import { addOnNotificationTap, getFcmToken } from "../utils/notifications";
@@ -109,11 +109,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const pushReadyRef = useRef(false);
 
-  const router = useRouter();
   // Tapping a chat notification deep-links into its thread.
   useEffect(
     () => addOnNotificationTap((conversationId) => {
-      void router.push(`/chat/${conversationId}`);
+      router.push(`/chat/${conversationId}`);
     }),
     [],
   );
