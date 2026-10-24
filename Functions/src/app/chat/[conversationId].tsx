@@ -90,15 +90,13 @@ export default function ConversationThread() {
     }
   };
 
-  /** Tapping a member chip opens (or resumes) your DM with them. */
-  const messageMember = async (memberId: string) => {
-    if (!userId || memberId === userId) return;
-    try {
-      const id = await openDm(memberId, memberNames[memberId] ?? "Member");
-      router.push(`/chat/${id}`);
-    } catch (error) {
-      console.warn("Failed to open DM:", error);
-    }
+  /** Opens a person's public profile (add friend, message, hangouts). */
+  const openProfile = (memberId: string, name?: string) => {
+    if (!memberId || memberId === userId) return;
+    router.push({
+      pathname: "/user/[userId]",
+      params: { userId: memberId, name: name ?? memberNames[memberId] ?? "Member" },
+    });
   };
 
   return (
@@ -134,7 +132,11 @@ export default function ConversationThread() {
               </Text>
             </View>
           )}
-          <View style={styles.headerText}>
+          <Pressable
+            style={styles.headerText}
+            disabled={isGroup || !otherId}
+            onPress={() => openProfile(otherId ?? "", title)}
+          >
             <Text
               style={[styles.headerTitle, { color: palette.text }]}
               numberOfLines={1}
@@ -147,9 +149,9 @@ export default function ConversationThread() {
             >
               {isGroup
                 ? `${conversation?.participantUserIds.length ?? 0} members`
-                : "Direct message"}
+                : "Direct message · tap for profile"}
             </Text>
-          </View>
+          </Pressable>
           {isGroup ? (
             <Pressable
               onPress={() => setShowMembers((value) => !value)}
@@ -184,7 +186,7 @@ export default function ConversationThread() {
                 const isMe = item === userId;
                 return (
                   <Pressable
-                    onPress={() => void messageMember(item)}
+                    onPress={() => openProfile(item)}
                     disabled={isMe}
                     style={[
                       styles.memberChip,
@@ -205,7 +207,7 @@ export default function ConversationThread() {
                     </Text>
                     {isMe ? null : (
                       <Ionicons
-                        name="chatbubble-ellipses-outline"
+                        name="person-circle-outline"
                         size={12}
                         color={palette.primary}
                       />
