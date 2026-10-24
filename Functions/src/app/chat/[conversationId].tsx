@@ -244,6 +244,8 @@ export default function ConversationThread() {
           <FlatList
             data={messages}
             inverted
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
             keyExtractor={(message) => message.id}
             renderItem={({ item }) => (
               <MessageBubble message={item} isMine={item.senderId === userId} />

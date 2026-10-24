@@ -5,7 +5,25 @@
  *
  * Expo inlines EXPO_PUBLIC_* vars from .env at bundle time via process.env.
  */
+import { Platform } from "react-native";
+
 const GOOGLE_MAPS_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+// A key restricted to "Android apps" rejects REST calls unless they identify
+// the app. Defaults to the local debug keystore; set the env var to your
+// release SHA-1 for production builds.
+const ANDROID_CERT_SHA1 =
+  process.env.EXPO_PUBLIC_ANDROID_CERT_SHA1 ?? "5E8F16062EA3CD2C4A0D547876BAA6F38CABF625";
+
+function placesHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  return {
+    "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
+    ...(Platform.OS === "android"
+      ? { "X-Android-Package": "com.anonymous.Functions", "X-Android-Cert": ANDROID_CERT_SHA1 }
+      : {}),
+    ...extra,
+  };
+}
 
 export interface PlaceResult {
   /** Formatted one-line address, e.g. "1100 S Congress Ave, Austin, TX". */
@@ -32,20 +50,19 @@ export async function searchPlaces(query: string, max = 5): Promise<PlaceResult[
     "https://places.googleapis.com/v1/places:searchText",
     {
       method: "POST",
-      headers: {
+      headers: placesHeaders({
         "Content-Type": "application/json",
-        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
         // Field mask limits the response (and billing) to what we render.
         "X-Goog-FieldMask":
           "places.displayName,places.formattedAddress,places.location",
-      },
+      }),
       body: JSON.stringify({ textQuery: trimmed, pageSize: max }),
     },
   );
   if (!response.ok) {
     const hint =
       response.status === 403
-        ? "enable 'Places API (New)' for this key in Google Cloud Console"
+        ? "enable 'Places API (New)' and allow this app's package + SHA-1 on the key"
         : `HTTP ${response.status}`;
     throw new Error(`Places API request failed — ${hint}`);
   }
@@ -89,10 +106,7 @@ export async function autocompletePlaces(
   if (trimmed.length < 2) return [];
   const response = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
-    },
+    headers: placesHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify({
       input: trimmed,
       sessionToken,
@@ -104,7 +118,7 @@ export async function autocompletePlaces(
   if (!response.ok) {
     const hint =
       response.status === 403
-        ? "enable 'Places API (New)' for this key in Google Cloud Console"
+        ? "enable 'Places API (New)' and allow this app's package + SHA-1 on the key"
         : `HTTP ${response.status}`;
     throw new Error(`Places autocomplete failed — ${hint}`);
   }
@@ -146,10 +160,7 @@ export async function getPlaceDetails(
       suggestion.placeId,
     )}?sessionToken=${encodeURIComponent(sessionToken)}`,
     {
-      headers: {
-        "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
-        "X-Goog-FieldMask": "location,formattedAddress",
-      },
+      headers: placesHeaders({ "X-Goog-FieldMask": "location,formattedAddress" }),
     },
   );
   if (!response.ok) throw new Error(`Place lookup failed — HTTP ${response.status}`);

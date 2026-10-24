@@ -122,6 +122,8 @@ export default function HomeScreen() {
 
       <FlatList
         data={visible}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <HangoutCard hangout={item} />}
         ItemSeparatorComponent={ListSeparator}

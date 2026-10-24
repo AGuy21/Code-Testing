@@ -48,6 +48,8 @@ export function Screen({
       {scroll ? (
         <ScrollView
           style={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           contentContainerStyle={[
             styles.scrollContent,
             { paddingBottom: insets.bottom + 32 },
