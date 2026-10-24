@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useAuth } from "@clerk/expo";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppText } from "../ui";
+import { CategoryTile } from "../ui/CategoryTile";
 import { RsvpButtons } from "./RsvpButtons";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useChat } from "../../hooks/useChat";
@@ -61,14 +62,7 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
       ]}
     >
       <View style={styles.header}>
-        <View
-          style={[
-            styles.emojiTile,
-            { backgroundColor: palette.accentSoft, borderColor: palette.border },
-          ]}
-        >
-          <Text style={styles.emoji}>{hangout.emoji}</Text>
-        </View>
+        <CategoryTile category={hangout.category} size={52} />
 
         <View style={styles.titleBlock}>
           <AppText
@@ -82,7 +76,6 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
             {hangout.title}
           </Text>
           <Text style={[styles.context, { color: palette.textMuted }]} numberOfLines={1}>
-            {hangout.privacy !== "public" ? "🔒 " : ""}
             {meta.label} · {hangout.placeLabel} · host{" "}
             {hangout.hostId ? (
               <Text
@@ -102,7 +95,11 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
           </Text>
         </View>
 
-        <Text style={[styles.chevron, { color: palette.textMuted }]}>›</Text>
+        {hangout.privacy !== "public" ? (
+          <Ionicons name="lock-closed" size={16} color={palette.textMuted} style={styles.lock} />
+        ) : (
+          <Ionicons name="chevron-forward" size={18} color={palette.textMuted} style={styles.lock} />
+        )}
       </View>
 
       <Text style={[styles.description, { color: palette.text }]} numberOfLines={2}>
@@ -137,8 +134,8 @@ export function HangoutCard({ hangout }: HangoutCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 20,
-    borderWidth: 1,
+    borderRadius: 26,
+    borderWidth: 1.5,
     padding: 16,
   },
   pressed: {
@@ -174,6 +171,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.Medium,
     fontSize: 12.5,
   },
+  lock: { marginTop: 14 },
   chevron: {
     fontFamily: Fonts.Medium,
     fontSize: 22,

@@ -27,8 +27,8 @@ export function Card({ variant = "default", style, ...rest }: CardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 20,
-    borderWidth: 1,
+    borderRadius: 24,
+    borderWidth: 1.5,
     padding: 18,
   },
 });

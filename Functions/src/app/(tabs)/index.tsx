@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, StyleSheet, View } from "react-native";
 import {
   AppText,
   AppTextInput,
   Card,
+  Chip,
+  Icon,
   PrimaryButton,
   Screen,
 } from "../../components/ui";
@@ -69,16 +71,21 @@ export default function HomeScreen() {
 
   return (
     <Screen scroll>
-      <AppText variant="hero">Events</AppText>
+      <View style={styles.titleRow}>
+        <AppText variant="hero">What's on</AppText>
+        <Icon name="flame" size={30} color="#FF8A4C" />
+      </View>
       <AppText variant="caption" style={styles.subtitle}>
         {isLoading
-          ? "Syncing hangouts…"
-          : `${visible.length} hangouts happening around you — say if you're in`}
+          ? "Finding hangouts…"
+          : visible.length === 1
+            ? "1 hangout near you — you in?"
+            : `${visible.length} hangouts near you — you in?`}
       </AppText>
 
       {syncError ? (
         <Card variant="accent" style={styles.syncBanner}>
-          <AppText variant="caption">⚠️ {syncError}</AppText>
+          <View style={styles.bannerRow}><Icon name="alert-circle" size={16} color="#E5A23C" /><AppText variant="caption" style={styles.flex}>{syncError}</AppText></View>
         </Card>
       ) : null}
 
@@ -102,19 +109,22 @@ export default function HomeScreen() {
 
       <View style={styles.chips}>
         {(["soonest", "nearest"] as const).map((mode) => (
-          <FilterChip
+          <Chip
             key={mode}
-            label={mode === "soonest" ? "🕒 Soonest" : "📍 Nearest"}
-            active={sort === mode}
+            label={mode === "soonest" ? "Soonest" : "Nearest"}
+            icon={mode === "soonest" ? "time" : "navigate"}
+            selected={sort === mode}
             onPress={() => void chooseSort(mode)}
           />
         ))}
-        <FilterChip label="All" active={category === null} onPress={() => setCategory(null)} />
+        <Chip label="All" icon="apps" selected={category === null} onPress={() => setCategory(null)} />
         {CATEGORY_ORDER.map((key) => (
-          <FilterChip
+          <Chip
             key={key}
-            label={`${CATEGORY_META[key].emoji} ${CATEGORY_META[key].label}`}
-            active={category === key}
+            label={CATEGORY_META[key].label}
+            icon={CATEGORY_META[key].icon}
+            color={CATEGORY_META[key].color}
+            selected={category === key}
             onPress={() => setCategory(category === key ? null : key)}
           />
         ))}
@@ -146,37 +156,11 @@ export default function HomeScreen() {
   );
 }
 
-function FilterChip({
-  label,
-  active,
-  onPress,
-}: {
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) {
-  const palette = useThemePalette();
-  return (
-    <Pressable
-      onPress={onPress}
-      style={[
-        styles.chip,
-        {
-          backgroundColor: active ? palette.primary : palette.surfaceElevated,
-          borderColor: active ? palette.borderStrong : palette.border,
-        },
-      ]}
-    >
-      <Text style={{ color: active ? "#0E1713" : palette.text, fontFamily: Fonts.SemiBold, fontSize: 13 }}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
-  chip: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 7 },
+  titleRow: { alignItems: "center", flexDirection: "row", gap: 8 },
+  bannerRow: { alignItems: "center", flexDirection: "row", gap: 8 },
+  flex: { flex: 1 },
   syncBanner: {
     marginBottom: 16,
   },

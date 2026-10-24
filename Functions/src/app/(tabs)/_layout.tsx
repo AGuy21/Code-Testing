@@ -1,158 +1,90 @@
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { Tabs } from "expo-router";
-import { Platform, TouchableOpacity } from "react-native";
-import { useColorTheme } from "../../hooks/useColorTheme";
-import { View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Fonts } from "../../constants/Fonts";
+import { useThemePalette } from "../../hooks/useColorTheme";
+
+type TabIcon = React.ComponentProps<typeof Ionicons>["name"];
+
+function tabIcon(active: TabIcon, idle: TabIcon) {
+  return ({ color, focused }: { color: import("react-native").ColorValue; focused: boolean }) => (
+    <Ionicons size={24} name={focused ? active : idle} color={color} />
+  );
+}
 
 export default function TabLayout() {
-  const primaryColor = useColorTheme("primary");
-  const secondaryColor = useColorTheme("secondary");
-  const backgroundColor = useColorTheme("background");
+  const palette = useThemePalette();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        sceneStyle: { backgroundColor },
-        tabBarActiveTintColor: primaryColor,
-        tabBarInactiveTintColor: secondaryColor,
+        sceneStyle: { backgroundColor: palette.background },
+        tabBarActiveTintColor: palette.primary,
+        tabBarInactiveTintColor: palette.textMuted,
         tabBarStyle: {
-          backgroundColor: backgroundColor,
-          borderTopWidth: 1,
-          borderTopColor: secondaryColor,
-          height: Platform.OS === "ios" ? 88 : 64,
-          paddingBottom: Platform.OS === "ios" ? 28 : 10,
+          backgroundColor: palette.surface,
+          borderTopWidth: 0,
+          elevation: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 8,
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "500",
-        },
+        tabBarLabelStyle: { fontFamily: Fonts.Bold, fontSize: 11 },
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Events",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              size={24}
-              name={focused ? "home" : "home-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: "Map",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              size={24}
-              name={focused ? "map" : "map-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
+      <Tabs.Screen name="index" options={{ title: "Events", tabBarIcon: tabIcon("flame", "flame-outline") }} />
+      <Tabs.Screen name="map" options={{ title: "Map", tabBarIcon: tabIcon("map", "map-outline") }} />
       <Tabs.Screen
         name="add"
         options={{
+          title: "Host",
           tabBarLabel: () => null,
-
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              size={36}
-              name="add"
-              color={focused ? primaryColor : "gray"}
-            />
-          ),
-
-          tabBarButton: ({ children, style, ...props }) => {
-            const { delayLongPress, ...safeProps } = props as any;
-
-            return (
-              <TouchableOpacity
-                {...safeProps}
-                style={[
-                  style,
+          tabBarIcon: () => null,
+          tabBarButton: ({ onPress, accessibilityState }) => (
+            <View style={styles.plusSlot}>
+              <Pressable
+                onPress={onPress}
+                accessibilityRole="button"
+                accessibilityLabel="Host a hangout"
+                style={({ pressed }) => [
+                  styles.plus,
                   {
-                    alignItems: "center",
-                    justifyContent: "center",
+                    backgroundColor: palette.primary,
+                    borderColor: palette.surface,
+                    opacity: accessibilityState?.selected ? 1 : 0.95,
                   },
+                  pressed && { transform: [{ scale: 0.92 }] },
                 ]}
               >
-                <View
-                  style={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: 100,
-                    marginBottom: 60,
-                    backgroundColor: "#363636",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: 100,
-                      backgroundColor: secondaryColor,
-                      opacity: 0.8,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      elevation: 5,
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 3.84,
-                    }}
-                  >
-                    <View
-                      style={{
-                        marginTop: -9,
-                        marginLeft: -4,
-                      }}
-                    >
-                      {children}
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-          },
-        }}
-      />
-
-      <Tabs.Screen
-        name="chat"
-        options={{
-          title: "Chat",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              size={24}
-              name={focused ? "chatbubbles" : "chatbubbles-outline"}
-              color={color}
-            />
+                <Ionicons name="add" size={34} color="#0E1713" />
+              </Pressable>
+            </View>
           ),
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              size={24}
-              name={focused ? "person" : "person-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
+      <Tabs.Screen name="chat" options={{ title: "Chat", tabBarIcon: tabIcon("chatbubbles", "chatbubbles-outline") }} />
+      <Tabs.Screen name="profile" options={{ title: "Profile", tabBarIcon: tabIcon("person", "person-outline") }} />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  plusSlot: { alignItems: "center", flex: 1, justifyContent: "flex-start" },
+  plus: {
+    alignItems: "center",
+    borderRadius: 32,
+    borderWidth: 4,
+    elevation: 10,
+    height: 64,
+    justifyContent: "center",
+    marginTop: -22,
+    shadowColor: "#50c878",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.45,
+    shadowRadius: 8,
+    width: 64,
+  },
+});

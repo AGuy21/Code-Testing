@@ -1,4 +1,6 @@
 import { StyleSheet, Text, View, type ViewStyle } from "react-native";
+import { Icon } from "./Icon";
+import type { IconName } from "../../constants/Categories";
 import { Fonts } from "../../constants/Fonts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import type { ThemePalette } from "../../constants/types/ColorsTypes";
@@ -7,7 +9,8 @@ export type BadgeVariant = "accent" | "muted";
 
 export interface BadgeProps {
   label: string;
-  emoji?: string;
+  icon?: IconName;
+  color?: string;
   variant?: BadgeVariant;
 }
 
@@ -33,14 +36,14 @@ function badgeStyle(
   };
 }
 
-export function Badge({ label, emoji, variant = "muted" }: BadgeProps) {
+export function Badge({ label, icon, color, variant = "muted" }: BadgeProps) {
   const palette = useThemePalette();
   const stylesFor = badgeStyle(variant, palette);
 
   return (
     <View style={[styles.badge, stylesFor.container]}>
-      {emoji ? <Text style={styles.emoji}>{emoji}</Text> : null}
-      <Text style={[styles.label, { color: stylesFor.textColor }]}>{label}</Text>
+      {icon ? <Icon name={icon} size={12} color={color ?? stylesFor.textColor} /> : null}
+      <Text style={[styles.label, { color: color ?? stylesFor.textColor }]}>{label}</Text>
     </View>
   );
 }

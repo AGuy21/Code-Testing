@@ -20,6 +20,8 @@ import {
   useChat,
   useConversationMessages,
 } from "../../providers/ChatProvider";
+import { useHangouts } from "../../hooks/useHangouts";
+import { CATEGORY_META } from "../../constants/Categories";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
 import { db } from "../../../Configs/FirebaseConfig";
@@ -39,7 +41,10 @@ export default function ConversationThread() {
   const [memberNames, setMemberNames] = useState<Record<string, string>>({});
   const fetchedNamesRef = useRef<Set<string>>(new Set());
 
+  const { hangouts } = useHangouts();
   const conversation = conversations.find((item) => item.id === conversationId);
+  const groupCategory = hangouts.find((h) => h.id === conversation?.hangoutId)?.category;
+  const groupMeta = groupCategory ? CATEGORY_META[groupCategory] : undefined;
   const isGroup = conversation?.type !== "dm";
   const otherId = conversation?.participantUserIds.find((id) => id !== userId);
   const title = isGroup
@@ -123,7 +128,11 @@ export default function ConversationThread() {
                 },
               ]}
             >
-              <Text style={styles.avatarEmoji}>{conversation?.emoji ?? "💬"}</Text>
+              <Ionicons
+                name={groupMeta?.icon ?? "chatbubbles"}
+                size={22}
+                color={groupMeta?.color ?? palette.primary}
+              />
             </View>
           ) : (
             <View style={[styles.avatar, styles.avatarDm]}>
@@ -236,7 +245,7 @@ export default function ConversationThread() {
           <View style={styles.emptyWrap}>
             <Card variant="accent">
               <AppText variant="caption" style={styles.emptyText}>
-                No messages yet — break the ice 👋
+                No messages yet — break the ice!
               </AppText>
             </Card>
           </View>

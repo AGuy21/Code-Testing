@@ -400,3 +400,9 @@ Ideas beyond the roadmap: mutual friend requests, server-side invite redemption,
 
 - `npm run check` — typecheck the app, run Jest unit tests (`src/__tests__`) and typecheck `functions/`.
 - `npm run smoke:android` — relaunches the dev build on the emulator and fails on JS errors, crashes, unmatched routes or Firebase auth re-init errors; screenshot at `/tmp/smoke.png`.
+
+## Design notes
+
+- Emoji are no longer rendered; categories and privacy levels use Ionicons with category colours (`src/constants/Categories.ts`, `src/components/ui/Icon.tsx`, `CategoryTile`, `Chip`).
+- `Screen` is responsive: gutters scale with window width (14/20/32) and content is capped at 720 px and centred, with safe-area padding.
+- Splash background colour changes need a native rebuild (`npx expo run:android`).

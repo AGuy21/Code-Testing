@@ -4,7 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Image, StyleSheet, Text, View } from "react-native";
 import { db } from "../../../Configs/FirebaseConfig";
-import { AppText, Card, PrimaryButton, Screen } from "../../components/ui";
+import { AppText, Card, Icon, PrimaryButton, Screen } from "../../components/ui";
 import { HangoutCard } from "../../components/hangouts/HangoutCard";
 import { useChat } from "../../hooks/useChat";
 import { useHangouts } from "../../hooks/useHangouts";
@@ -75,7 +75,7 @@ export default function UserProfile() {
 
   return (
     <Screen scroll>
-      <PrimaryButton label="‹ Back" variant="ghost" onPress={() => router.back()} />
+      <PrimaryButton label="Back" icon="chevron-back" variant="ghost" onPress={() => router.back()} />
       {loading ? (
         <ActivityIndicator color={palette.primary} style={{ marginTop: 40 }} />
       ) : (
@@ -92,7 +92,12 @@ export default function UserProfile() {
             )}
             <AppText variant="hero" style={styles.center}>{displayName}</AppText>
             {isMe ? <AppText variant="caption">This is you</AppText> : null}
-            {isFriend ? <AppText variant="caption">🫶 Friend</AppText> : null}
+            {isFriend ? (
+              <View style={styles.friendRow}>
+                <Icon name="heart" size={14} color={palette.primary} />
+                <AppText variant="caption">Friend</AppText>
+              </View>
+            ) : null}
           </View>
 
           {isMe ? (
@@ -101,12 +106,14 @@ export default function UserProfile() {
             <View style={styles.actions}>
               <PrimaryButton
                 label={messaging ? "Opening…" : "Message"}
+                icon="chatbubble"
                 onPress={() => void message()}
                 disabled={messaging}
                 style={styles.flex}
               />
               <PrimaryButton
                 label={isFriend ? "Remove friend" : "Add friend"}
+                icon={isFriend ? "person-remove" : "person-add"}
                 variant="outline"
                 onPress={() => void (isFriend ? removeFriend(targetId) : addFriend(targetId))}
                 style={styles.flex}
@@ -135,6 +142,7 @@ export default function UserProfile() {
 }
 
 const styles = StyleSheet.create({
+  friendRow: { alignItems: "center", flexDirection: "row", gap: 6 },
   header: { alignItems: "center", gap: 8, marginVertical: 16 },
   avatar: { width: 96, height: 96, borderRadius: 48 },
   avatarFallback: { alignItems: "center", justifyContent: "center" },

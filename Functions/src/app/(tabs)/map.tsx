@@ -13,7 +13,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AppText, Badge, Card } from "../../components/ui";
+import { AppText, Badge, CategoryTile, Card, Icon } from "../../components/ui";
 import { HangoutMap } from "../../components/map/HangoutMap";
 import { RsvpButtons } from "../../components/hangouts/RsvpButtons";
 import { useHangouts } from "../../hooks/useHangouts";
@@ -40,6 +40,7 @@ export default function Map() {
     isLoading,
   } = useHangouts();
   const router = useRouter();
+  const [cardHeight, setCardHeight] = useState(280);
   const { userId } = useAuth();
   const { openGroupChat } = useChat();
 
@@ -132,7 +133,7 @@ export default function Map() {
               </AppText>
               <AppText variant="caption">
                 {syncError
-                  ? `⚠️ ${syncError}`
+                  ? syncError
                   : hangouts.length === 0
                     ? "Nothing yet — host the first one from the + tab"
                     : "Tap a pin to see details and RSVP"}
@@ -148,37 +149,35 @@ export default function Map() {
         style={[
           styles.fab,
           { backgroundColor: palette.primary },
-          selected && styles.fabRaised,
+          selected && { bottom: cardHeight + 32 },
         ]}
       >
         {locating ? (
           <ActivityIndicator color="#0E1713" />
         ) : (
-          <Text style={styles.fabIcon}>📍</Text>
+          <Icon name="locate" size={26} color="#0E1713" />
         )}
       </Pressable>
 
       {/* Selected hangout card */}
       {selected ? (
-        <View style={styles.bottomWrap}>
+        <View style={styles.bottomWrap} onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}>
           <Card>
             <View style={styles.cardHeader}>
-              <View style={[styles.emojiBubble, { backgroundColor: palette.accentSoft }]}>
-                <Text style={styles.emoji}>{selected.emoji}</Text>
-              </View>
+<CategoryTile category={selected.category} size={48} />
               <View style={styles.titleBlock}>
                 <AppText variant="subtitle" numberOfLines={1}>
                   {selected.title}
                 </AppText>
                 <AppText variant="caption" numberOfLines={1}>
                   {selected.access === "limited"
-                    ? `🔒 Near ${selected.placeLabel}`
+                    ? `Near ${selected.placeLabel}`
                     : selected.placeLabel}{" "}
                   · {formatStartsAt(selected.startsAt)}
                 </AppText>
               </View>
               {selectedMeta ? (
-                <Badge label={selectedMeta.label} emoji={selectedMeta.emoji} variant="accent" />
+                <Badge label={selectedMeta.label} icon={selectedMeta.icon} color={selectedMeta.color} variant="muted" />
               ) : null}
             </View>
 
@@ -187,7 +186,7 @@ export default function Map() {
             </AppText>
 
             <View style={styles.metaRow}>
-              <AppText variant="caption">👥 {goingCount(selected.id)} going</AppText>
+              <View style={styles.goingRow}><Icon name="people" size={15} color={palette.primary} /><AppText variant="caption">{goingCount(selected.id)} going</AppText></View>
               <Pressable
                 disabled={!selected.hostId}
                 onPress={() =>
@@ -198,7 +197,7 @@ export default function Map() {
                 }
               >
                 <AppText variant="caption" style={{ color: palette.primary }}>
-                  Host {selected.hostName} ›
+                  Host {selected.hostName}
                 </AppText>
               </Pressable>
             </View>
@@ -242,12 +241,6 @@ const styles = StyleSheet.create({
     right: 16,
     width: 56,
   },
-  fabRaised: {
-    bottom: 320,
-  },
-  fabIcon: {
-    fontSize: 22,
-  },
   bottomWrap: {
     bottom: 16,
     left: 16,
@@ -259,6 +252,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
   },
+  goingRow: { alignItems: "center", flexDirection: "row", gap: 6 },
   emojiBubble: {
     alignItems: "center",
     borderRadius: 22,

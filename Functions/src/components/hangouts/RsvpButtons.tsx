@@ -59,9 +59,9 @@ export function RsvpButtons({ hangoutId, style }: RsvpButtonsProps) {
           label={
             canAsk
               ? hangout.requestPending
-                ? "Requested ✓"
+                ? "Requested"
                 : "Request to join"
-              : "🔒 Invite only"
+              : "Invite only"
           }
           tone={hangout.requestPending ? "soft" : "idle"}
           disabled={!canRsvp || !canAsk}
@@ -100,7 +100,7 @@ export function RsvpButtons({ hangoutId, style }: RsvpButtonsProps) {
       ]}
     >
       <Segment
-        label={status === "going" ? "Going ✓" : "Join"}
+        label={status === "going" ? "Going" : "Join"}
         tone={status === "going" ? "solid" : "idle"}
         disabled={!canRsvp}
         onPress={() => choose("going")}
@@ -115,7 +115,7 @@ export function RsvpButtons({ hangoutId, style }: RsvpButtonsProps) {
       />
       {hangout?.allowPlusOnes && status === "going" ? (
         <Segment
-          label={hasPlusOne(hangoutId) ? "+1 ✓" : "+1"}
+          label={hasPlusOne(hangoutId) ? "+1 on" : "+1"}
           tone={hasPlusOne(hangoutId) ? "solid" : "idle"}
           disabled={!canRsvp}
           onPress={() => togglePlusOne(hangoutId)}

@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { AppText, PrimaryButton, Screen } from "../../components/ui";
+import { AppText, PrimaryButton, Screen, Icon } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 
@@ -39,11 +39,13 @@ export default function InviteLink() {
           </>
         ) : state.status === "ok" ? (
           <>
-            <AppText variant="hero">You're in 🎉</AppText>
+            <Icon name="checkmark-circle" size={64} color={palette.primary} />
+            <AppText variant="hero">You're in!</AppText>
             <AppText variant="caption">You can now see “{state.title}”.</AppText>
           </>
         ) : (
           <>
+            <Icon name="close-circle" size={64} color="#E5484D" />
             <AppText variant="subtitle">Couldn't use that invite</AppText>
             <AppText variant="caption">{state.message}</AppText>
           </>

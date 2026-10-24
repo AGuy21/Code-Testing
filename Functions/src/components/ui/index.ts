@@ -8,3 +8,6 @@ export {
   type PrimaryButtonProps,
 } from "./PrimaryButton";
 export { Screen, type ScreenProps } from "./Screen";
+export { Icon, type IconProps } from "./Icon";
+export { CategoryTile, type CategoryTileProps } from "./CategoryTile";
+export { Chip, type ChipProps } from "./Chip";

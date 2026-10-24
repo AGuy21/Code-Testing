@@ -12,7 +12,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { AppText, AppTextInput, Card, PrimaryButton, Screen } from "../../components/ui";
+import { AppText, AppTextInput, Card, CategoryTile, Icon, PrimaryButton, Screen } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
@@ -113,7 +113,7 @@ export default function Profile() {
   return (
     <Screen scroll>
       <AppText variant="hero">
-        {user?.firstName ? `Hey ${user.firstName} 👋` : "Profile"}
+        {user?.firstName ? `Hey, ${user.firstName}!` : "Profile"}
       </AppText>
       <AppText variant="caption" style={styles.tagline}>
         Your RSVPs, hosting and account — all in one place.
@@ -324,14 +324,7 @@ function EventRow({ hangout, manage }: EventRowProps) {
       onPress={openOnMap}
       style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
     >
-      <View
-        style={[
-          styles.rowTile,
-          { backgroundColor: palette.accentSoft, borderColor: palette.border },
-        ]}
-      >
-        <Text style={styles.rowEmoji}>{hangout.emoji}</Text>
-      </View>
+      <CategoryTile category={hangout.category} size={44} />
       <View style={styles.rowText}>
         <Text style={[styles.rowTitle, { color: palette.text }]} numberOfLines={1}>
           {hangout.title}

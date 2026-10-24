@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@clerk/expo";
-import { AppText, Card, Screen } from "../../components/ui";
+import { AppText, Card, Icon, Screen } from "../../components/ui";
+import { useHangouts } from "../../hooks/useHangouts";
+import { CATEGORY_META } from "../../constants/Categories";
 import { useChat } from "../../hooks/useChat";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
@@ -31,6 +33,11 @@ export default function Chat() {
   const palette = useThemePalette();
   const { userId } = useAuth();
   const { conversations, isLoading, ensurePushReady } = useChat();
+  const { hangouts } = useHangouts();
+  const categoryOf = (hangoutId?: string) => {
+    const category = hangouts.find((h) => h.id === hangoutId)?.category;
+    return category ? CATEGORY_META[category] : undefined;
+  };
 
   // Register the FCM token (asks permission once, on the first chat visit).
   useEffect(() => {
@@ -51,7 +58,7 @@ export default function Chat() {
     const last = conversation.lastMessage;
     if (!last) {
       return conversation.type === "group"
-        ? "No messages yet — say hi 👋"
+        ? "No messages yet — say hi!"
         : "Say hello";
     }
     const who = last.senderId === userId ? "You" : last.senderName;
@@ -109,7 +116,11 @@ export default function Chat() {
                     },
                   ]}
                 >
-                  <Text style={styles.avatarEmoji}>{item.emoji ?? "💬"}</Text>
+                  <Icon
+                    name={categoryOf(item.hangoutId)?.icon ?? "chatbubbles"}
+                    size={24}
+                    color={categoryOf(item.hangoutId)?.color ?? palette.primary}
+                  />
                 </View>
               ) : (
                 <View style={[styles.avatar, styles.avatarDm]}>

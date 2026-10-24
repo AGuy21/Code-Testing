@@ -1,22 +1,16 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Alert, Platform, Pressable, Share, StyleSheet, Text, View } from "react-native";
-import { AppText, AppTextInput, Card, PrimaryButton, Screen } from "../../components/ui";
+import { AppText, AppTextInput, Card, CategoryTile, Chip, Icon, PrimaryButton, Screen } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
-import { CATEGORY_META, CATEGORY_ORDER } from "../../constants/Categories";
+import { CATEGORY_META, CATEGORY_ORDER, PRIVACY_META } from "../../constants/Categories";
 import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { PlaceSearchInput } from "../../components/hangouts/PlaceSearchInput";
 import { formatStartsAt } from "../../utils/hangouts";
 import type { HangoutCategory, LatLng } from "../../constants/types/hangout";
 
-const PRIVACY_LABEL = {
-  public: "🌍 Public",
-  request: "✋ Request to join",
-  invite: "💌 Invite only",
-  friends: "🫶 Friends only",
-} as const;
 
 /** Host tools for a hangout: requests, guests, invites, +1s and invite code. */
 export default function ManageHangout() {
@@ -167,10 +161,13 @@ export default function ManageHangout() {
 
   return (
     <Screen scroll>
-      <PrimaryButton label="‹ Back" variant="ghost" onPress={() => router.back()} />
-      <AppText variant="hero">{hangout.emoji} {hangout.title}</AppText>
+      <PrimaryButton label="Back" icon="chevron-back" variant="ghost" onPress={() => router.back()} />
+      <View style={styles.titleRow}>
+        <CategoryTile category={hangout.category} size={44} />
+        <AppText variant="hero" style={styles.titleText} numberOfLines={2}>{hangout.title}</AppText>
+      </View>
       <AppText variant="caption" style={styles.sub}>
-        {PRIVACY_LABEL[hangout.privacy]} · {people.going.length + people.plusOnes.length} going
+        {PRIVACY_META[hangout.privacy].label} · {people.going.length + people.plusOnes.length} going
       </AppText>
 
       <Text style={[styles.label, { color: palette.textMuted }]}>Details</Text>
@@ -192,7 +189,7 @@ export default function ManageHangout() {
         near={newLocation ?? hangout.location}
       />
       <Text style={[styles.label, { color: palette.textMuted }]}>Start time</Text>
-      <AppText variant="caption">🕒 {formatStartsAt(startsAt.toISOString())}</AppText>
+      <View style={styles.timeRow}><Icon name="time" size={15} color={palette.primary} /><AppText variant="caption">{formatStartsAt(startsAt.toISOString())}</AppText></View>
       {Platform.OS === "android" ? (
         <View style={styles.chips}>
           {(["date", "time"] as const).map((mode) => (
@@ -226,21 +223,7 @@ export default function ManageHangout() {
         {CATEGORY_ORDER.map((key) => {
           const active = key === category;
           return (
-            <Pressable
-              key={key}
-              onPress={() => setCategory(key)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: active ? palette.primary : palette.surfaceElevated,
-                  borderColor: active ? palette.borderStrong : palette.border,
-                },
-              ]}
-            >
-              <Text style={{ color: active ? "#0E1713" : palette.text, fontFamily: Fonts.SemiBold }}>
-                {CATEGORY_META[key].emoji} {CATEGORY_META[key].label}
-              </Text>
-            </Pressable>
+            <Chip key={key} label={CATEGORY_META[key].label} icon={CATEGORY_META[key].icon} color={CATEGORY_META[key].color} selected={active} onPress={() => setCategory(key)} />
           );
         })}
       </View>
@@ -376,6 +359,9 @@ export default function ManageHangout() {
 }
 
 const styles = StyleSheet.create({
+  titleRow: { alignItems: "center", flexDirection: "row", gap: 12, marginTop: 8 },
+  titleText: { flex: 1, fontSize: 28 },
+  timeRow: { alignItems: "center", flexDirection: "row", gap: 6 },
   multiline: { height: 90, textAlignVertical: "top" },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 14 },
   chip: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 8 },

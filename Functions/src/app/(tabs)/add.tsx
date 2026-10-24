@@ -13,11 +13,12 @@ import {
   AppText,
   AppTextInput,
   PrimaryButton,
+  Chip,
   Screen,
 } from "../../components/ui";
 import { useHangouts } from "../../hooks/useHangouts";
 import { useThemePalette } from "../../hooks/useColorTheme";
-import { CATEGORY_META, CATEGORY_ORDER } from "../../constants/Categories";
+import { CATEGORY_META, CATEGORY_ORDER, type IconName } from "../../constants/Categories";
 import { Fonts } from "../../constants/Fonts";
 import type {
   HangoutCategory,
@@ -36,23 +37,27 @@ type PickerMode = "date" | "time";
 
 const PRIVACY_OPTIONS: readonly {
   key: HangoutPrivacy;
+  icon: IconName;
   label: string;
   hint: string;
 }[] = [
-  { key: "public", label: "🌍 Public", hint: "Anyone can see it and join." },
+  { key: "public", icon: "earth", label: "Public", hint: "Anyone can see it and join." },
   {
     key: "request",
-    label: "✋ Request to join",
+    icon: "hand-left",
+    label: "Request to join",
     hint: "Others see the basics; you approve who gets the exact spot.",
   },
   {
     key: "invite",
-    label: "💌 Invite only",
+    icon: "mail",
+    label: "Invite only",
     hint: "Only people you invite (or who have your code) see the details.",
   },
   {
     key: "friends",
-    label: "🫶 Friends only",
+    icon: "heart",
+    label: "Friends only",
     hint: "Only people you approve see the details.",
   },
 ];
@@ -221,26 +226,7 @@ export default function Add() {
           const meta = CATEGORY_META[key];
           const isSelected = key === category;
           return (
-            <Pressable
-              key={key}
-              onPress={() => setCategory(key)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: isSelected ? palette.primary : palette.surfaceElevated,
-                  borderColor: isSelected ? palette.borderStrong : palette.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.chipText,
-                  { color: isSelected ? "#0E1713" : palette.text },
-                ]}
-              >
-                {meta.emoji} {meta.label}
-              </Text>
-            </Pressable>
+            <Chip key={key} label={meta.label} icon={meta.icon} color={meta.color} selected={isSelected} onPress={() => setCategory(key)} />
           );
         })}
       </View>
@@ -250,53 +236,16 @@ export default function Add() {
         {QUICK_TIMES.map((option, index) => {
           const isSelected = activeQuick === index;
           return (
-            <Pressable
-              key={option.label}
-              onPress={() => {
+            <Chip key={option.label} label={option.label} selected={isSelected} onPress={() => {
                 setActiveQuick(index);
                 setDate(option.value());
-              }}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: isSelected ? palette.primary : palette.surfaceElevated,
-                  borderColor: isSelected ? palette.borderStrong : palette.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.chipText,
-                  { color: isSelected ? "#0E1713" : palette.text },
-                ]}
-              >
-                {option.label}
-              </Text>
-            </Pressable>
+              }} />
           );
         })}
-        <Pressable
-          onPress={() => openPicker("date")}
-          style={[
-            styles.chip,
-            {
-              backgroundColor: activeQuick === null ? palette.primary : palette.surfaceElevated,
-              borderColor: activeQuick === null ? palette.borderStrong : palette.border,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              styles.chipText,
-              { color: activeQuick === null ? "#0E1713" : palette.text },
-            ]}
-          >
-            📅 Pick date & time
-          </Text>
-        </Pressable>
+        <Chip label="Pick date & time" icon="calendar" selected={activeQuick === null} onPress={() => openPicker("date")} />
       </View>
       <Text style={[styles.selectedTime, { color: palette.textMuted }]}>
-        🕒 Starts {formatStartsAt(date.toISOString())}
+        Starts {formatStartsAt(date.toISOString())}
       </Text>
 
       {showPicker !== null && Platform.OS === "android" ? (
@@ -369,26 +318,7 @@ export default function Add() {
         {PRIVACY_OPTIONS.map((option) => {
           const isSelected = option.key === privacy;
           return (
-            <Pressable
-              key={option.key}
-              onPress={() => setPrivacy(option.key)}
-              style={[
-                styles.chip,
-                {
-                  backgroundColor: isSelected ? palette.primary : palette.surfaceElevated,
-                  borderColor: isSelected ? palette.borderStrong : palette.border,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.chipText,
-                  { color: isSelected ? "#0E1713" : palette.text },
-                ]}
-              >
-                {option.label}
-              </Text>
-            </Pressable>
+            <Chip key={option.key} label={option.label} icon={option.icon} selected={isSelected} onPress={() => setPrivacy(option.key)} />
           );
         })}
       </View>
@@ -396,39 +326,9 @@ export default function Add() {
         {PRIVACY_OPTIONS.find((option) => option.key === privacy)?.hint}
       </Text>
       <View style={styles.chipRow}>
-        <Pressable
-          onPress={() => setAllowPlusOnes((value) => !value)}
-          style={[
-            styles.chip,
-            {
-              backgroundColor: allowPlusOnes ? palette.primary : palette.surfaceElevated,
-              borderColor: allowPlusOnes ? palette.borderStrong : palette.border,
-            },
-          ]}
-        >
-          <Text
-            style={[styles.chipText, { color: allowPlusOnes ? "#0E1713" : palette.text }]}
-          >
-            ➕ Allow +1s
-          </Text>
-        </Pressable>
+        <Chip label="Allow +1s" icon="person-add" selected={allowPlusOnes} onPress={() => setAllowPlusOnes((value) => !value)} />
         {isPrivate ? (
-          <Pressable
-            onPress={() => setWithInviteCode((value) => !value)}
-            style={[
-              styles.chip,
-              {
-                backgroundColor: withInviteCode ? palette.primary : palette.surfaceElevated,
-                borderColor: withInviteCode ? palette.borderStrong : palette.border,
-              },
-            ]}
-          >
-            <Text
-              style={[styles.chipText, { color: withInviteCode ? "#0E1713" : palette.text }]}
-            >
-              🔑 Create invite code
-            </Text>
-          </Pressable>
+          <Chip label="Create invite code" icon="key" selected={withInviteCode} onPress={() => setWithInviteCode((value) => !value)} />
         ) : null}
       </View>
 

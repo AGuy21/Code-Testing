@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { Icon } from "../ui/Icon";
 import { AppTextInput } from "../ui";
 import { useThemePalette } from "../../hooks/useColorTheme";
 import { Fonts } from "../../constants/Fonts";
@@ -126,7 +127,7 @@ export function PlaceSearchInput({
             </View>
           ) : hasError ? (
             <View style={styles.statusRow}>
-              <Text style={styles.statusIcon}>⚠️</Text>
+              <Icon name="alert-circle" size={18} color="#E5A23C" />
               <Text
                 style={[styles.statusText, { color: palette.textMuted }]}
                 numberOfLines={2}
@@ -155,7 +156,7 @@ export function PlaceSearchInput({
                   },
                 ]}
               >
-                <Text style={styles.suggestionIcon}>📍</Text>
+                <Icon name="location" size={18} color={palette.primary} />
                 <Text
                   style={[styles.suggestionText, { color: palette.text }]}
                   numberOfLines={1}
@@ -172,15 +173,19 @@ export function PlaceSearchInput({
       ) : null}
 
       {selectedLabel ? (
-        <Text style={[styles.selected, { color: palette.textMuted }]} numberOfLines={1}>
-          📍 {selectedLabel}
-        </Text>
+        <View style={styles.selectedRow}>
+          <Icon name="location" size={14} color={palette.primary} />
+          <Text style={[styles.selected, { color: palette.textMuted }]} numberOfLines={1}>
+            {selectedLabel}
+          </Text>
+        </View>
       ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  selectedRow: { alignItems: "center", flexDirection: "row", gap: 6, marginTop: 6 },
   container: {
     position: "relative",
   },

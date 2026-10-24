@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   useColorScheme,
+  useWindowDimensions,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
@@ -31,6 +32,10 @@ export function Screen({
 }: ScreenProps) {
   const palette = useThemePalette();
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  // Scale gutters with the screen and cap line length on tablets/landscape.
+  const gutter = width < 360 ? 14 : width < 600 ? 20 : 32;
+  const column = { maxWidth: 720, width: "100%" as const, alignSelf: "center" as const };
   const scheme = useColorScheme();
   const resolvedStatusBarStyle: StatusBarStyle =
     statusBarStyle ?? (scheme === "light" ? "dark" : "light");
@@ -39,12 +44,23 @@ export function Screen({
     <View
       style={[
         styles.root,
-        { backgroundColor: palette.background, paddingTop: insets.top },
-        padded && styles.padded,
-        style,
+        {
+          backgroundColor: palette.background,
+          paddingTop: insets.top + (padded ? 8 : 0),
+          paddingLeft: Math.max(insets.left, 0),
+          paddingRight: Math.max(insets.right, 0),
+        },
       ]}
     >
       <StatusBar style={resolvedStatusBarStyle} />
+      <View
+        style={[
+          styles.root,
+          column,
+          padded && { paddingHorizontal: gutter },
+          style,
+        ]}
+      >
       {scroll ? (
         <ScrollView
           style={styles.scroll}
@@ -52,7 +68,7 @@ export function Screen({
           keyboardDismissMode="on-drag"
           contentContainerStyle={[
             styles.scrollContent,
-            { paddingBottom: insets.bottom + 32 },
+            { paddingBottom: insets.bottom + 32, gap: 2 },
           ]}
           showsVerticalScrollIndicator={false}
         >
@@ -61,6 +77,7 @@ export function Screen({
       ) : (
         children
       )}
+      </View>
     </View>
   );
 }
@@ -68,10 +85,6 @@ export function Screen({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  padded: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
   },
   scroll: {
     flex: 1,
