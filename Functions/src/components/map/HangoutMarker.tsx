@@ -1,0 +1,115 @@
+import { useEffect, useState } from "react";
+import { Marker } from "react-native-maps";
+import { StyleSheet, Text, View } from "react-native";
+import { categoryMeta } from "../../constants/Categories";
+import { Icon } from "../ui/Icon";
+import { Fonts } from "../../constants/Fonts";
+import { useThemePalette } from "../../hooks/useColorTheme";
+import type { Hangout, HangoutId } from "../../constants/types/hangout";
+
+/** Diameter of the pin circle; the selected pin is slightly larger. */
+const PIN_SIZE = 44;
+const PIN_SIZE_SELECTED = 52;
+/**
+ * How far the count badge overhangs the circle edge. The wrapper below must
+ * include this overhang — Android clips anything drawn outside the marker's
+ * child-view bounds, which used to cut the badge off.
+ */
+const BADGE_OUTSET = 8;
+/** Extra transparent margin so shadows and glyph edges are never clipped. */
+const PAD = 6;
+
+export interface HangoutMarkerProps {
+  hangout: Hangout;
+  goingCount: number;
+  selected: boolean;
+  onPress: (id: HangoutId) => void;
+}
+
+export function HangoutMarker({
+  hangout,
+  goingCount,
+  selected,
+  onPress,
+}: HangoutMarkerProps) {
+  const palette = useThemePalette();
+  const size = selected ? PIN_SIZE_SELECTED : PIN_SIZE;
+  // The wrapper is the marker's render bounds: circle + badge overhang.
+  const wrapper = size + BADGE_OUTSET + PAD * 2;
+  // Android snapshots the marker to a bitmap; keep tracking briefly so the
+  // icon font (which loads async) is drawn before the snapshot freezes.
+  const [tracking, setTracking] = useState(true);
+  useEffect(() => {
+    setTracking(true);
+    const t = setTimeout(() => setTracking(false), 1200);
+    return () => clearTimeout(t);
+  }, [selected, goingCount, hangout.category]);
+
+  return (
+    <Marker
+      coordinate={hangout.location}
+      // Anchored at the circle's bottom-center so the pin stays planted on
+      // its location in both sizes (the wrapper scales with the circle).
+      anchor={{ x: (PAD + size / 2) / wrapper, y: (PAD + size) / wrapper }}
+      tracksViewChanges={tracking}
+      zIndex={selected ? 10 : 1}
+      onPress={() => onPress(hangout.id)}
+    >
+      <View style={{ width: wrapper, height: wrapper }}>
+        <View
+          style={[
+            styles.circle,
+            {
+              width: size,
+              height: size,
+              borderRadius: size / 2,
+              backgroundColor: palette.surface,
+              borderColor: categoryMeta(hangout.category).color,
+              borderWidth: selected ? 3 : 2,
+            },
+          ]}
+        >
+          <Icon
+            name={categoryMeta(hangout.category).icon}
+            size={selected ? 26 : 22}
+            color={categoryMeta(hangout.category).color}
+          />
+        </View>
+        {goingCount > 0 ? (
+          <View style={[styles.countBadge, { backgroundColor: palette.primary }]}>
+            <Text style={styles.countText}>{goingCount}</Text>
+          </View>
+        ) : null}
+      </View>
+    </Marker>
+  );
+}
+
+const styles = StyleSheet.create({
+  circle: {
+    alignItems: "center",
+    justifyContent: "center",
+    left: PAD,
+    position: "absolute",
+    top: PAD,
+  },
+  emoji: {
+    fontSize: 20,
+  },
+  countBadge: {
+    alignItems: "center",
+    borderRadius: 10,
+    bottom: PAD - 2,
+    height: 20,
+    justifyContent: "center",
+    minWidth: 20,
+    paddingHorizontal: 5,
+    position: "absolute",
+    right: PAD - 2,
+  },
+  countText: {
+    fontFamily: Fonts.Bold,
+    fontSize: 11,
+    color: "#0E1713",
+  },
+});

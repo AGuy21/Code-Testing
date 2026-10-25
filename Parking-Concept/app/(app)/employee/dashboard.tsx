@@ -1,0 +1,174 @@
+import { Keyboard, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { AppText, Card, PrimaryButton, Screen } from "../../../componenets/ui";
+import { theme } from "../../../constants/theme";
+
+import { useAuth } from "@clerk/expo";
+import LoadingScreen from "../../../componenets/ui/LoadingScreen";
+import useLotData from "../../../componenets/hooks/useLotData";
+import CarListItem from "../../../componenets/ui/CarListItem";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import Divider from "../../../componenets/ui/Divider";
+import { useState, useEffect, useCallback } from "react";
+import { AntDesign } from "@expo/vector-icons";
+import LotDropdown from "../../../componenets/ui/LotDropdown";
+
+interface DashboardStat {
+  label: string;
+  value: number | string;
+}
+
+export default function DashboardScreen() {
+  const { signOut } = useAuth({ treatPendingAsSignedOut: false });
+  const [inputLotId, setInputLotId] = useState("University Street");
+  const [activeLotId, setActiveLotId] = useState("University Street");
+  const { refetch, loading, lotData } = useLotData(activeLotId);
+  const refreshParentData = useCallback(() => refetch(), [refetch]);
+
+  let mappedCars = [];
+
+  useEffect(() => {
+    mappedCars = lotData.Cars.map((item, index) => {
+      return { ...item, id: index };
+    });
+  }, [lotData]);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  const DASHBOARD_STATS: readonly DashboardStat[] = [
+    { label: "Price", value: lotData?.Price },
+    { label: "Hours", value: lotData.Hours },
+  ];
+
+  function handleChangeLotId() {
+    const formattedId = inputLotId.trim();
+    if (!formattedId) return;
+
+    if (formattedId === activeLotId) {
+      refetch(); // Forces a refresh if the ID didn't change
+    } else {
+      setActiveLotId(formattedId);
+    }
+
+    Keyboard.dismiss();
+  }
+
+  function handleLotSelect(lotId: string) {
+    setInputLotId(lotId);
+    setActiveLotId(lotId);
+  }
+
+  return (
+    <Screen scroll>
+      {/* <Show when="signed-in"> */}
+      <AppText variant="title">Dashboard</AppText>
+      <AppText variant="caption" style={styles.subtitle}>
+        Welcome back — here's today at a glance.
+      </AppText>
+      <Card variant="accent" style={styles.lotCard}>
+        <View style={styles.lotRow}>
+          <AppText variant="label" style={styles.nowShowingLabel}>
+            NOW SHOWING
+          </AppText>
+          <Pressable
+            onPress={handleChangeLotId}
+            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+          >
+            <View style={styles.circle}>
+              <AntDesign name="reload" size={16} color={theme.colors.white} />
+            </View>
+          </Pressable>
+        </View>
+
+        <LotDropdown onLotSelect={handleLotSelect} startingLot={inputLotId} />
+      </Card>
+
+      <View style={styles.grid}>
+        {DASHBOARD_STATS.map((stat) => (
+          <Card key={stat.label} style={styles.tile}>
+            <AppText variant="title" style={styles.tileValue}>
+              {stat.value}
+            </AppText> 
+            <AppText variant="caption">{stat.label}</AppText>
+          </Card>
+        ))}
+      </View>
+
+      <SafeAreaView>
+        <View>
+          {lotData.Cars.map((item, index) => (
+            <View key={item.Plate} style={{ marginBottom: theme.spacing.md }}>
+              <CarListItem
+                car={item}
+                lot={activeLotId}
+                onRefreshParent={refreshParentData}
+              />
+            </View>
+          ))}
+        </View>
+      </SafeAreaView>
+
+      <PrimaryButton label="Sign Out" onPress={signOut} />
+      <Divider />
+      <PrimaryButton
+        variant="outline"
+        label="Go Back"
+        onPress={() => router.replace("/")}
+      />
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  lotCard: {
+    marginBottom: theme.spacing.md,
+    padding: theme.spacing.lg,
+  },
+  nowShowingLabel: {
+    marginBottom: theme.spacing.sm,
+    textTransform: "uppercase",
+  },
+  lotRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: theme.spacing.md,
+  },
+  textInput: {
+    fontWeight: theme.typography.hero.fontWeight,
+    letterSpacing: theme.typography.hero.letterSpacing,
+    fontSize: 20,
+    color: theme.colors.textPrimary,
+    borderBottomWidth: 2,
+    borderBottomColor: theme.colors.accent,
+    minWidth: 60,
+    paddingBottom: 2,
+  },
+  subtitle: {
+    marginBottom: theme.spacing.lg,
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: theme.spacing.sm,
+  },
+  tile: {
+    flexBasis: "48%",
+    flexGrow: 1,
+    padding: theme.spacing.lg,
+  },
+  tileValue: {
+    marginBottom: theme.spacing.xs,
+  },
+  circle: {
+    height: 33,
+    width: 33,
+    borderRadius: 22,
+    backgroundColor: theme.colors.accentStrong,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

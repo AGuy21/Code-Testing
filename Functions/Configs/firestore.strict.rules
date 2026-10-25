@@ -1,0 +1,114 @@
+rules_version = '2';
+
+// STRICT rules — use once the `firebaseToken` Cloud Function is deployed and
+// the app signs in to Firebase with the Clerk-minted custom token
+// (src/providers/FirebaseAuthBridge.tsx). request.auth.uid == Clerk user id.
+//
+// Deploy: copy over firestore.rules (or point firebase.json at this file) and
+//   firebase deploy --only firestore:rules
+//
+// Known gap: invite-code redemption self-adds the caller to approvedUserIds
+// after the client checks the code hash. Rules can't hash, so move redemption
+// into a callable Cloud Function if codes must be unguessable-by-bypass.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+
+    // The caller may add/remove only their own id in this list field.
+    function onlyMe(field) {
+      return request.resource.data[field].toSet().difference(resource.data[field].toSet()).hasOnly([me()])
+        && resource.data[field].toSet().difference(request.resource.data[field].toSet()).hasOnly([me()]);
+    }
+
+    match /hangouts/{hangoutId} {
+      allow read: if true;
+
+      allow create: if signedIn()
+        && request.resource.data.hostId == me()
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 500
+        && request.resource.data.location.latitude is number
+        && request.resource.data.location.longitude is number
+        && request.resource.data.placeLabel is string
+        && request.resource.data.startsAt is timestamp
+        && request.resource.data.goingUserIds.size() == 0
+        && request.resource.data.passedUserIds.size() == 0
+        && request.resource.data.privacy in ['public', 'invite', 'request', 'friends'];
+
+      allow update: if signedIn() && (
+        // Host: edit details, manage access, cancel.
+        (resource.data.hostId == me()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'title', 'description', 'category', 'emoji', 'placeLabel',
+               'startsAt', 'location', 'cancelled', 'allowPlusOnes', 'baseGoingCount',
+               'inviteCodeHash', 'requestedUserIds', 'approvedUserIds',
+               'deniedUserIds', 'plusOneUserIds', 'goingUserIds',
+               'passedUserIds'])
+          && request.resource.data.title.size() >= 1
+          && request.resource.data.title.size() <= 120
+          && request.resource.data.description.size() <= 500)
+        // Anyone else: only their own RSVP / request / +1 / invite redemption.
+        || (request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'goingUserIds', 'passedUserIds', 'plusOneUserIds',
+               'requestedUserIds', 'approvedUserIds'])
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['goingUserIds']) || onlyMe('goingUserIds'))
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['passedUserIds']) || onlyMe('passedUserIds'))
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['plusOneUserIds']) || onlyMe('plusOneUserIds'))
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['requestedUserIds']) || onlyMe('requestedUserIds'))
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['approvedUserIds']) || onlyMe('approvedUserIds')))
+      );
+
+      // Exact location / description / invite code: host and approved guests.
+      match /private/{docId} {
+        allow read: if signedIn() && (
+          get(/databases/$(database)/documents/hangouts/$(hangoutId)).data.hostId == me()
+          || me() in get(/databases/$(database)/documents/hangouts/$(hangoutId)).data.approvedUserIds);
+        allow create, update, delete: if signedIn()
+          && getAfter(/databases/$(database)/documents/hangouts/$(hangoutId)).data.hostId == me()
+          && request.resource.data.keys().hasOnly(['location', 'placeLabel', 'description', 'inviteCode']);
+      }
+
+      allow delete: if signedIn()
+        && (resource.data.hostId == me() || resource.data.startsAt < request.time);
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if signedIn() && me() == userId
+        && request.resource.data.fcmTokens.size() <= 10
+        && (!('friendIds' in request.resource.data)
+            || request.resource.data.friendIds.size() <= 500);
+    }
+
+    match /conversations/{conversationId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.type in ['group', 'dm']
+        && me() in request.resource.data.participantUserIds
+        && request.resource.data.participantUserIds.size() <= 100;
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['participantUserIds', 'lastMessage', 'lastReadAt'])
+        && request.resource.data.participantUserIds.size() <= 100;
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if true;
+        allow create: if signedIn()
+          && request.resource.data.senderId == me()
+          && me() in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUserIds
+          && request.resource.data.text is string
+          && request.resource.data.text.size() >= 1
+          && request.resource.data.text.size() <= 1000
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+    }
+  }
+}

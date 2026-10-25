@@ -1,0 +1,283 @@
+import { useRouter } from "expo-router";
+import { useAuth } from "@clerk/expo";
+import { getCurrentFix } from "../../utils/location";
+import { StatusBar } from "expo-status-bar";
+import MapView from "react-native-maps";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useColorScheme,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppText, Badge, CategoryTile, Card, Icon } from "../../components/ui";
+import { HangoutMap } from "../../components/map/HangoutMap";
+import { RsvpButtons } from "../../components/hangouts/RsvpButtons";
+import { useHangouts } from "../../hooks/useHangouts";
+import { useChat } from "../../hooks/useChat";
+import { useThemePalette } from "../../hooks/useColorTheme";
+import { categoryMeta, goingLabel } from "../../constants/Categories";
+import { MAP_INITIAL_REGION } from "../../data/hangouts";
+import { formatStartsAt } from "../../utils/hangouts";
+import type { HangoutId } from "../../constants/types/hangout";
+import { PrimaryButton } from "../../components/ui";
+
+export default function Map() {
+  const palette = useThemePalette();
+  const insets = useSafeAreaInsets();
+  const scheme = useColorScheme();
+
+  const {
+    hangouts,
+    goingCount,
+    rsvps,
+    focusedHangoutId,
+    clearFocus,
+    syncError,
+    isLoading,
+  } = useHangouts();
+  const router = useRouter();
+  const [cardHeight, setCardHeight] = useState(280);
+  const { userId } = useAuth();
+  const { openGroupChat } = useChat();
+
+  const [selectedId, setSelectedId] = useState<HangoutId | null>(null);
+  const [showsUserLocation, setShowsUserLocation] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const mapRef = useRef<MapView>(null);
+
+  // Focus a marker requested from another tab (e.g. "View on map").
+  useEffect(() => {
+    if (!focusedHangoutId) return;
+    const target = hangouts.find((hangout) => hangout.id === focusedHangoutId);
+    setSelectedId(target ? target.id : null);
+    if (target) {
+      mapRef.current?.animateToRegion(
+        { ...target.location, latitudeDelta: 0.02, longitudeDelta: 0.015 },
+        400,
+      );
+    }
+    clearFocus();
+  }, [focusedHangoutId, hangouts, clearFocus]);
+
+  const handleLocate = useCallback(async () => {
+    if (locating) return;
+    setLocating(true);
+    try {
+      const fix = await getCurrentFix();
+      if (!fix) return;
+      setShowsUserLocation(true);
+      mapRef.current?.animateCamera(
+        {
+          center: { latitude: fix.latitude, longitude: fix.longitude },
+          zoom: 15,
+        },
+        { duration: 500 },
+      );
+    } finally {
+      setLocating(false);
+    }
+  }, [locating]);
+
+  const selected = selectedId
+    ? hangouts.find((hangout) => hangout.id === selectedId) ?? null
+    : null;
+  const selectedMeta = selected ? categoryMeta(selected.category) : null;
+
+  // The group chat is visible to the host and members who said they're going.
+  const selectedIsMember = Boolean(
+    userId &&
+      selected &&
+      (rsvps[selected.id] === "going" || selected.hostId === userId),
+  );
+
+  const openSelectedChat = async () => {
+    if (!selected) return;
+    try {
+      await openGroupChat(selected);
+      router.push(`/chat/${selected.id}`);
+    } catch (error) {
+      console.warn("Failed to open chat:", error);
+    }
+  };
+
+  return (
+    <View style={[styles.root, { backgroundColor: palette.background }]}>
+      <StatusBar style={scheme === "light" ? "dark" : "light"} />
+
+      <HangoutMap
+        mapRef={mapRef}
+        hangouts={hangouts}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
+        goingCountFor={goingCount}
+        initialRegion={MAP_INITIAL_REGION}
+        showsUserLocation={showsUserLocation}
+      />
+
+      {/* Header overlay */}
+      <View style={[styles.headerOverlay, { top: insets.top + 8 }]}>
+        <Card variant="accent" style={styles.headerCard}>
+          {isLoading ? (
+            <View style={styles.loadingRow}>
+              <ActivityIndicator color={palette.primary} />
+              <AppText variant="subtitle">Loading hangouts…</AppText>
+            </View>
+          ) : (
+            <>
+              <AppText variant="subtitle">
+                {hangouts.length === 1 ? "1 hangout nearby" : `${hangouts.length} hangouts nearby`}
+              </AppText>
+              <AppText variant="caption">
+                {syncError
+                  ? syncError
+                  : hangouts.length === 0
+                    ? "Nothing yet — host the first one from the + tab"
+                    : "Tap a pin to see details and RSVP"}
+              </AppText>
+            </>
+          )}
+        </Card>
+      </View>
+
+      {/* Locate me FAB */}
+      <Pressable
+        onPress={handleLocate}
+        style={[
+          styles.fab,
+          { backgroundColor: palette.primary },
+          selected && { bottom: cardHeight + 32 },
+        ]}
+      >
+        {locating ? (
+          <ActivityIndicator color="#0E1713" />
+        ) : (
+          <Icon name="locate" size={26} color="#0E1713" />
+        )}
+      </Pressable>
+
+      {/* Selected hangout card */}
+      {selected ? (
+        <View style={styles.bottomWrap} onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}>
+          <Card>
+            <View style={styles.cardHeader}>
+<CategoryTile category={selected.category} size={48} />
+              <View style={styles.titleBlock}>
+                <AppText variant="subtitle" numberOfLines={1}>
+                  {selected.title}
+                </AppText>
+                <AppText variant="caption" numberOfLines={1}>
+                  {selected.access === "limited"
+                    ? `Near ${selected.placeLabel}`
+                    : selected.placeLabel}{" "}
+                  · {formatStartsAt(selected.startsAt)}
+                </AppText>
+              </View>
+              {selectedMeta ? (
+                <Badge label={selectedMeta.label} icon={selectedMeta.icon} color={selectedMeta.color} variant="muted" />
+              ) : null}
+            </View>
+
+            <AppText variant="body" numberOfLines={2} style={styles.description}>
+              {selected.description}
+            </AppText>
+
+            <View style={styles.metaRow}>
+              <View style={styles.goingRow}><Icon name="people" size={15} color={palette.primary} /><AppText variant="caption">{goingLabel(goingCount(selected.id))}</AppText></View>
+              <Pressable
+                disabled={!selected.hostId}
+                onPress={() =>
+                  router.push({
+                    pathname: "/user/[userId]",
+                    params: { userId: selected.hostId as string, name: selected.hostName },
+                  })
+                }
+              >
+                <AppText variant="caption" style={{ color: palette.primary }}>
+                  Host {selected.hostName}
+                </AppText>
+              </Pressable>
+            </View>
+
+            <RsvpButtons hangoutId={selected.id} style={styles.rsvp} />
+            {selectedIsMember ? (
+              <PrimaryButton
+                label="Open chat"
+                variant="ghost"
+                onPress={() => void openSelectedChat()}
+                style={styles.chatButton}
+              />
+            ) : null}
+          </Card>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  rsvp: { marginTop: 18 },
+  loadingRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  root: {
+    flex: 1,
+  },
+  headerOverlay: {
+    left: 16,
+    position: "absolute",
+    right: 16,
+  },
+  headerCard: {
+    paddingVertical: 12,
+  },
+  fab: {
+    alignItems: "center",
+    borderRadius: 28,
+    bottom: 24,
+    height: 56,
+    justifyContent: "center",
+    position: "absolute",
+    right: 16,
+    width: 56,
+  },
+  bottomWrap: {
+    bottom: 16,
+    left: 16,
+    position: "absolute",
+    right: 16,
+  },
+  cardHeader: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 12,
+  },
+  goingRow: { alignItems: "center", flexDirection: "row", gap: 6 },
+  emojiBubble: {
+    alignItems: "center",
+    borderRadius: 22,
+    height: 44,
+    justifyContent: "center",
+    width: 44,
+  },
+  emoji: {
+    fontSize: 20,
+  },
+  titleBlock: {
+    flex: 1,
+    gap: 2,
+  },
+  description: {
+    marginTop: 12,
+  },
+  metaRow: {
+    flexDirection: "row",
+    gap: 16,
+    marginBottom: 14,
+    marginTop: 6,
+  },
+  chatButton: {
+    marginTop: 12,
+  },
+});

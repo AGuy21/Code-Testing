@@ -1,0 +1,504 @@
+import Ionicons from "@react-native-vector-icons/ionicons";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useRouter } from "expo-router";
+import { useAuth, useUser } from "@clerk/expo";
+import { useChat } from "../../hooks/useChat";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { AppText, AppTextInput, Card, CategoryTile, Icon, PrimaryButton, Screen } from "../../components/ui";
+import { useHangouts } from "../../hooks/useHangouts";
+import { useThemePalette } from "../../hooks/useColorTheme";
+import { Fonts } from "../../constants/Fonts";
+import { formatStartsAt } from "../../utils/hangouts";
+import type { Hangout } from "../../constants/types/hangout";
+
+export default function Profile() {
+  const router = useRouter();
+  const palette = useThemePalette();
+  const { userId, isLoaded, signOut } = useAuth();
+  const { user } = useUser();
+  const {
+    hangouts,
+    rsvps,
+    focusHangout,
+    friendIds,
+    addFriend,
+    removeFriend,
+    searchUsers,
+    lookupNames,
+  } = useHangouts();
+  const [friendSearch, setFriendSearch] = useState("");
+  const [friendResults, setFriendResults] = useState<{ id: string; displayName: string }[]>([]);
+  const [friendNames, setFriendNames] = useState<Record<string, string>>({});
+
+  const friendsKey = friendIds.join(",");
+  useEffect(() => {
+    if (friendIds.length === 0) return;
+    void lookupNames(friendIds).then((found) =>
+      setFriendNames((prev) => ({ ...prev, ...found })),
+    );
+  }, [friendsKey, friendIds, lookupNames]);
+
+  useEffect(() => {
+    if (friendSearch.trim().length < 2) {
+      setFriendResults([]);
+      return;
+    }
+    let stale = false;
+    const timer = setTimeout(() => {
+      searchUsers(friendSearch)
+        .then((found) => {
+          if (!stale) setFriendResults(found.filter((u) => u.id !== userId));
+        })
+        .catch(() => undefined);
+    }, 300);
+    return () => {
+      stale = true;
+      clearTimeout(timer);
+    };
+  }, [friendSearch, searchUsers, userId]);
+
+  // Live from Firestore: what this user hosts and where they said yes.
+  const hosting = useMemo(
+    () => hangouts.filter((hangout) => hangout.hostId === userId),
+    [hangouts, userId],
+  );
+  const going = useMemo(
+    () => hangouts.filter((hangout) => rsvps[hangout.id] === "going"),
+    [hangouts, rsvps],
+  );
+
+  const fullName =
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    user?.username ||
+    "Your profile";
+  const email = user?.emailAddresses[0]?.emailAddress ?? null;
+  const initial = (user?.firstName ?? user?.username ?? "?").charAt(0).toUpperCase();
+
+  const confirmSignOut = () => {
+    Alert.alert("Sign out", "See you at the next hangout?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Sign out",
+        style: "destructive",
+        onPress: () => {
+          void (async () => {
+            try {
+              await signOut();
+              router.replace("/(auth)/login");
+            } catch (error) {
+              console.error("Error signing out:", error);
+            }
+          })();
+        },
+      },
+    ]);
+  };
+
+  if (!isLoaded) {
+    return (
+      <Screen style={styles.loadingScreen}>
+        <ActivityIndicator size="large" color={palette.primary} />
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen scroll>
+      <AppText variant="hero">
+        {user?.firstName ? `Hey, ${user.firstName}!` : "Profile"}
+      </AppText>
+      <AppText variant="caption" style={styles.tagline}>
+        Your RSVPs, hosting and account — all in one place.
+      </AppText>
+
+      <Card style={styles.identityCard}>
+        <View style={styles.identityRow}>
+          {user?.imageUrl ? (
+            <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
+          ) : (
+            <View
+              style={[
+                styles.avatar,
+                styles.avatarFallback,
+                {
+                  backgroundColor: palette.accentSoft,
+                  borderColor: palette.borderStrong,
+                },
+              ]}
+            >
+              <Text style={[styles.avatarInitial, { color: palette.primary }]}>
+                {initial}
+              </Text>
+            </View>
+          )}
+          <View style={styles.identityText}>
+            <Text style={[styles.name, { color: palette.text }]} numberOfLines={1}>
+              {fullName}
+            </Text>
+            {email ? (
+              <Text style={[styles.email, { color: palette.textMuted }]} numberOfLines={1}>
+                {email}
+              </Text>
+            ) : null}
+          </View>
+        </View>
+      </Card>
+
+      <View style={styles.statsRow}>
+        <StatTile label="Hosting" value={hosting.length} />
+        <StatTile label="Going" value={going.length} />
+      </View>
+
+      <Text style={[styles.sectionLabel, { color: palette.textMuted }]}>
+        Your RSVPs
+      </Text>
+      {going.length > 0 ? (
+        <Card style={styles.listCard}>
+          {going.map((hangout, index) => (
+            <Fragment key={hangout.id}>
+              {index > 0 ? (
+                <View style={[styles.divider, { backgroundColor: palette.border }]} />
+              ) : null}
+              <EventRow hangout={hangout} />
+            </Fragment>
+          ))}
+        </Card>
+      ) : (
+        <Card variant="accent" style={styles.emptyCard}>
+          <Text style={[styles.emptyText, { color: palette.textMuted }]}>
+            Nothing yet. Join something from Events.
+          </Text>
+        </Card>
+      )}
+
+      <Text style={[styles.sectionLabel, { color: palette.textMuted }]}>
+        Hosted by you
+      </Text>
+      {hosting.length > 0 ? (
+        <Card style={styles.listCard}>
+          {hosting.map((hangout, index) => (
+            <Fragment key={hangout.id}>
+              {index > 0 ? (
+                <View style={[styles.divider, { backgroundColor: palette.border }]} />
+              ) : null}
+              <EventRow hangout={hangout} manage />
+            </Fragment>
+          ))}
+        </Card>
+      ) : (
+        <Card variant="accent" style={styles.emptyCard}>
+          <Text style={[styles.emptyText, { color: palette.textMuted }]}>
+            Nothing pinned yet — host one from the + tab.
+          </Text>
+        </Card>
+      )}
+
+      <Text style={[styles.sectionLabel, { color: palette.textMuted }]}>
+        Friends
+      </Text>
+      <Card>
+        <AppTextInput
+          value={friendSearch}
+          onChangeText={setFriendSearch}
+          placeholder="Add friends by name"
+          autoCorrect={false}
+        />
+        {friendResults
+          .filter((u) => !friendIds.includes(u.id))
+          .map((u) => (
+            <Pressable
+              key={u.id}
+              onPress={() => {
+                void addFriend(u.id);
+                setFriendNames((prev) => ({ ...prev, [u.id]: u.displayName }));
+                setFriendSearch("");
+              }}
+              style={styles.friendRow}
+            >
+              <Text style={{ color: palette.text, fontFamily: Fonts.SemiBold }}>
+                ＋ {u.displayName}
+              </Text>
+            </Pressable>
+          ))}
+        {friendIds.length === 0 ? (
+          <Text style={[styles.accountNote, { color: palette.textMuted }]}>
+            No friends added yet.
+          </Text>
+        ) : (
+          friendIds.map((id) => (
+            <View key={id} style={[styles.friendRow, styles.friendSpread]}>
+              <Text
+                style={{ color: palette.text, fontFamily: Fonts.Medium }}
+                onPress={() =>
+                  router.push({
+                    pathname: "/user/[userId]",
+                    params: { userId: id, name: friendNames[id] ?? id },
+                  })
+                }
+              >
+                {friendNames[id] ?? id}
+              </Text>
+              <Pressable onPress={() => void removeFriend(id)}>
+                <Text style={{ color: palette.textMuted, fontFamily: Fonts.SemiBold }}>
+                  Remove
+                </Text>
+              </Pressable>
+            </View>
+          ))
+        )}
+      </Card>
+
+      <Text style={[styles.sectionLabel, { color: palette.textMuted }]}>
+        Account
+      </Text>
+      <Card>
+        <Text style={[styles.accountNote, { color: palette.textMuted }]}>
+          Secured by Clerk. Your RSVPs sync live across every device you sign
+          in on.
+        </Text>
+        <PrimaryButton
+          label="Sign out"
+          variant="outline"
+          onPress={confirmSignOut}
+          style={styles.signOutButton}
+        />
+      </Card>
+
+      <Text style={[styles.footer, { color: palette.textMuted }]}>
+        Functions · plan less, hang more
+      </Text>
+    </Screen>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: number }) {
+  const palette = useThemePalette();
+  return (
+    <Card style={styles.statTile}>
+      <Text style={[styles.statValue, { color: palette.text }]}>{value}</Text>
+      <Text style={[styles.statLabelText, { color: palette.primary }]}>{label}</Text>
+    </Card>
+  );
+}
+
+interface EventRowProps {
+  hangout: Hangout;
+  /** Show the host "manage" shortcut. */
+  manage?: boolean;
+}
+
+function EventRow({ hangout, manage }: EventRowProps) {
+  const router = useRouter();
+  const palette = useThemePalette();
+  const { rsvps, focusHangout } = useHangouts();
+  const { userId } = useAuth();
+  const { openGroupChat } = useChat();
+
+  const openOnMap = () => {
+    focusHangout(hangout.id);
+    router.push("/(tabs)/map");
+  };
+
+  const openChat = async () => {
+    try {
+      await openGroupChat(hangout);
+      router.push(`/chat/${hangout.id}`);
+    } catch (error) {
+      console.warn("Failed to open chat:", error);
+    }
+  };
+
+  return (
+    <Pressable
+      onPress={openOnMap}
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+    >
+      <CategoryTile category={hangout.category} size={44} />
+      <View style={styles.rowText}>
+        <Text style={[styles.rowTitle, { color: palette.text }]} numberOfLines={1}>
+          {hangout.title}
+        </Text>
+        <Text style={[styles.rowMeta, { color: palette.textMuted }]} numberOfLines={1}>
+          {formatStartsAt(hangout.startsAt)} · {hangout.placeLabel}
+        </Text>
+      </View>
+      {userId && (rsvps[hangout.id] === "going" || hangout.hostId === userId) ? (
+        <Pressable
+          onPress={() => void openChat()}
+          style={styles.rowChat}
+          hitSlop={8}
+        >
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={18}
+            color={palette.primary}
+          />
+        </Pressable>
+      ) : null}
+      {manage ? (
+        <Pressable
+          onPress={() => router.push(`/manage/${hangout.id}`)}
+          style={styles.rowChat}
+          hitSlop={8}
+        >
+          <Ionicons name="settings-outline" size={18} color={palette.primary} />
+        </Pressable>
+      ) : null}
+      <Text style={[styles.rowChevron, { color: palette.textMuted }]}>›</Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  friendRow: { paddingVertical: 10 },
+  friendSpread: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  loadingScreen: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tagline: {
+    marginBottom: 20,
+    marginTop: 6,
+  },
+  identityCard: {},
+  identityRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 14,
+  },
+  avatar: {
+    borderRadius: 999,
+    height: 64,
+    width: 64,
+  },
+  avatarFallback: {
+    alignItems: "center",
+    borderWidth: 1,
+    justifyContent: "center",
+  },
+  avatarInitial: {
+    fontFamily: Fonts.ExtraBold,
+    fontSize: 26,
+  },
+  identityText: {
+    flex: 1,
+    gap: 2,
+  },
+  name: {
+    fontFamily: Fonts.Bold,
+    fontSize: 19,
+  },
+  email: {
+    fontFamily: Fonts.Medium,
+    fontSize: 13,
+  },
+  statsRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 6,
+    marginTop: 14,
+  },
+  statTile: {
+    alignItems: "center",
+    flex: 1,
+    paddingVertical: 18,
+  },
+  statValue: {
+    fontFamily: Fonts.ExtraBold,
+    fontSize: 28,
+    lineHeight: 32,
+  },
+  statLabelText: {
+    fontFamily: Fonts.SemiBold,
+    fontSize: 12,
+    letterSpacing: 1.2,
+    textTransform: "uppercase",
+  },
+  sectionLabel: {
+    fontFamily: Fonts.SemiBold,
+    fontSize: 12,
+    letterSpacing: 1,
+    marginBottom: 8,
+    marginTop: 18,
+    textTransform: "uppercase",
+  },
+  listCard: {
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+  },
+  divider: {
+    height: 1,
+  },
+  row: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 12,
+    paddingVertical: 12,
+  },
+  rowPressed: {
+    opacity: 0.7,
+  },
+  rowTile: {
+    alignItems: "center",
+    borderRadius: 12,
+    borderWidth: 1,
+    height: 40,
+    justifyContent: "center",
+    width: 40,
+  },
+  rowEmoji: {
+    fontSize: 19,
+  },
+  rowText: {
+    flex: 1,
+    gap: 2,
+  },
+  rowTitle: {
+    fontFamily: Fonts.SemiBold,
+    fontSize: 14.5,
+  },
+  rowMeta: {
+    fontFamily: Fonts.Medium,
+    fontSize: 12,
+  },
+  rowChat: {
+    alignItems: "center",
+    height: 32,
+    justifyContent: "center",
+    width: 32,
+  },
+  rowChevron: {
+    fontFamily: Fonts.Medium,
+    fontSize: 20,
+  },
+  emptyCard: {
+    paddingVertical: 18,
+  },
+  emptyText: {
+    fontFamily: Fonts.Medium,
+    fontSize: 13.5,
+    textAlign: "center",
+  },
+  accountNote: {
+    fontFamily: Fonts.Medium,
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  signOutButton: {
+    marginTop: 14,
+  },
+  footer: {
+    fontFamily: Fonts.Medium,
+    fontSize: 12,
+    marginTop: 24,
+    textAlign: "center",
+  },
+});

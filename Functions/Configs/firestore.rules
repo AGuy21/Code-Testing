@@ -1,0 +1,154 @@
+rules_version = '2';
+
+// Firestore security rules for the Functions app.
+//
+// Apply them either by pasting into:
+//   Firebase console → Firestore Database → Rules
+// or by deploying with the Firebase CLI:
+//   firebase deploy --only firestore:rules
+//
+// Model (see README.md → Data model):
+// - `hangouts` docs are world-readable so the feed/map work for everyone.
+// - `create` validates the essential fields. There is NO signed-in check:
+//   the app authenticates with Clerk, which cannot mint Firebase Auth
+//   tokens, so request.auth is always null for this client.
+// - `update` may only touch the RSVP participant arrays (no auth gate for
+//   the same Clerk/Firebase reason).
+// - `delete` only succeeds for hangouts whose start time has passed (the
+//   client auto-expires them) or for legacy seed docs (no hostId). Live
+//   docs stay protected.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /hangouts/{hangoutId} {
+
+      // Anyone (signed in or not) can browse the feed and the map.
+      allow read: if true;
+
+      // Hosting a hangout. The client writes: title, description, category,
+      // emoji, location, placeLabel, startsAt, hostName, hostId,
+      // baseGoingCount, goingUserIds, passedUserIds, createdAt.
+      //
+      // NOTE — no `request.auth` check: the app authenticates with Clerk,
+      // which cannot mint Firebase Auth tokens, so request.auth is always
+      // null here. Field validation is the guard; a real signed-in gate
+      // needs a backend that exchanges Clerk sessions for Firebase custom
+      // tokens (future Cloud Functions work).
+      allow create: if request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 500
+        && request.resource.data.location.latitude is number
+        && request.resource.data.location.longitude is number
+        && request.resource.data.placeLabel is string
+        && request.resource.data.startsAt is timestamp
+        && request.resource.data.goingUserIds is list
+        && request.resource.data.goingUserIds.size() == 0
+        && request.resource.data.passedUserIds is list
+        && request.resource.data.passedUserIds.size() == 0
+        && (!('privacy' in request.resource.data)
+            || request.resource.data.privacy in
+               ['public', 'invite', 'request', 'friends']);
+
+      // RSVPs (Join / Pass / undo), +1s and private-access bookkeeping
+      // (join requests, approvals, denials, invite-code hash, +1 setting),
+      // host edits (title/description/category/emoji/placeLabel) and the
+      // `cancelled` flag (swept by Cloud Functions) may only modify these
+      // fields. Host-only checks live in the client — no Firebase Auth token.
+      // As with create, request.auth is always null (Clerk ≠ Firebase Auth)
+      // — the field restriction is the guard. The client writes the Clerk
+      // user id via arrayUnion/arrayRemove.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['goingUserIds', 'passedUserIds', 'plusOneUserIds',
+                     'requestedUserIds', 'approvedUserIds', 'deniedUserIds',
+                     'allowPlusOnes', 'baseGoingCount', 'inviteCodeHash',
+                     'title', 'description', 'category', 'emoji',
+                     'placeLabel', 'cancelled', 'startsAt', 'location'])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 1
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.description.size() <= 500
+        && request.resource.data.startsAt is timestamp
+        && request.resource.data.location.latitude is number
+        && request.resource.data.location.longitude is number
+        && request.resource.data.goingUserIds is list
+        && request.resource.data.passedUserIds is list
+        && request.resource.data.goingUserIds.size() <= 1000
+        && request.resource.data.passedUserIds.size() <= 1000;
+
+      // Exact location, full description and invite code of a private
+      // hangout. NOTE: with no Firebase Auth token (Clerk ≠ Firebase Auth)
+      // rules cannot tell who is asking, so this is shape-validated only;
+      // real read enforcement needs the Clerk→Firebase custom-token backend.
+      match /private/{docId} {
+        allow read: if true;
+        allow create, update: if request.resource.data.keys().hasOnly(
+            ['location', 'placeLabel', 'description', 'inviteCode']);
+        allow delete: if true;
+      }
+
+      // Auto-expiry: the client deletes hangouts once startsAt has passed.
+      // Legacy seed docs never carried a hostId, so they can be purged too.
+      allow delete: if resource.data.startsAt < request.time
+        || resource.data.hostId == null;
+    }
+
+    match /users/{userId} {
+      // Public profiles: chat renders display names/avatars without extra
+      // reads, and Cloud Functions fetch FCM tokens via the admin SDK
+      // (bypasses rules). No Firebase Auth token exists (Clerk ≠ Firebase
+      // Auth — see the hangouts note), so writes are validated by shape.
+      allow read: if true;
+      // Friends list edits only touch `friendIds`.
+      allow create, update: if request.resource.data.keys().hasOnly(['friendIds'])
+        && request.resource.data.friendIds is list
+        && request.resource.data.friendIds.size() <= 500;
+      allow create, update: if request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 1
+        && request.resource.data.displayName.size() <= 80
+        && (!('imageUrl' in request.resource.data)
+            || request.resource.data.imageUrl is string)
+        && request.resource.data.fcmTokens is list
+        && request.resource.data.fcmTokens.size() <= 10
+        && (!('friendIds' in request.resource.data)
+            || (request.resource.data.friendIds is list
+                && request.resource.data.friendIds.size() <= 500));
+    }
+
+    match /conversations/{conversationId} {
+      // Chat threads: one group per hangout (id === hangoutId) plus
+      // deterministic DMs ("dm-<uidA>-<uidB>"). Identity is Clerk-side, so
+      // no request.auth gate (same trade-off as hangouts) — writes are
+      // shape-validated.
+      allow read: if true;
+
+      allow create: if request.resource.data.type in ['group', 'dm']
+        && request.resource.data.participantUserIds is list
+        && request.resource.data.participantUserIds.size() >= 1
+        && request.resource.data.participantUserIds.size() <= 100;
+
+      // Membership sync (RSVP join/leave), lastMessage bookkeeping and read
+      // receipts are the only permitted edits.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['participantUserIds', 'lastMessage', 'lastReadAt'])
+        && request.resource.data.participantUserIds is list
+        && request.resource.data.participantUserIds.size() <= 100;
+
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if true;
+        allow create: if request.resource.data.text is string
+          && request.resource.data.text.size() >= 1
+          && request.resource.data.text.size() <= 1000
+          && request.resource.data.senderId is string
+          && request.resource.data.senderId in resource.data.participantUserIds
+          && request.resource.data.senderName is string
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+    }
+  }
+}

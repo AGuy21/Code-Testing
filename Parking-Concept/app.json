@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Parking-Concept",
+    "scheme": "parkingapp",
+    "slug": "Parking-Concept",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "associatedDomains": [
+        "applinks:parkingapp.com"
+      ]
+    },
+    "android": {
+      "package": "com.anonymous.ParkingConcept",
+      "predictiveBackGestureEnabled": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#002657",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "parkingapp.com",
+              "pathPrefix": "/park"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-router",
+      "@clerk/expo",
+      "expo-web-browser"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
