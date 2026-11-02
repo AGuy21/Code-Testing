@@ -92,6 +92,9 @@ export async function getFcmToken(): Promise<string | null> {
       });
     }
 
+    // iOS would yield an APNs token, which the FCM admin SDK can't send to
+    // without the native Firebase SDK; skip until that's added.
+    if (Platform.OS !== "android") return null;
     // getDevicePushTokenAsync returns the native FCM token on Android.
     const token = await Notifications.getDevicePushTokenAsync();
     return typeof token.data === "string" ? token.data : null;

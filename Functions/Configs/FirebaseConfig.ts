@@ -8,6 +8,7 @@
 import { initializeApp } from "firebase/app";
 import * as firebaseAuth from "firebase/auth";
 import { initializeFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -51,3 +52,7 @@ try {
 }
 
 export { app };
+
+
+// Callable Cloud Functions (invite redemption).
+export const functions = getFunctions(app, "us-central1");

@@ -29,7 +29,8 @@ import {
   type ReactNode,
 } from "react";
 import { useAuth } from "@clerk/expo";
-import { db } from "../../Configs/FirebaseConfig";
+import { httpsCallable } from "firebase/functions";
+import { db, functions } from "../../Configs/FirebaseConfig";
 import { CATEGORY_ORDER } from "../constants/Categories";
 import type {
   Hangout,
@@ -158,7 +159,6 @@ interface HangoutDoc {
   approvedUserIds?: string[];
   deniedUserIds?: string[];
   plusOneUserIds?: string[];
-  inviteCodeHash?: string;
   cancelled?: boolean;
   hidden?: boolean;
 }
@@ -543,11 +543,11 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
           approvedUserIds: privacy === "friends" ? friendIds : [],
           deniedUserIds: [],
           plusOneUserIds: [],
-          ...(inviteCode
-            ? { inviteCodeHash: await hashInviteCode(inviteCode) }
-            : {}),
           createdAt: serverTimestamp(),
         });
+        if (inviteCode) {
+          batch.set(doc(db, "inviteCodes", await hashInviteCode(inviteCode)), { hangoutId: id });
+        }
         if (isPrivate) {
           batch.set(doc(db, "hangouts", id, "private", "details"), {
             location: input.location,
@@ -717,24 +717,22 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       if (!userId) throw new Error("Sign in to use an invite code.");
       const trimmed = code.trim();
       if (trimmed.length === 0) throw new Error("Enter an invite code.");
-      const matches = await getDocs(
-        query(
-          collection(db, "hangouts"),
-          where("inviteCodeHash", "==", await hashInviteCode(trimmed)),
-          limit(1),
-        ),
-      );
-      const match = matches.docs[0];
-      const data = match?.data() as HangoutDoc | undefined;
-      if (!match || !data) throw new Error("That invite code isn't valid.");
-      if ((data.deniedUserIds ?? []).includes(userId)) {
-        throw new Error("The host can't accept you for this hangout.");
+      try {
+        const result = await httpsCallable<{ code: string }, { title: string }>(
+          functions,
+          "redeemInvite",
+        )({ code: trimmed });
+        return result.data.title;
+      } catch (error) {
+        const { code = "", message = "" } = error as { code?: string; message?: string };
+        throw new Error(
+          code === "functions/not-found" && message === "NOT_FOUND"
+            ? "Invites aren't available yet. Try again later."
+            : code.startsWith("functions/")
+              ? message
+              : "Couldn't use that invite.",
+        );
       }
-      await updateDoc(match.ref, {
-        approvedUserIds: arrayUnion(userId),
-        requestedUserIds: arrayRemove(userId),
-      });
-      return data.title;
     },
     [userId],
   );
@@ -819,7 +817,9 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       const code = generateInviteCode();
       const hash = await hashInviteCode(code);
       const batch = writeBatch(db);
-      batch.update(doc(db, "hangouts", id), { inviteCodeHash: hash });
+      const previous = privateDetails[id]?.inviteCode;
+      if (previous) batch.delete(doc(db, "inviteCodes", await hashInviteCode(previous)));
+      batch.set(doc(db, "inviteCodes", hash), { hangoutId: id });
       batch.set(
         doc(db, "hangouts", id, "private", "details"),
         { inviteCode: code },
@@ -832,7 +832,7 @@ export function HangoutsProvider({ children }: { children: ReactNode }) {
       }));
       return code;
     },
-    [findEntry, userId],
+    [findEntry, userId, privateDetails],
   );
 
   const getInviteCode = useCallback(

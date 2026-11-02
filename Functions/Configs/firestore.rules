@@ -1,5 +1,8 @@
 rules_version = '2';
 
+// LEGACY / DEV ONLY — world-writable. firebase.json deploys firestore.strict.rules;
+// do not publish this file to a shared or production project.
+
 // Firestore security rules for the Functions app.
 //
 // Apply them either by pasting into:

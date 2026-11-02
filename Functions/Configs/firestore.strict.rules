@@ -7,15 +7,16 @@ rules_version = '2';
 // Deploy: copy over firestore.rules (or point firebase.json at this file) and
 //   firebase deploy --only firestore:rules
 //
-// Known gap: invite-code redemption self-adds the caller to approvedUserIds
-// after the client checks the code hash. Rules can't hash, so move redemption
-// into a callable Cloud Function if codes must be unguessable-by-bypass.
+// Invite codes: only the `redeemInvite` Cloud Function (admin SDK) can add a
+// guest to approvedUserIds; hashes live in the server-only `inviteCodes`
+// collection so they can't be read and brute-forced.
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
     function signedIn() { return request.auth != null; }
     function me() { return request.auth.uid; }
+    function hangoutOf(id) { return get(/databases/$(database)/documents/hangouts/$(id)).data; }
 
     // The caller may add/remove only their own id in this list field.
     function onlyMe(field) {
@@ -39,7 +40,10 @@ service cloud.firestore {
         && request.resource.data.startsAt is timestamp
         && request.resource.data.goingUserIds.size() == 0
         && request.resource.data.passedUserIds.size() == 0
-        && request.resource.data.privacy in ['public', 'invite', 'request', 'friends'];
+        && request.resource.data.privacy in ['public', 'invite', 'request', 'friends']
+        && request.resource.data.baseGoingCount is int
+        && request.resource.data.baseGoingCount >= 0
+        && request.resource.data.baseGoingCount <= 999;
 
       allow update: if signedIn() && (
         // Host: edit details, manage access, cancel.
@@ -47,21 +51,24 @@ service cloud.firestore {
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
                'title', 'description', 'category', 'emoji', 'placeLabel',
                'startsAt', 'location', 'cancelled', 'allowPlusOnes', 'baseGoingCount',
-               'inviteCodeHash', 'requestedUserIds', 'approvedUserIds',
+               'requestedUserIds', 'approvedUserIds',
                'deniedUserIds', 'plusOneUserIds', 'goingUserIds',
                'passedUserIds'])
           && request.resource.data.title.size() >= 1
           && request.resource.data.title.size() <= 120
-          && request.resource.data.description.size() <= 500)
-        // Anyone else: only their own RSVP / request / +1 / invite redemption.
+          && request.resource.data.description.size() <= 500
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['baseGoingCount'])
+              || (request.resource.data.baseGoingCount is int
+                  && request.resource.data.baseGoingCount >= 0
+                  && request.resource.data.baseGoingCount <= 999)))
+        // Anyone else: only their own RSVP / request / +1.
         || (request.resource.data.diff(resource.data).affectedKeys().hasOnly([
                'goingUserIds', 'passedUserIds', 'plusOneUserIds',
-               'requestedUserIds', 'approvedUserIds'])
+               'requestedUserIds'])
           && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['goingUserIds']) || onlyMe('goingUserIds'))
           && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['passedUserIds']) || onlyMe('passedUserIds'))
           && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['plusOneUserIds']) || onlyMe('plusOneUserIds'))
-          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['requestedUserIds']) || onlyMe('requestedUserIds'))
-          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['approvedUserIds']) || onlyMe('approvedUserIds')))
+          && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['requestedUserIds']) || onlyMe('requestedUserIds')))
       );
 
       // Exact location / description / invite code: host and approved guests.
@@ -78,31 +85,67 @@ service cloud.firestore {
         && (resource.data.hostId == me() || resource.data.startsAt < request.time);
     }
 
+    // Hashes of invite codes: written by the host, read only by Cloud Functions.
+    match /inviteCodes/{hash} {
+      allow read: if false;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['hangoutId'])
+        && hangoutOf(request.resource.data.hangoutId).hostId == me();
+      allow delete: if signedIn() && hangoutOf(resource.data.hangoutId).hostId == me();
+      allow update: if false;
+    }
+
     match /users/{userId} {
-      allow read: if true;
+      allow read: if signedIn();
       allow create, update: if signedIn() && me() == userId
-        && request.resource.data.fcmTokens.size() <= 10
-        && (!('friendIds' in request.resource.data)
-            || request.resource.data.friendIds.size() <= 500);
+        && request.resource.data.get('fcmTokens', []).size() <= 10
+        && request.resource.data.get('friendIds', []).size() <= 500;
     }
 
     match /conversations/{conversationId} {
-      allow read: if true;
+      function isMember() { return me() in resource.data.participantUserIds; }
+      // A group chat mirrors its hangout: the host and anyone who can see it may join.
+      function canJoinGroup() {
+        return resource.data.type == 'group'
+          && (hangoutOf(conversationId).privacy == 'public'
+              || hangoutOf(conversationId).hostId == me()
+              || me() in hangoutOf(conversationId).approvedUserIds);
+      }
+
+      allow get: if signedIn() && (resource == null || isMember());
+      allow list: if signedIn() && isMember();
       allow create: if signedIn()
         && request.resource.data.type in ['group', 'dm']
         && me() in request.resource.data.participantUserIds
-        && request.resource.data.participantUserIds.size() <= 100;
+        && request.resource.data.participantUserIds.size() <= 100
+        && (request.resource.data.type == 'dm'
+            ? request.resource.data.participantUserIds.size() == 2
+            : existsAfter(/databases/$(database)/documents/hangouts/$(conversationId)));
       allow update: if signedIn()
-        && request.resource.data.diff(resource.data).affectedKeys()
-             .hasOnly(['participantUserIds', 'lastMessage', 'lastReadAt'])
-        && request.resource.data.participantUserIds.size() <= 100;
+        && request.resource.data.participantUserIds.size() <= 100
+        && (
+          // Members: send/read state, leave, or (host only) remove others.
+          (isMember()
+            && request.resource.data.diff(resource.data).affectedKeys()
+                 .hasOnly(['participantUserIds', 'lastMessage', 'lastReadAt'])
+            && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['participantUserIds'])
+                || onlyMe('participantUserIds')
+                || (resource.data.type == 'group' && hangoutOf(conversationId).hostId == me())))
+          // Non-members: only add themselves to a group they may see.
+          || (!isMember() && canJoinGroup()
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantUserIds'])
+              && onlyMe('participantUserIds'))
+        );
       allow delete: if false;
 
       match /messages/{messageId} {
-        allow read: if true;
+        function isParticipant() {
+          return me() in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUserIds;
+        }
+        allow read: if signedIn() && isParticipant();
         allow create: if signedIn()
           && request.resource.data.senderId == me()
-          && me() in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUserIds
+          && isParticipant()
           && request.resource.data.text is string
           && request.resource.data.text.size() >= 1
           && request.resource.data.text.size() <= 1000

@@ -406,3 +406,11 @@ Ideas beyond the roadmap: mutual friend requests, server-side invite redemption,
 - Emoji are no longer rendered; categories and privacy levels use Ionicons with category colours (`src/constants/Categories.ts`, `src/components/ui/Icon.tsx`, `CategoryTile`, `Chip`).
 - `Screen` is responsive: gutters scale with window width (14/20/32) and content is capped at 720 px and centred, with safe-area padding.
 - Splash background colour changes need a native rebuild (`npx expo run:android`).
+
+## Security model & deploy order
+
+- Deploy `firebase.json` uses `Configs/firestore.strict.rules` (signed-in only). `firestore.rules` is legacy/dev-only.
+- Invite codes live as hashes in server-only `inviteCodes/{hash}`; guests join via the `redeemInvite` callable.
+- DMs/group chats are readable only by participants.
+- Order: `firebase functions:secrets:set CLERK_SECRET_KEY` → `cd functions && npm i && npm run build` → `firebase deploy --only functions` → `firebase deploy --only firestore:rules`.
+- iOS push is not wired (APNs tokens need the native Firebase SDK); Android uses FCM.

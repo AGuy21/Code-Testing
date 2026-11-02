@@ -23,11 +23,12 @@ import type { ExpoConfig } from "expo/config";
 
 const envMapsKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
 
-// Development fallback so the map renders out of the box on fresh clones.
-// For production builds, set EXPO_PUBLIC_GOOGLE_MAPS_API_KEY in `.env`
-// and restrict the key in Google Cloud Console (see README.md → Google Maps).
-const androidMapsApiKey =
-  envMapsKey ?? "AIzaSyAbQvbeWBss38by85XQbcvQZzGf109ov1s";
+// Set EXPO_PUBLIC_GOOGLE_MAPS_API_KEY in `.env` / EAS secrets and restrict the
+// key in Google Cloud Console (see README.md → Google Maps).
+if (!envMapsKey) console.warn("⚠️  EXPO_PUBLIC_GOOGLE_MAPS_API_KEY is not set; maps will be blank.");
+const androidMapsApiKey = envMapsKey ?? "";
+
+const BUNDLE_ID = "com.anonymous.Functions";
 
 const config: ExpoConfig = {
   scheme: "functions",
@@ -40,6 +41,8 @@ const config: ExpoConfig = {
   backgroundColor: "#0E1713",
   ios: {
     supportsTablet: true,
+    bundleIdentifier: BUNDLE_ID,
+    infoPlist: { ITSAppUsesNonExemptEncryption: false },
     ...(envMapsKey ? { config: { googleMapsApiKey: envMapsKey } } : {}),
   },
   android: {
@@ -59,7 +62,7 @@ const config: ExpoConfig = {
       "android.permission.ACCESS_COARSE_LOCATION",
       "android.permission.ACCESS_FINE_LOCATION",
     ],
-    package: "com.anonymous.functions",
+    package: BUNDLE_ID,
   },
   web: {
     favicon: "./assets/favicon.png",

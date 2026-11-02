@@ -3,7 +3,8 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 import { onDocumentCreated, onDocumentWritten } from "firebase-functions/v2/firestore";
 import { onSchedule } from "firebase-functions/v2/scheduler";
-import { onRequest } from "firebase-functions/v2/https";
+import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
+import { createHash } from "node:crypto";
 import { defineSecret } from "firebase-functions/params";
 import { getAuth } from "firebase-admin/auth";
 import { verifyToken } from "@clerk/backend";
@@ -115,7 +116,9 @@ export const onHangoutWritten = onDocumentWritten("hangouts/{hangoutId}", async 
 
   // Counter + moderation are written back only when they would change, so
   // the write this triggers settles immediately instead of looping.
-  const goingCount = 1 + (going?.length ?? 0) + ((after.plusOneUserIds as Ids)?.length ?? 0);
+  const preset = Math.min(999, Math.max(0, Math.floor(Number(after.baseGoingCount) || 0)));
+  const goingCount =
+    preset + new Set(going ?? []).size + ((after.plusOneUserIds as Ids)?.length ?? 0);
   const text = `${after.title ?? ""} ${after.description ?? ""}`.toLowerCase();
   const flagged = BLOCKED_TERMS.some((term) => text.includes(term));
   const patch: Record<string, unknown> = {};
@@ -125,6 +128,8 @@ export const onHangoutWritten = onDocumentWritten("hangouts/{hangoutId}", async 
 });
 
 async function deleteHangout(id: string): Promise<void> {
+  const codes = await db.collection("inviteCodes").where("hangoutId", "==", id).get();
+  await Promise.all(codes.docs.map((d) => d.ref.delete()));
   await db.recursiveDelete(db.doc(`hangouts/${id}`));
 }
 
@@ -164,3 +169,31 @@ export const firebaseToken = onRequest(
     }
   },
 );
+
+
+/**
+ * Redeems a private invite code. Rules can't hash, so this is the only place
+ * a guest can be added to approvedUserIds: it checks the code server-side.
+ */
+export const redeemInvite = onCall({ cors: true }, async (request) => {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "Sign in to use an invite code.");
+  const raw = typeof request.data?.code === "string" ? request.data.code.trim() : "";
+  if (raw.length < 4 || raw.length > 32) {
+    throw new HttpsError("invalid-argument", "That invite code isn't valid.");
+  }
+  const hash = createHash("sha256").update(raw.toUpperCase()).digest("hex");
+  const code = await db.doc(`inviteCodes/${hash}`).get();
+  const hangoutId = code.data()?.hangoutId as string | undefined;
+  const match = hangoutId ? await db.doc(`hangouts/${hangoutId}`).get() : undefined;
+  if (!match?.exists) throw new HttpsError("not-found", "That invite code isn't valid.");
+  const data = match.data() ?? {};
+  if (((data.deniedUserIds as Ids) ?? []).includes(uid)) {
+    throw new HttpsError("permission-denied", "The host can't accept you for this hangout.");
+  }
+  await match.ref.update({
+    approvedUserIds: FieldValue.arrayUnion(uid),
+    requestedUserIds: FieldValue.arrayRemove(uid),
+  });
+  return { title: String(data.title ?? "") };
+});

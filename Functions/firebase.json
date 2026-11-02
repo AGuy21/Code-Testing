@@ -1,6 +1,6 @@
 {
   "firestore": {
-    "rules": "Configs/firestore.rules"
+    "rules": "Configs/firestore.strict.rules"
   },
   "functions": [
     {

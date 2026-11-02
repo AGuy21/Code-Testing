@@ -20,7 +20,7 @@ function placesHeaders(extra: Record<string, string> = {}): Record<string, strin
     "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY ?? "",
     ...(Platform.OS === "android"
       ? { "X-Android-Package": "com.anonymous.Functions", "X-Android-Cert": ANDROID_CERT_SHA1 }
-      : {}),
+      : { "X-Ios-Bundle-Identifier": "com.anonymous.Functions" }),
     ...extra,
   };
 }
